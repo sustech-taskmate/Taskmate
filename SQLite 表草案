@@ -1,0 +1,57 @@
+sqlite表设计
+
+表1：account_info
+
+id:int				//key
+sid:varchar(10)			//学生、学助的学号
+name:string
+token:string
+
+
+
+表2：course_account_relation
+
+sid:varchar(10)
+course_id:int 	->course_info.id
+relation:string
+key(sid,course_id)
+
+
+
+
+
+
+//todo:check
+表3：course_info
+id:int
+name:String
+??:String			//如何区别不同学期的同一个course 上层提供某种标识符么?
+
+
+表4：assignment_info
+
+id:int		    key
+course_id: int -> course_info.id
+name: string
+start_date: date
+end_date:date
+description:string
+is_allowed_delay_submit:Boolean
+
+
+表5:assignment_allocation
+
+assignment_id:int  -> assignment_info.id
+sid:int			//学助\老师的学号
+problem_id:int
+description:string
+
+表6:url_info
+assignment_id:int		->assignment_info.id
+student_id:int		//学号
+problem_id:int		//问题编号
+url:string			//学生提交的文件
+score:int			//评分 *100后保存在数据库内 处理的时候注意范围 可以为null用来判断是否批改过
+comment:string		//评语
+
+
