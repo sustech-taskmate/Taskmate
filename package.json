@@ -10,11 +10,12 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@kangc/v-md-editor": "^2.3.15",
     "@tauri-apps/api": "^1.2.0",
     "element-plus": "^2.3.0",
-    "element-ui": "^2.15.12",
     "pdfjs-dist": "^3.4.120",
     "pnpm": "^7.29.1",
+    "prismjs": "^1.29.0",
     "vue": "^3.2.45",
     "vue-pdf-embed": "^1.1.5",
     "vue-router": "^4.1.6",
@@ -24,7 +25,9 @@
   "devDependencies": {
     "@tauri-apps/cli": "^1.2.2",
     "@types/node": "^18.15.1",
+    "@types/prismjs": "^1.26.0",
     "@vitejs/plugin-vue": "^4.0.0",
+    "@vue/compiler-sfc": "^3.2.47",
     "sass": "^1.59.3",
     "typescript": "^4.6.4",
     "vite": "^4.0.0",

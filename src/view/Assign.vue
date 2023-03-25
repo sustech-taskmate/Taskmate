@@ -15,6 +15,9 @@
           :preview-src-list="['src/assets/test.png']"
       >
       </el-image>
+      <div v-if="format==='markdown'">
+        <v-md-preview :text="md" style="overflow-y: scroll;height: 100vh"></v-md-preview>
+      </div>
     </div>
     <div class="right">
       right
@@ -31,16 +34,15 @@ export default {
   },
   data() {
     return {
-      format: 'office',
+      format: 'markdown',
       pdf_url: 'src/assets/test.pdf',
       img_url: 'src/assets/test.png',
       office: '',
       office_url: 'http://view.officeapps.live.com/op/view.aspx?src=' + this.office,
+      md: '# Hello'
     }
   },
-  methods: {
-
-  }
+  methods: {},
 }
 </script>
 
@@ -87,6 +89,6 @@ body {
   left: 70%;
 }
 
-.image{
+.image {
 }
 </style>
