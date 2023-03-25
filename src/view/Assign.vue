@@ -16,7 +16,9 @@
           style="position: absolute; left: 0; top: 25%"
       >
       </el-image>
-
+      <div v-if="format==='markdown'">
+        <v-md-preview :text="md" style="overflow-y: scroll;height: 100vh"></v-md-preview>
+      </div>
       <video-player v-if="format==='mp4'" class="video-player vjs-custom-skin"
                     ref="videoPlayer"
                     :playsinline="true"
@@ -24,7 +26,6 @@
                     style="position: absolute; left: 0; top: 25%"
       >
       </video-player>
-
     </div>
     <div class="right">
       right
@@ -33,7 +34,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'Assign',
   created() {
@@ -42,11 +42,12 @@ export default {
   },
   data() {
     return {
-      format: 'mp4',
+      format: 'office',
       pdf_url: 'src/assets/test.pdf',
       img_url: 'src/assets/test.png',
       office: '',
       office_url: 'http://view.officeapps.live.com/op/view.aspx?src=' + this.office,
+      md: '# Hello',
       playerOptions: {
         playbackRates: [0.7, 1.0, 1.5, 2.0], //播放速度
         autoplay: true, //如果true,浏览器准备好时开始回放。
@@ -74,8 +75,9 @@ export default {
       }
     }
   },
-  methods: {},
-  computed: {}
+  methods: {
+
+  }
 }
 </script>
 
