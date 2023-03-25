@@ -4,7 +4,16 @@
       left
     </div>
     <div class="center">
-      center
+      <iframe v-if="format==='pdf'" style="width: 100%; height: 98.5%;" :src="pdf_url"></iframe>
+      <el-image
+          v-if="format==='img'"
+          ref="image"
+          lazy
+          class="image"
+          :src="'src/assets/test.png'"
+          :preview-src-list="['src/assets/test.png']"
+      >
+      </el-image>
     </div>
     <div class="right">
       right
@@ -12,13 +21,30 @@
   </div>
 </template>
 
+<script>
+
+export default {
+  name: 'Assign',
+  mounted() {
+  },
+  data() {
+    return {
+      format: 'pdf',
+      pdf_url: 'src/assets/test.pdf',
+      img_url: 'src/assets/test.png',
+    }
+  },
+  methods: {}
+}
+</script>
+
 <style>
 
 html {
   height: 100%;
 }
 
-body{
+body {
   height: 100%;
   margin: 0;
 }
@@ -54,16 +80,7 @@ body{
   bottom: 0;
   left: 70%;
 }
-</style>
 
-
-<script>
-
-export default {
-  name: 'Assign',
-  data() {
-  },
-  methods: {
-  }
+.image{
 }
-</script>
+</style>
