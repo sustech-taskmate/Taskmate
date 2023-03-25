@@ -22,8 +22,8 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../view/Set.vue')
   },
   {
-    path: '/Main/Homework/Modify',
-    component: () => import('../view/Modify.vue')
+    path: '/Main/Homework/Assign',
+    component: () => import('../view/Assign.vue')
   }
 
 ]

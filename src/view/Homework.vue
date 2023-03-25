@@ -66,7 +66,7 @@
         }
     ])
     const myClick = () => {
-        router.push('/Main/Homework/Modify')
+        router.push('/Main/Homework/Assign')
     }
     const mySet = () => {
         router.push('/Main/Set')
