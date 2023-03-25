@@ -5,6 +5,7 @@
     </div>
     <div class="center">
       <iframe v-if="format==='pdf'" style="width: 100%; height: 98.5%;" :src="pdf_url"></iframe>
+      <iframe v-if="format==='office'" style="width: 100%; height: 98.5%;" :src="office_url"></iframe>
       <el-image
           v-if="format==='img'"
           ref="image"
@@ -22,19 +23,24 @@
 </template>
 
 <script>
-
 export default {
   name: 'Assign',
+  created() {
+  },
   mounted() {
   },
   data() {
     return {
-      format: 'pdf',
+      format: 'office',
       pdf_url: 'src/assets/test.pdf',
       img_url: 'src/assets/test.png',
+      office: '',
+      office_url: 'http://view.officeapps.live.com/op/view.aspx?src=' + this.office,
     }
   },
-  methods: {}
+  methods: {
+
+  }
 }
 </script>
 
