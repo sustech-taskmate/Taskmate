@@ -98,10 +98,6 @@ export default defineComponent({
     return {
       url: "",
       format: 'pdf',
-      pdf_url: 'src/assets/test.pdf',
-      img_url: 'src/assets/test.png',
-      office: '',
-      office_url: 'http://view.officeapps.live.com/op/view.aspx?src=' + this.office,
       md: '# Hello',
       video: '',
       playerOptions: {
@@ -138,7 +134,9 @@ export default defineComponent({
       this.format = name.split(".")[1];
       this.url = 'src/assets/' + name;
       if(this.format === 'video'){
-        this.playerOptions.sources[0].src = this.url
+        this.video = this.url;
+      } else if (this.format === 'office') {
+        this.url = 'http://view.officeapps.live.com/op/view.aspx?src=' + this.url;
       }
     },
     urlToBlob(url: string) {
