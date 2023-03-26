@@ -3,15 +3,15 @@
     <div class="left">
       left
       <div class="fileList">
-        <el-button v-for="item in file_list" @click="lookFile(item)"> {{item}} </el-button>
+        <el-button v-for="item in fileList" @click="lookFile(item)"> {{ item.filename }}</el-button>
       </div>
     </div>
 
     <div class="center">
-      <iframe v-if="format==='pdf'" style="width: 100%; height: 98.5%;" :src="url"></iframe>
-      <iframe v-if="format==='office'" style="width: 100%; height: 98.5%;" :src="url"></iframe>
+      <iframe v-if="format===AssignFileType.pdf" style="width: 100%; height: 98.5%;" :src="url"></iframe>
+      <iframe v-if="format===AssignFileType.office" style="width: 100%; height: 98.5%;" :src="url"></iframe>
       <el-image
-          v-if="format==='img'"
+          v-if="format===AssignFileType.image"
           ref="image"
           lazy
           class="image"
@@ -20,10 +20,10 @@
           style="position: absolute; left: 0; top: 25%"
       >
       </el-image>
-      <div v-if="format==='markdown'">
+      <div v-if="format===AssignFileType.markdown">
         <v-md-preview :text="md" style="overflow-y: scroll;height: 100vh"></v-md-preview>
       </div>
-      <video-player v-if="format==='video'" class="video-player vjs-custom-skin"
+      <video-player v-if="format===AssignFileType.video" class="video-player vjs-custom-skin"
                     ref="videoPlayer"
                     :playsinline="true"
                     :options="playerOptions"
@@ -37,52 +37,14 @@
   </div>
 </template>
 
+
+<script setup lang="ts">
+import {AssignFileType} from '@/store/assign';
+</script>
 <script lang="ts">
 import {defineComponent} from 'vue';
 import JSZip, {JSZipObject} from 'jszip';
-
-enum AssignFileType {
-  pdf,
-  img,
-  video,
-  office,
-  txt,
-  markdown,
-  zip,
-  placeholder
-}
-
-class AssignFile{
-  filename: string = '';
-  format: AssignFileType = AssignFileType.placeholder;
-  url: string = '';
-  data: [string, any] = ['', null];
-}
-
-class ZipFile {
-  name: string = '';
-  dir: boolean = false;
-  data: Blob | undefined;
-
-  constructor(name: string, dir: boolean, data: Blob | undefined) {
-    this.name = name;
-    this.dir = dir;
-    this.data = data;
-  }
-}
-
-class FileTreeNode {
-  name: string = '';
-  isDir: boolean = false;
-  isRoot: boolean = false;
-  children: FileTreeNode[] = [];
-
-  constructor(name: string, isDir: boolean, isRoot: boolean) {
-    this.name = name;
-    this.isDir = isDir;
-    this.isRoot = isRoot;
-  }
-}
+import {AssignFile, AssignFileType, FileTreeNode, ZipFile} from '@/store/assign';
 
 export default defineComponent({
   name: 'Assign',
@@ -97,7 +59,7 @@ export default defineComponent({
   data() {
     return {
       url: "",
-      format: 'pdf',
+      format: AssignFileType.placeholder,
       md: '# Hello',
       video: '',
       playerOptions: {
@@ -126,16 +88,21 @@ export default defineComponent({
         controls: true
       },
       zipNode: undefined as FileTreeNode | undefined,
-      file_list: ['test.pdf', 'test.png', 'test.mp4']
+      fileList: [
+        new AssignFile('test.mp4', AssignFileType.video,
+            'src/assets/test.mp4', undefined),
+        new AssignFile('test.pdf', AssignFileType.pdf,
+            'src/assets/test.pdf', undefined),
+      ] as AssignFile[]
     }
   },
   methods: {
-    lookFile(name:string){
-      this.format = name.split(".")[1];
-      this.url = 'src/assets/' + name;
-      if(this.format === 'video'){
+    lookFile(file: AssignFile) {
+      this.format = file.format;
+      this.url = file.url;
+      if (this.format === AssignFileType.video) {
         this.video = this.url;
-      } else if (this.format === 'office') {
+      } else if (this.format === AssignFileType.office) {
         this.url = 'http://view.officeapps.live.com/op/view.aspx?src=' + this.url;
       }
     },
@@ -250,7 +217,7 @@ body {
 .image {
 }
 
-.fileList{
+.fileList {
   background: white;
   width: 100%;
   height: 50%;
