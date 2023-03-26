@@ -2,17 +2,46 @@
   <div class="container">
     <div class="left">
       left
+      <div class="fileList">
+        <el-button v-for="item in file_list" @click="lookFile(item)"> {{item}} </el-button>
+      </div>
+
     </div>
+<!--    <div class="center">-->
+<!--      <iframe v-if="format==='pdf'" style="width: 100%; height: 98.5%;" :src="pdf_url"></iframe>-->
+<!--      <iframe v-if="format==='office'" style="width: 100%; height: 98.5%;" :src="office_url"></iframe>-->
+<!--      <el-image-->
+<!--          v-if="format==='img'"-->
+<!--          ref="image"-->
+<!--          lazy-->
+<!--          class="image"-->
+<!--          :src="'src/assets/test.png'"-->
+<!--          :preview-src-list="['src/assets/test.png']"-->
+<!--          style="position: absolute; left: 0; top: 25%"-->
+<!--      >-->
+<!--      </el-image>-->
+<!--      <div v-if="format==='markdown'">-->
+<!--        <v-md-preview :text="md" style="overflow-y: scroll;height: 100vh"></v-md-preview>-->
+<!--      </div>-->
+<!--      <video-player v-if="format==='mp4'" class="video-player vjs-custom-skin"-->
+<!--                    ref="videoPlayer"-->
+<!--                    :playsinline="true"-->
+<!--                    :options="playerOptions"-->
+<!--                    style="position: absolute; left: 0; top: 25%"-->
+<!--      >-->
+<!--      </video-player>-->
+<!--    </div>-->
+
     <div class="center">
-      <iframe v-if="format==='pdf'" style="width: 100%; height: 98.5%;" :src="pdf_url"></iframe>
-      <iframe v-if="format==='office'" style="width: 100%; height: 98.5%;" :src="office_url"></iframe>
+      <iframe v-if="format==='pdf'" style="width: 100%; height: 98.5%;" :src="url"></iframe>
+      <iframe v-if="format==='office'" style="width: 100%; height: 98.5%;" :src="url"></iframe>
       <el-image
-          v-if="format==='img'"
+          v-if="format==='png'"
           ref="image"
           lazy
           class="image"
-          :src="'src/assets/test.png'"
-          :preview-src-list="['src/assets/test.png']"
+          :src="url"
+          :preview-src-list="[url]"
           style="position: absolute; left: 0; top: 25%"
       >
       </el-image>
@@ -33,7 +62,25 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+enum AssignFileType {
+  pdf,
+  png,
+  mp4,
+  office,
+  txt,
+  markdown,
+  zip,
+  placeholder
+}
+
+class AssignFile{
+  filename: string = '';
+  format: AssignFileType = AssignFileType.placeholder;
+  url: string = '';
+  data: [string, any] = ['', null];
+}
+
 export default {
   name: 'Assign',
   created() {
@@ -42,7 +89,8 @@ export default {
   },
   data() {
     return {
-      format: 'office',
+      url: "",
+      format: 'pdf',
       pdf_url: 'src/assets/test.pdf',
       img_url: 'src/assets/test.png',
       office: '',
@@ -57,10 +105,7 @@ export default {
         language: 'zh-CN',
         aspectRatio: '16:9', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
         fluid: true, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
-        sources: [{
-          src: 'src/assets/test.mp4',  // 路径
-          type: 'video/mp4'  // 类型
-        }, {
+        sources: [ {
           src: 'src/assets/test.mp4',
           type: 'video/webm'
         }],
@@ -72,11 +117,19 @@ export default {
           fullscreenToggle: true  //全屏按钮
         },
         controls: true
-      }
+      },
+      file_list: ['test.pdf', 'test.png', 'test.mp4']
     }
   },
   methods: {
-
+    lookFile(name){
+      var type = name.split(".")[1];
+      this.format = type;
+      this.url = 'src/assets/' + name;
+      if(this.format === 'mp4'){
+        this.playerOptions.sources[0].src = this.url
+      }
+    }
   }
 }
 </script>
@@ -100,7 +153,7 @@ body {
 .left {
   position: absolute;
   width: 25%;
-  background-color: blue;
+  background: blue;
   top: 0;
   bottom: 0;
   left: 0;
@@ -125,5 +178,12 @@ body {
 }
 
 .image {
+}
+
+.fileList{
+  background: white;
+  width: 100%;
+  height: 50%;
+  margin-top: 50%;
 }
 </style>
