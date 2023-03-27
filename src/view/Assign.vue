@@ -2,12 +2,9 @@
   <div class="container">
     <div class="left">
       <el-menu
-          v-for="item in fileList"
           class="el-menu-vertical-demo"
-          @open="handleOpen"
-          @close="handleClose"
           @select="handleSelect"
-          v-model="fileOpen"
+          v-for="item in fileMap.values()"
       >
         <tree-menu v-if="item.format===AssignFileType.zip" :nodes="this.zipNode">
           <el-icon>
@@ -37,7 +34,7 @@
       >
       </el-image>
       <div v-if="format===AssignFileType.markdown">
-        <v-md-preview :text="md" style="overflow-y: scroll;height: 100vh"></v-md-preview>
+        <v-md-preview :text="md" style="overflow-y: auto;height: 100vh"></v-md-preview>
       </div>
       <video-player v-if="format===AssignFileType.video" class="video-player vjs-custom-skin"
                     ref="videoPlayer"
@@ -55,18 +52,41 @@
 
 
 <script setup lang="ts">
-import {AssignFileType} from '@/store/assign';
+import {AssignFile, AssignFileType} from '@/store/assign';
 import TreeMenu from "@/components/TreeMenu.vue";
+import {ref} from "vue";
 
-const handleOpen = (key: string, keyPath: string[]) => {
-  console.log("open", key, keyPath)
-}
-const handleClose = (key: string, keyPath: string[]) => {
-  console.log("close", key, keyPath)
-}
+let fileMap = new Map<string, AssignFile>([
+  ['test.zip', new AssignFile('test.zip', AssignFileType.zip,
+      'src/assets/test.zip', undefined)],
+  ['test.mp4', new AssignFile('test.mp4', AssignFileType.video,
+      'src/assets/test.mp4', undefined)],
+  ['test.pdf', new AssignFile('test.pdf', AssignFileType.pdf,
+      'src/assets/test.pdf', undefined)],
+  ['test.png', new AssignFile('test.png', AssignFileType.pdf,
+      'src/assets/test.png', undefined)],
+])
+let format = ref(AssignFileType.placeholder);
+let url = ref("");
 const handleSelect = (key: string, keyPath: string[]) => {
-  console.log("select", key, keyPath)
+  let filename = key.split("\n")[0];
+  let file = fileMap.get(filename);
+  if (!file) return;
+  if (file.format === AssignFileType.pdf) {
+    format.value = file.format;
+    url.value = file.url;
+  } else if (file.format === AssignFileType.video) {
+    format.value = file.format;
+    url.value = file.url;
+  } else if (file.format === AssignFileType.zip) {
+    format.value = file.format;
+    url.value = file.url;
+  } else if (file.format === AssignFileType.image) {
+    format.value = file.format;
+    url.value = file.url;
+  }
 }
+
 </script>
 
 <script lang="ts">
@@ -92,9 +112,6 @@ export default defineComponent({
   },
   data() {
     return {
-      url: "",
-      format: AssignFileType.placeholder,
-      md: '# Hello',
       video: '',
       playerOptions: {
         playbackRates: [0.7, 1.0, 1.25, 1.5, 2.0], //播放速度
@@ -122,14 +139,6 @@ export default defineComponent({
         controls: true
       },
       zipNode: [] as FileTreeNode[],
-      fileList: [
-        new AssignFile('test.zip', AssignFileType.zip,
-            'src/assets/test.zip', undefined),
-        new AssignFile('test.mp4', AssignFileType.video,
-            'src/assets/test.mp4', undefined),
-        new AssignFile('test.pdf', AssignFileType.pdf,
-            'src/assets/test.pdf', undefined),
-      ] as AssignFile[],
     }
   },
   methods: {
@@ -187,8 +196,8 @@ export default defineComponent({
           } else {
             substring = dirName.substring(index + 1, dirName.length - 1);
             let p = new FileTreeNode(substring, true, false, file.data);
-            p.parent = map.get(dirName.substring(0, index+1));
-            (map.get(dirName.substring(0, index+1)) as FileTreeNode).children.push(p);
+            p.parent = map.get(dirName.substring(0, index + 1));
+            (map.get(dirName.substring(0, index + 1)) as FileTreeNode).children.push(p);
             map.set(dirName, p);
           }
         } else {
@@ -199,8 +208,8 @@ export default defineComponent({
             root.children.push(p);
           } else {
             let p = new FileTreeNode(dirName.substring(index + 1), false, false, file.data);
-            p.parent = map.get(dirName.substring(0, index+1));
-            (map.get(dirName.substring(0, index+1)) as FileTreeNode).children.push(p);
+            p.parent = map.get(dirName.substring(0, index + 1));
+            (map.get(dirName.substring(0, index + 1)) as FileTreeNode).children.push(p);
           }
         }
       }

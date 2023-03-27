@@ -1,5 +1,6 @@
 <template>
-  <el-menu v-for="(node, index) in nodes" :key="index" :index="node.filename">
+  <el-menu v-for="(node, index) in nodes" :key="index" :index="node.filename"
+           style="overflow-y: auto;max-height: 80vh">
     <el-sub-menu v-if="node.isDir">
       <template #title>
         <el-icon>
