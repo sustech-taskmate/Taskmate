@@ -1,10 +1,26 @@
 <template>
   <div class="container">
     <div class="left">
-      left
-      <div class="fileList">
-        <el-button v-for="item in fileList" @click="lookFile(item)"> {{ item.filename }}</el-button>
-      </div>
+      <el-menu
+          v-for="item in fileList"
+          class="el-menu-vertical-demo"
+          @open="handleOpen"
+          @close="handleClose"
+          @select="handleSelect"
+          v-model="fileOpen"
+      >
+        <tree-menu v-if="item.format===AssignFileType.zip" :nodes="this.zipNode">
+          <el-icon>
+            <Document/>
+          </el-icon>
+        </tree-menu>
+        <el-menu-item v-if="item.format!==AssignFileType.zip" :index="item.filename">
+          <el-icon>
+            <Document/>
+          </el-icon>
+          <template #title>{{ item.filename }}</template>
+        </el-menu-item>
+      </el-menu>
     </div>
 
     <div class="center">
@@ -40,18 +56,36 @@
 
 <script setup lang="ts">
 import {AssignFileType} from '@/store/assign';
+import TreeMenu from "@/components/TreeMenu.vue";
+
+const handleOpen = (key: string, keyPath: string[]) => {
+  console.log("open", key, keyPath)
+}
+const handleClose = (key: string, keyPath: string[]) => {
+  console.log("close", key, keyPath)
+}
+const handleSelect = (key: string, keyPath: string[]) => {
+  console.log("select", key, keyPath)
+}
 </script>
+
 <script lang="ts">
 import {defineComponent} from 'vue';
 import JSZip, {JSZipObject} from 'jszip';
 import {AssignFile, AssignFileType, FileTreeNode, ZipFile} from '@/store/assign';
+import {
+  Document,
+  Menu as IconMenu,
+  Location,
+  Setting,
+} from '@element-plus/icons-vue'
 
 export default defineComponent({
   name: 'Assign',
   created() {
     let zipFiles = this.getTemplateZipData("src/assets/test.zip");
     zipFiles.then(data => {
-      this.zipNode = this.buildFileTree((data as ZipFile[]));
+      this.zipNode.push(this.buildFileTree("test.zip", (data as ZipFile[])));
     });
   },
   mounted() {
@@ -87,25 +121,18 @@ export default defineComponent({
         },
         controls: true
       },
-      zipNode: undefined as FileTreeNode | undefined,
+      zipNode: [] as FileTreeNode[],
       fileList: [
+        new AssignFile('test.zip', AssignFileType.zip,
+            'src/assets/test.zip', undefined),
         new AssignFile('test.mp4', AssignFileType.video,
             'src/assets/test.mp4', undefined),
         new AssignFile('test.pdf', AssignFileType.pdf,
             'src/assets/test.pdf', undefined),
-      ] as AssignFile[]
+      ] as AssignFile[],
     }
   },
   methods: {
-    lookFile(file: AssignFile) {
-      this.format = file.format;
-      this.url = file.url;
-      if (this.format === AssignFileType.video) {
-        this.video = this.url;
-      } else if (this.format === AssignFileType.office) {
-        this.url = 'http://view.officeapps.live.com/op/view.aspx?src=' + this.url;
-      }
-    },
     urlToBlob(url: string) {
       return new Promise((resolve, reject) => {
         fetch(url).then(response => {
@@ -142,30 +169,44 @@ export default defineComponent({
         resolve(templateData);
       })
     },
-    buildFileTree(data: ZipFile[]) {
-      let root = new FileTreeNode('root', true, true);
-      for (let file of data) {
-        let path = file.name.split('/');
-        let cur = root;
-        for (let i = 0; i < path.length; i++) {
-          let name = path[i];
-          if (name === '') continue;
-          let isDir = i < path.length - 1;
-          let node = new FileTreeNode(name, isDir, false);
-          let child = cur.children.find((node) => node.name === name && node.isDir === isDir);
-          if (child) {
-            cur = child;
+    buildFileTree(zipName: string, zipFiles: ZipFile[]): FileTreeNode {
+      const root = new FileTreeNode(zipName, true, true, undefined);
+      zipFiles.sort((a: ZipFile, b: ZipFile) => a.name.length - b.name.length);
+      const map = new Map<string, FileTreeNode>();
+      map.set('', root);
+      for (const file of zipFiles) {
+        let dirName = file.name;
+        if (file.dir) {
+          let substring = dirName.substring(0, dirName.length - 1);
+          let index = substring.lastIndexOf('/');
+          if (index === -1) {
+            let p = new FileTreeNode(substring, true, false, file.data);
+            p.parent = root;
+            root.children.push(p);
+            map.set(dirName, p);
           } else {
-            cur.children.push(node);
-            cur = node;
+            substring = dirName.substring(index + 1, dirName.length - 1);
+            let p = new FileTreeNode(substring, true, false, file.data);
+            p.parent = map.get(dirName.substring(0, index+1));
+            (map.get(dirName.substring(0, index+1)) as FileTreeNode).children.push(p);
+            map.set(dirName, p);
           }
-        }
-        if (!file.dir) {
-          cur.children.push(new FileTreeNode(file.name, false, false));
+        } else {
+          let index = dirName.lastIndexOf('/');
+          if (index === -1) {
+            let p = new FileTreeNode(dirName, false, false, file.data);
+            p.parent = root;
+            root.children.push(p);
+          } else {
+            let p = new FileTreeNode(dirName.substring(index + 1), false, false, file.data);
+            p.parent = map.get(dirName.substring(0, index+1));
+            (map.get(dirName.substring(0, index+1)) as FileTreeNode).children.push(p);
+          }
         }
       }
       return root;
     }
+
   }
 });
 
@@ -217,10 +258,8 @@ body {
 .image {
 }
 
-.fileList {
-  background: white;
-  width: 100%;
-  height: 50%;
-  margin-top: 50%;
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 200px;
+  min-height: 20px;
 }
 </style>

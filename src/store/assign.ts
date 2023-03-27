@@ -1,6 +1,6 @@
 enum AssignFileType {
     pdf,
-    img,
+    image,
     video,
     office,
     txt,
@@ -35,15 +35,18 @@ class ZipFile {
 }
 
 class FileTreeNode {
-    name: string = '';
+    filename: string = '';
     isDir: boolean = false;
     isRoot: boolean = false;
+    data: Blob | undefined;
+    parent: FileTreeNode | undefined;
     children: FileTreeNode[] = [];
 
-    constructor(name: string, isDir: boolean, isRoot: boolean) {
-        this.name = name;
+    constructor(filename: string, isDir: boolean, isRoot: boolean, data: Blob | undefined) {
+        this.filename = filename;
         this.isDir = isDir;
         this.isRoot = isRoot;
+        this.data = data;
     }
 }
 

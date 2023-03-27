@@ -25,6 +25,7 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
     "@tauri-apps/cli": "^1.2.2",
     "@types/node": "^18.15.1",
     "@types/prismjs": "^1.26.0",
