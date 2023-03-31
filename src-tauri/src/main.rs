@@ -3,6 +3,8 @@
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
+mod file_handler;
+
 fn main() {
     tauri::Builder::default()
         .run(tauri::generate_context!())
