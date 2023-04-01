@@ -2,10 +2,9 @@
 use std::fs::File;
 use std::path::Path;
 use reqwest::blocking::get;
-use std::filesystem::path;
 
 
-fn download_file(url: &str, file_path: &str) -> std::result::Result<(), String> {
+async fn download_file(url: &str, file_path: &str) -> std::result::Result<(), String> {
     let mut response = get(url).map_err(|e| e.to_string())?;
     let file_name = Path::new(url).file_name().ok_or_else(|| "get file name failed".to_string() )?;
     let file_path = Path::new(file_path).join(file_name);
