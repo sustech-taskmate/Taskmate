@@ -4,15 +4,31 @@
       <el-menu
           class="el-menu-vertical-demo"
           @select="handleSelect"
-          v-for="item in fileMap.values()"
           :collapse="true"
       >
-        <el-menu-item v-if="item.format!==AssignFileType.zip" :index="item.filename">
-          <el-icon>
-            <Document/>
-          </el-icon>
-          <template #title>{{ item.filename }}</template>
-        </el-menu-item>
+        <template v-for="(item, index) in fileMap.values()" :key="index">
+          <tree-menu v-if="item.format===AssignFileType.zip" :index="item.filename" :nodes="zipNode">
+            <el-icon>
+              <FolderOpened />
+            </el-icon>
+            <span>{{ item.filename }}</span>
+          </tree-menu>
+
+          <el-menu-item v-else :index="item.filename">
+            <el-icon v-if="item.format===AssignFileType.video">
+              <VideoPlay />
+            </el-icon>
+            <el-icon v-else-if="item.format===AssignFileType.image">
+              <PictureFilled />
+            </el-icon>
+            <el-icon v-else>
+              <Document />
+            </el-icon>
+            <template #title>
+              <span>{{ item.filename }}</span>
+            </template>
+          </el-menu-item>
+        </template>
       </el-menu>
     </div>
 
@@ -47,18 +63,26 @@
 </template>
 
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import {AssignFile, AssignFileType} from '@/store/assign';
 import {ref} from "vue";
+import {
+  Folder,
+  Document,
+  VideoPlay,
+  PictureFilled,
+  FolderOpened,
+} from '@element-plus/icons-vue'
+import TreeMenu from "@/components/TreeMenu.vue";
 
 let fileMap = new Map<string, AssignFile>([
-  // ['test.zip', new AssignFile('test.zip', AssignFileType.zip,
-  //     'src/assets/test.zip', undefined)],
+  ['test.zip', new AssignFile('test.zip', AssignFileType.zip,
+      'src/assets/test.zip', undefined)],
   ['test.mp4', new AssignFile('test.mp4', AssignFileType.video,
       'src/assets/test.mp4', undefined)],
   ['test.pdf', new AssignFile('test.pdf', AssignFileType.pdf,
       'src/assets/test.pdf', undefined)],
-  ['test.png', new AssignFile('test.png', AssignFileType.pdf,
+  ['test.png', new AssignFile('test.png', AssignFileType.image,
       'src/assets/test.png', undefined)],
 ])
 let format = ref(AssignFileType.placeholder);
@@ -115,12 +139,6 @@ let playerOptions = ref({
 import {defineComponent} from 'vue';
 import JSZip, {JSZipObject} from 'jszip';
 import {AssignFile, AssignFileType, FileTreeNode, ZipFile} from '@/store/assign';
-import {
-  Document,
-  Menu as IconMenu,
-  Location,
-  Setting,
-} from '@element-plus/icons-vue'
 
 export default defineComponent({
   name: 'Assign',
@@ -266,5 +284,11 @@ body {
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 20px;
+}
+
+.el-menu-vertical-demo{
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>
