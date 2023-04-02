@@ -1,37 +1,32 @@
 <template>
-  <el-menu v-for="(node, index) in nodes" :key="index" :index="node.filename"
-           style="overflow-y: auto;max-height: 80vh">
-    <el-sub-menu v-if="node.isDir">
+  <template v-for="(node, index) in nodes" :key="index">
+    <el-sub-menu v-if="node.isDir" :index="node.filename">
       <template #title>
         <el-icon>
-          <Location/>
+          <Folder/>
         </el-icon>
         <span>{{ node.filename }}</span>
       </template>
       <tree-menu :nodes="node.children"></tree-menu>
     </el-sub-menu>
-    <el-menu-item v-if="!node.isDir" :index="node.filename">
+    <el-menu-item v-else :index="node.filename">
+      <el-icon>
+        <Document/>
+      </el-icon>
       <template #title>
         {{ node.filename }}
       </template>
     </el-menu-item>
-  </el-menu>
+  </template>
 </template>
 
-<script lang="ts">
-import {defineComponent} from 'vue';
+<script lang="ts" setup>
 import {FileTreeNode} from '@/store/assign';
-import {Location} from "@element-plus/icons-vue";
-
-export default defineComponent({
-  name: 'TreeMenu',
-  components: {Location},
-  props: {
-    nodes: {
-      type: Array as () => FileTreeNode[],
-      required: true,
-    },
-  },
-});
-
+import {Document, Folder} from "@element-plus/icons-vue";
+const props = defineProps({
+  nodes:{
+    type: Array as () => FileTreeNode[],
+    required: true
+  }
+})
 </script>
