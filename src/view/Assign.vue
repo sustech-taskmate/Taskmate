@@ -1,11 +1,13 @@
 <template>
-  <div class="container">
-    <div class="left">
+  <el-row type="flex">
+    <el-col :span="myWidthLeft">
       <el-menu
+          id="left"
           class="el-menu-vertical-demo"
           @select="handleSelect"
-          :collapse="true"
+          :collapse="myCollapse"
       >
+        <el-button type="primary" @click="flexible">伸缩</el-button>
         <template v-for="(item, index) in fileMap.values()" :key="index">
           <tree-menu v-if="item.format===AssignFileType.zip" :index="item.filename" :nodes="zipNode">
             <el-icon>
@@ -30,9 +32,8 @@
           </el-menu-item>
         </template>
       </el-menu>
-    </div>
-
-    <div class="center">
+    </el-col>
+    <el-col :span="myWidthCenter" style="background-color: blue">
       <iframe v-if="format===AssignFileType.pdf" style="width: 100%; height: 98.5%;" :src="url"></iframe>
       <iframe v-if="format===AssignFileType.office" style="width: 100%; height: 98.5%;" :src="url"></iframe>
       <el-image
@@ -55,11 +56,11 @@
                     style="position: absolute; left: 0; top: 25%"
       >
       </video-player>
-    </div>
-    <div class="right">
+    </el-col >
+    <el-col :span="5" style="background-color: red">
       right
-    </div>
-  </div>
+    </el-col>
+  </el-row>
 </template>
 
 
@@ -74,6 +75,23 @@ import {
   FolderOpened,
 } from '@element-plus/icons-vue'
 import TreeMenu from "@/components/TreeMenu.vue";
+
+let myCollapse = ref(false)
+let myWidthLeft = ref(3)
+let myWidthCenter = ref(16)
+
+const flexible = () => {
+    if (myCollapse.value) {
+        myWidthLeft.value = 3
+        myWidthCenter.value = 16
+    }
+    else {
+        myWidthLeft.value = 1
+        myWidthCenter.value = 18
+    }
+    myCollapse.value = !myCollapse.value
+}
+
 
 let fileMap = new Map<string, AssignFile>([
   ['test.zip', new AssignFile('test.zip', AssignFileType.zip,
@@ -236,51 +254,6 @@ export default defineComponent({
 </script>
 
 <style>
-
-html {
-  height: 100%;
-}
-
-body {
-  height: 100%;
-  margin: 0;
-}
-
-.container {
-  top: 0;
-  display: flex;
-}
-
-.left {
-  position: absolute;
-  width: 25%;
-  background: blue;
-  top: 0;
-  bottom: 0;
-  left: 0;
-}
-
-.center {
-  position: absolute;
-  width: 45%;
-  background-color: yellow;
-  top: 0;
-  bottom: 0;
-  left: 25%;
-}
-
-.right {
-  position: absolute;
-  width: 30%;
-  background-color: green;
-  top: 0;
-  bottom: 0;
-  left: 70%;
-}
-
-.image {
-}
-
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 20px;
