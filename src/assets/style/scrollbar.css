@@ -1,0 +1,24 @@
+::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background: #EDEDED;
+    box-shadow: inset 0 0 5px rgba(0, 122, 230);
+}
+
+::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background: #523750;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    /*鼠标移过滚动条背景色*/
+    background: rgba(157, 165, 183, 0.7)
+}
