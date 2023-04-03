@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import {createApp} from "vue";
 import "./styles.css";
 import App from "./App.vue";
 import router from './router'
@@ -23,12 +23,22 @@ import createEmojiPlugin from '@kangc/v-md-editor/lib/plugins/emoji/index';
 import '@kangc/v-md-editor/lib/plugins/emoji/emoji.css';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-json';
+// @ts-ignore
+import setupStyle from './assets/index';
 
-VMdPreview.use(vuepressTheme, {
-    Prism,
-});
-VMdPreview.use(createLineNumbertPlugin())
-VMdPreview.use(createCopyCodePlugin());
-VMdPreview.use(createEmojiPlugin());
+async function setupApp() {
+    setupStyle()
 
-createApp(App).use(VMdPreview).use(VueVideoPlayer).use(store).use(Ele).use(router).mount('#app')
+    VMdPreview.use(vuepressTheme, {
+        Prism,
+    })
+    VMdPreview.use(createLineNumbertPlugin())
+    VMdPreview.use(createCopyCodePlugin())
+    VMdPreview.use(createEmojiPlugin())
+
+    createApp(App).use(VMdPreview).use(VueVideoPlayer).use(store).use(Ele).use(router).mount('#app')
+}
+
+await setupApp()
+
+
