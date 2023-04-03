@@ -1,3 +1,3 @@
-import './style/scrollbar.css';
+import './style/global/scrollbar.css';
 
 export default function setupStyle() {}
