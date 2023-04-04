@@ -58,7 +58,7 @@
       </video-player>
     </el-col >
     <el-col :span="5" style="background-color: red">
-      right
+      <assign-right-bar></assign-right-bar>
     </el-col>
   </el-row>
 </template>
@@ -75,6 +75,7 @@ import {
   FolderOpened,
 } from '@element-plus/icons-vue'
 import TreeMenu from "@/components/TreeMenu.vue";
+import AssignRightBar from "@/components/AssignRightBar.vue";
 
 let myCollapse = ref(false)
 let myWidthLeft = ref(3)
