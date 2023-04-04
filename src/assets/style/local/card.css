@@ -1,0 +1,192 @@
+.card-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.pull-down {
+    font-size: 28px;
+    margin-top: 25%;
+    margin-left: -5%;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.pull-down.active {
+    transform: rotate(90deg);
+}
+
+.card {
+    display: flex;
+    text-align: left;
+    align-items: center;
+    width: 100%;
+    height: 90px;
+    border-radius: 10px;
+    background: linear-gradient(
+            to right bottom,
+            rgba(255, 255, 255, .6),
+            rgba(255, 255, 255, .3),
+            rgba(255, 255, 255, .2)
+    );
+    backdrop-filter: blur(11px);
+}
+
+.index-big {
+    list-style: none;
+    width: 26px;
+    height: 26px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: white;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 26px;
+    cursor: pointer;
+}
+
+.index-big:hover {
+    background: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1),
+    0 0 20px rgba(255, 255, 255, 1),
+    0 0 45px rgba(255, 255, 255, .05),
+    0 0 30px rgba(255, 255, 255, .05),
+    0 0 15px rgba(255, 255, 255, .05);
+}
+
+.problem-box-big {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+.point-box-big {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 40%;
+    line-height: 40%;
+    font-size: 20px;
+}
+
+.descript-box-big {
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 80%;
+    height: 60%;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.description-big {
+    font-size: 14px;
+    text-align: left;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow: hidden;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+div[contenteditable=true] {
+    padding: 5px;
+    outline: none;
+    border-radius: 5px;
+}
+
+.sub-card-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    transform: translate(5%, -20%);
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    height: 0;
+}
+
+.sub-card-box.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    transform: translate(5%, 0);
+    opacity: 1;
+    height: auto;
+}
+
+.sub-card {
+    display: flex;
+    text-align: left;
+    align-items: center;
+    width: 90%;
+    height: 70px;
+    border-radius: 10px;
+    background: linear-gradient(
+            to right bottom,
+            rgba(255, 255, 255, .6),
+            rgba(255, 255, 255, .3),
+            rgba(255, 255, 255, .2)
+    );
+    backdrop-filter: blur(11px);
+}
+
+.index-small {
+    list-style: none;
+    width: 30px;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: white;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 30px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.index-small.active {
+    background-color: #03a9f4;
+}
+
+.adjust-point {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    height: 40%;
+    transform: translate(0, 20%);
+    font-family: "Microsoft YaHei", serif;
+    color: greenyellow;
+}
+
+.adjust-comment {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    height: 60%;
+}
+
+.subtext-text {
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    height: 60%;
+}
