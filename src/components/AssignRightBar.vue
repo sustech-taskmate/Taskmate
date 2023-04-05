@@ -40,7 +40,7 @@
       <el-col :span="17" class="problem-box-big">
         <div class="point-box-big">
           {{ item.givenPoints.toFixed(2) }} /&ensp;
-          <div contenteditable="true" @keydown="onlyNumberAndDecimal" @input="updateTotalPoints(item, $event)">
+          <div contenteditable="true" @keydown="onlyNumberAndDecimal(item, $event)" @input="updateTotalPoints(item, $event)">
             {{ item.totalPoints.toFixed(2) }}
           </div>&ensp;POINTS
         </div>
@@ -67,8 +67,11 @@
           </el-popover>
         </div>
       </el-col>
-      <el-col :span="3">
-        <el-icon style="font-size: 20px;margin-top: 100%;margin-left: -5%">
+      <el-col :span="3" style="display: flex;flex-direction: column;">
+        <el-icon style="font-size: 20px;margin-left: -5%;margin-top: -20%;cursor: pointer" @click="remove(item)">
+          <CircleCloseFilled/>
+        </el-icon>
+        <el-icon style="font-size: 20px;margin-left: -5%;margin-top: 30%;cursor: pointer" @click="addSub(item)">
           <CirclePlusFilled/>
         </el-icon>
       </el-col>
@@ -77,7 +80,9 @@
       <el-row class="sub-card">
         <el-col :span="1"></el-col>
         <el-col :span="4">
-          <li class="index-small" :class="{'active': sub.isSmallActive}" @click="activeIndex(sub)">
+          <li class="index-small" :class="{'active': sub.isSmallActive}"
+              @click="activeIndex(sub)" contenteditable="true"
+              @keydown="onlyNumber(sub, $event)" @input="updateSubIdx(sub, $event)">
             {{ sub.questionIdx }}
           </li>
         </el-col>
@@ -94,14 +99,14 @@
           </el-row>
         </el-col>
         <el-col :span="2">
-            <el-popconfirm title="Are you sure to delete this?"
-            @confirm="removeSub(item, idx)">
-              <template #reference>
-                <el-icon style="font-size: 20px;transform: translate(0, -100%);cursor: pointer;">
-                  <Close/>
-                </el-icon>
-              </template>
-            </el-popconfirm>
+          <el-popconfirm title="Are you sure to delete this?"
+                         @confirm="removeSub(item, idx)">
+            <template #reference>
+              <el-icon style="font-size: 20px;transform: translate(0, -100%);cursor: pointer;">
+                <Close/>
+              </el-icon>
+            </template>
+          </el-popconfirm>
         </el-col>
       </el-row>
     </el-row>
@@ -111,7 +116,7 @@
 
 <script setup lang="ts">
 import {ref} from "vue";
-import {CaretRight, CirclePlusFilled, Close} from "@element-plus/icons-vue";
+import {CaretRight, CirclePlusFilled, CircleCloseFilled, Close} from "@element-plus/icons-vue";
 import '@/assets/style/local/card.css'
 import '@/assets/style/local/progress.css'
 import '@/store/card'
@@ -125,6 +130,13 @@ const showInput = (item: BigCard) => {
 }
 const hideInput = (item: BigCard) => {
   item.isShowInput = false;
+}
+const addSub = (item: BigCard) => {
+  item.subCards.push(new SmallCard(item, item.subCards.length + 1, '+', 0, ''));
+  item.isPullDown = true;
+}
+const remove = (item: BigCard) => {
+  cards.value.remove(item);
 }
 const activeIndex = (sub: SmallCard) => {
   sub.isSmallActive = !sub.isSmallActive
@@ -141,14 +153,38 @@ const removeSub = (item: BigCard, idx: number) => {
     item.isPullDown = false;
   }
 }
-const onlyNumberAndDecimal = (e: { key: string; preventDefault: () => void; }) => {
-  const reg = /^[0-9.]+$/;
-  if (!reg.test(e.key)) {
+const handleKeydown = (e: { key: string; preventDefault: () => void; }, reg: RegExp, flag:boolean) => {
+  const keyCode = e.key;
+  if (keyCode === 'ArrowLeft' || keyCode === 'ArrowRight'
+      || keyCode === 'Delete' || keyCode === 'Backspace') {
+    return;
+  } else if (!reg.test(keyCode)) {
+    e.preventDefault();
+  } else if (flag) {
     e.preventDefault();
   }
 }
+const onlyNumber = (sub: SmallCard, e: { key: string; preventDefault: () => void; }) => {
+  let flag = (sub.questionIdx.toString().length >= 3);
+  handleKeydown(e, /^[0-9]+$/, flag);
+}
+const onlyNumberAndDecimal = (item:BigCard, e: { key: string; preventDefault: () => void; }) => {
+  let flag = (item.totalPoints.toString().length >= 5);
+  handleKeydown(e, /^[0-9.]+$/, flag);
+}
 const updateTotalPoints = (item: BigCard, e: { target: { innerText: string; }; }) => {
-  item.totalPoints = parseFloat(e.target.innerText);
+  if (e.target.innerText != '') {
+    item.totalPoints = parseFloat(e.target.innerText);
+  } else {
+    item.totalPoints = 0;
+  }
+}
+const updateSubIdx = (sub: SmallCard, e: { target: { innerText: string; }; }) => {
+  if (e.target.innerText != '') {
+    sub.questionIdx = parseInt(e.target.innerText);
+  } else {
+    sub.questionIdx = 0;
+  }
 }
 
 let cards = ref(new UniqueList<BigCard>());
