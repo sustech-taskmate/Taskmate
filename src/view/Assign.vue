@@ -7,7 +7,10 @@
           @select="handleSelect"
           :collapse="myCollapse"
       >
-        <el-button type="primary" @click="flexible">伸缩</el-button>
+        <el-row type="flex" justify="space-between">
+            <span v-cloak v-show="blockShow">占位block</span>
+            <el-button justify="end" type="primary" @click="flexible"><el-icon><Menu /></el-icon></el-button>
+        </el-row>
         <template v-for="(item, index) in fileMap.values()" :key="index">
           <tree-menu v-if="item.format===AssignFileType.zip" :index="item.filename" :nodes="zipNode">
             <el-icon>
@@ -65,6 +68,7 @@
 
 
 <script lang="ts" setup>
+import {Menu} from "@element-plus/icons-vue";
 import {AssignFile, AssignFileType} from '@/store/assign';
 import {ref} from "vue";
 import {
@@ -80,13 +84,16 @@ import AssignRightBar from "@/components/AssignRightBar.vue";
 let myCollapse = ref(false)
 let myWidthLeft = ref(3)
 let myWidthCenter = ref(16)
+let blockShow = ref(true)
 
 const flexible = () => {
     if (myCollapse.value) {
+        blockShow.value = true
         myWidthLeft.value = 3
         myWidthCenter.value = 16
     }
     else {
+        blockShow.value = false
         myWidthLeft.value = 1
         myWidthCenter.value = 18
     }
