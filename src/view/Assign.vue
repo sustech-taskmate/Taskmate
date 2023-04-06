@@ -116,7 +116,7 @@ const flexible = () => {
     else {
         blockShow.value = false
         myWidthLeft.value = 1
-        myWidthCenter.value = 16
+        myWidthCenter.value = 18
     }
     myCollapse.value = !myCollapse.value
 }
