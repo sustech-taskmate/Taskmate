@@ -33,7 +33,7 @@
         </template>
       </el-menu>
     </el-col>
-    <el-col :span="myWidthCenter" style="background-color: blue">
+    <el-col :span="myWidthCenter" style="background-color: lightskyblue">
       <iframe v-if="format===AssignFileType.pdf" style="width: 100%; height: 98.5%;" :src="url"></iframe>
       <iframe v-if="format===AssignFileType.office" style="width: 100%; height: 98.5%;" :src="url"></iframe>
       <el-image
@@ -57,7 +57,7 @@
       >
       </video-player>
     </el-col >
-    <el-col :span="5" style="background-color: red">
+    <el-col :span="5" style="background-color: yellowgreen">
       <assign-right-bar></assign-right-bar>
     </el-col>
   </el-row>

@@ -34,9 +34,11 @@ class BigCard implements UniqueKey {
     questionIdx: number = 0;
     totalPoints: number = 0;
     givenPoints: number = 0;
+    pointInput: string = '';
     comment: string = '';
     isShowInput: boolean = false;
     isPullDown: boolean = false;
+    pointEditable: boolean = false;
     subCards: SmallCard[] = [];
 
 
@@ -44,6 +46,7 @@ class BigCard implements UniqueKey {
         this.questionIdx = questionIdx;
         this.totalPoints = totalPoints;
         this.givenPoints = givenPoints;
+        this.pointInput = this.totalPoints.toString();
         this.comment = comment;
     }
 
@@ -54,18 +57,19 @@ class BigCard implements UniqueKey {
 
 class SmallCard {
     parentCard: BigCard | null = null;
-    questionIdx: number = 0;
     sign: string = ''
     points: number = 0;
     comment: string = '';
     isSmallActive: boolean = false;
     isShowInput: boolean = false;
+    pointEditable: boolean = false;
+    pointInput: string = '';
 
-    constructor(parentCard: BigCard | null, questionIdx: number, sign: string, points: number, comment: string) {
+    constructor(parentCard: BigCard | null, sign: string, points: number, comment: string) {
         this.parentCard = parentCard;
-        this.questionIdx = questionIdx;
         this.sign = sign;
         this.points = points;
+        this.pointInput = this.points.toString();
         this.comment = comment;
     }
 }
