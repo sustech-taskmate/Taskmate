@@ -1,39 +1,61 @@
 <template>
   <el-row type="flex">
     <el-col :span="myWidthLeft">
-      <el-menu
-          id="left"
-          class="el-menu-vertical-demo"
-          @select="handleSelect"
-          :collapse="myCollapse"
-      >
-        <el-button type="primary" @click="flexible">伸缩</el-button>
-        <template v-for="(item, index) in fileMap.values()" :key="index">
-          <tree-menu v-if="item.format===AssignFileType.zip" :index="item.filename" :nodes="zipNode">
-            <el-icon>
-              <FolderOpened />
-            </el-icon>
-            <span>{{ item.filename }}</span>
-          </tree-menu>
-
-          <el-menu-item v-else :index="item.filename">
-            <el-icon v-if="item.format===AssignFileType.video">
-              <VideoPlay />
-            </el-icon>
-            <el-icon v-else-if="item.format===AssignFileType.image">
-              <PictureFilled />
-            </el-icon>
-            <el-icon v-else>
-              <Document />
-            </el-icon>
-            <template #title>
+      <el-row type="flex" justify="space-between" style="margin-bottom: 50px">
+        <div v-cloak v-show="blockShow">
+          <span>学号  12011901</span>
+          <br/>
+          <span>姓名  郭希阳</span>
+        </div>
+        <el-button justify="end" type="primary" @click="flexible"><el-icon><Menu /></el-icon></el-button>
+      </el-row>
+      <el-row style="height: 27%">
+        <el-menu
+            id="left"
+            class="el-menu-vertical-demo"
+            @select="handleSelect"
+            :collapse="myCollapse"
+            style="max-height: 90%"
+        >
+          <h2>作业文件</h2>
+          <template v-for="(item, index) in fileMap.values()" :key="index">
+            <tree-menu v-if="item.format===AssignFileType.zip" :index="item.filename" :nodes="zipNode">
+              <el-icon>
+                <FolderOpened />
+              </el-icon>
               <span>{{ item.filename }}</span>
-            </template>
-          </el-menu-item>
-        </template>
-      </el-menu>
+            </tree-menu>
+
+            <el-menu-item v-else :index="item.filename">
+              <el-icon v-if="item.format===AssignFileType.video">
+                <VideoPlay />
+              </el-icon>
+              <el-icon v-else-if="item.format===AssignFileType.image">
+                <PictureFilled />
+              </el-icon>
+              <el-icon v-else>
+                <Document />
+              </el-icon>
+              <template #title>
+                <span>{{ item.filename }}</span>
+              </template>
+            </el-menu-item>
+          </template>
+        </el-menu>
+      </el-row>
+      <el-row>
+        <el-col :span="23">
+          <span>留言板</span>
+          <el-input
+              v-model="textarea"
+              :rows="10"
+              type="textarea"
+              placeholder="请输入你的留言"
+          />
+        </el-col>
+      </el-row>
     </el-col>
-    <el-col :span="myWidthCenter" style="background-color: lightskyblue">
+    <el-col :span="myWidthCenter" style="background-color: blue">
       <iframe v-if="format===AssignFileType.pdf" style="width: 100%; height: 98.5%;" :src="url"></iframe>
       <iframe v-if="format===AssignFileType.office" style="width: 100%; height: 98.5%;" :src="url"></iframe>
       <el-image
@@ -65,6 +87,7 @@
 
 
 <script lang="ts" setup>
+import {Menu} from "@element-plus/icons-vue";
 import {AssignFile, AssignFileType} from '@/store/assign';
 import {ref} from "vue";
 import {
@@ -78,17 +101,22 @@ import TreeMenu from "@/components/TreeMenu.vue";
 import AssignRightBar from "@/components/AssignRightBar.vue";
 
 let myCollapse = ref(false)
-let myWidthLeft = ref(3)
-let myWidthCenter = ref(16)
+let myWidthLeft = ref(5)
+let myWidthCenter = ref(14)
+let blockShow = ref(true)
+
+const textarea = ref('')
 
 const flexible = () => {
     if (myCollapse.value) {
-        myWidthLeft.value = 3
-        myWidthCenter.value = 16
+        blockShow.value = true
+        myWidthLeft.value = 5
+        myWidthCenter.value = 14
     }
     else {
+        blockShow.value = false
         myWidthLeft.value = 1
-        myWidthCenter.value = 18
+        myWidthCenter.value = 16
     }
     myCollapse.value = !myCollapse.value
 }
