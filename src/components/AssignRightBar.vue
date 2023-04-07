@@ -17,13 +17,13 @@
     </div>
     <div class="box2">
       <h2 class="text-prog">POINTS</h2>
-      <div class="percent">
+      <div class="point-box">
         <svg style="visibility: hidden">
           <circle cx="40" cy="40" r="40"></circle>
           <circle cx="40" cy="40" r="40"></circle>
         </svg>
-        <div class="number">
-          <h3>18 / 100</h3>
+        <div class="point">
+          <h3>99.99 / 100.00</h3>
         </div>
       </div>
     </div>
@@ -39,10 +39,19 @@
       </el-col>
       <el-col :span="17" class="problem-box-big">
         <div class="point-box-big">
-          {{ item.givenPoints.toFixed(2) }} /&ensp;
-          <div contenteditable="true" @keydown="onlyNumberAndDecimal" @input="updateTotalPoints(item, $event)">
-            {{ item.totalPoints.toFixed(2) }}
-          </div>&ensp;POINTS
+          <div class="point-given">
+            {{ item.givenPoints }}
+          </div>
+          &ensp;/&ensp;
+          <div class="point-set">
+            <div @click="setPointEditable(item)" v-show="!item.pointEditable" class="point-display">
+              {{ item.totalPoints }}
+            </div>
+            <input v-show="item.pointEditable" type="text"
+                   @input="updateTotalPoints(item)" v-model="item.pointInput"
+                   @blur="setPointUneditable(item)" class="point-input">
+          </div>
+
         </div>
         <div class="descript-box-big">
           <el-popover
@@ -67,8 +76,8 @@
           </el-popover>
         </div>
       </el-col>
-      <el-col :span="3">
-        <el-icon style="font-size: 20px;margin-top: 100%;margin-left: -5%">
+      <el-col :span="3" style="display: flex;flex-direction: column;">
+        <el-icon style="font-size: 20px;margin-left: -5%;margin-top: 30%;cursor: pointer" @click="addSub(item)">
           <CirclePlusFilled/>
         </el-icon>
       </el-col>
@@ -77,31 +86,44 @@
       <el-row class="sub-card">
         <el-col :span="1"></el-col>
         <el-col :span="4">
-          <li class="index-small" :class="{'active': sub.isSmallActive}" @click="activeIndex(sub)">
-            {{ sub.questionIdx }}
+          <li class="index-small" :class="{'active': sub.isSmallActive}"
+              @click="activeIndex(sub)">
+            {{ idx + 1 }}
           </li>
         </el-col>
         <el-col :span="17" style="height: 100%">
-          <el-row class="adjust-point">{{ sub.sign }}{{ sub.points.toFixed(2) }}</el-row>
+          <el-row class="adjust-point">
+            <div style="cursor: pointer;" @click="updateSign(sub)">
+              {{ sub.sign }}
+            </div>
+            <div style="width: 40%">
+              <input v-show="sub.pointEditable" type="text"
+                     @input="updateSubPoints(sub)" v-model="sub.pointInput"
+                     @blur="setSubPointUneditable(sub)" class="sub-point-input">
+              <div v-show="!sub.pointEditable" @click="setSubPointEditable(sub)" class="sub-point-display">
+                {{ sub.points }}
+              </div>
+            </div>
+          </el-row>
           <el-row class="adjust-comment">
-            <el-input v-model="sub.comment" slot="content" :rows="1"
-                      v-show="sub.isShowInput"
-                      @change="hideInputSub(sub)"
-                      @blur="hideInputSub(sub)"
-                      placeholder="Please add the details"
-            ></el-input>
+            <input v-model="sub.comment"
+                   v-show="sub.isShowInput"
+                   @change="hideInputSub(sub)"
+                   @blur="hideInputSub(sub)"
+                   placeholder="Please add the details"
+            style="background-color: transparent;background-image: none;padding: 0;height: 24px"/>
             <div class="subtext-text" @click="showInputSub(sub)" v-show="!sub.isShowInput">{{ sub.comment }}</div>
           </el-row>
         </el-col>
         <el-col :span="2">
-            <el-popconfirm title="Are you sure to delete this?"
-            @confirm="removeSub(item, idx)">
-              <template #reference>
-                <el-icon style="font-size: 20px;transform: translate(0, -100%);cursor: pointer;">
-                  <Close/>
-                </el-icon>
-              </template>
-            </el-popconfirm>
+          <el-popconfirm title="Are you sure to delete this?"
+                         @confirm="removeSub(item, idx)">
+            <template #reference>
+              <el-icon style="font-size: 20px;transform: translate(0, -100%);cursor: pointer;">
+                <Close/>
+              </el-icon>
+            </template>
+          </el-popconfirm>
         </el-col>
       </el-row>
     </el-row>
@@ -126,6 +148,26 @@ const showInput = (item: BigCard) => {
 const hideInput = (item: BigCard) => {
   item.isShowInput = false;
 }
+const addSub = (item: BigCard) => {
+  item.subCards.push(new SmallCard(item, '+', 0, ''));
+  item.isPullDown = true;
+}
+const setPointEditable = (item: BigCard) => {
+  item.pointEditable = true;
+}
+const setPointUneditable = (item: BigCard) => {
+  item.pointEditable = false;
+}
+const updateTotalPoints = (item: BigCard) => {
+  item.pointInput = item.pointInput.match(/^(?!0\d|$)(?:\d{1,4}(?:\.\d{0,2})?|\.\d{1,2})$/)?.[0] || '';
+  item.totalPoints = item.pointInput === '' ? 0 : parseFloat(item.pointInput);
+}
+const removeSub = (item: BigCard, idx: number) => {
+  item.subCards.splice(idx, 1);
+  if (item.subCards.length === 0) {
+    item.isPullDown = false;
+  }
+}
 const activeIndex = (sub: SmallCard) => {
   sub.isSmallActive = !sub.isSmallActive
 }
@@ -135,27 +177,40 @@ const showInputSub = (sub: SmallCard) => {
 const hideInputSub = (sub: SmallCard) => {
   sub.isShowInput = false;
 }
-const removeSub = (item: BigCard, idx: number) => {
-  item.subCards.splice(idx, 1);
-  if (item.subCards.length === 0) {
-    item.isPullDown = false;
-  }
+const updateSign = (sub: SmallCard) => {
+  sub.sign = sub.sign === '+' ? '-' : '+';
 }
-const onlyNumberAndDecimal = (e: { key: string; preventDefault: () => void; }) => {
-  const reg = /^[0-9.]+$/;
-  if (!reg.test(e.key)) {
+const setSubPointEditable = (sub: SmallCard) => {
+  sub.pointEditable = true;
+}
+const setSubPointUneditable = (sub: SmallCard) => {
+  sub.pointEditable = false;
+}
+const updateSubPoints = (sub: SmallCard) => {
+  sub.pointInput = sub.pointInput.match(/^(?!0\d|$)(?:\d{1,4}(?:\.\d{0,2})?|\.\d{1,2})$/)?.[0] || '';
+  sub.points = sub.pointInput === '' ? 0 : parseFloat(sub.pointInput);
+}
+const handleKeydown = (e: { key: string; preventDefault: () => void; }, reg: RegExp, flag: boolean) => {
+  const keyCode = e.key;
+  if (keyCode === 'ArrowLeft' || keyCode === 'ArrowRight'
+      || keyCode === 'Delete' || keyCode === 'Backspace') {
+    return;
+  } else if (!reg.test(keyCode)) {
+    e.preventDefault();
+  } else if (flag) {
     e.preventDefault();
   }
 }
-const updateTotalPoints = (item: BigCard, e: { target: { innerText: string; }; }) => {
-  item.totalPoints = parseFloat(e.target.innerText);
+const onlyNumberAndDecimal = (item: BigCard, e: { key: string; preventDefault: () => void; }) => {
+  let flag = (item.totalPoints.toString().length >= 5);
+  handleKeydown(e, /^[0-9.]+$/, flag);
 }
 
 let cards = ref(new UniqueList<BigCard>());
-cards.value.add(new BigCard(1, 10, 8, 'This is a demo 1'));
+cards.value.add(new BigCard(1, 9421.99, 8321.12, 'This is a demo 1'));
 cards.value.add(new BigCard(2, 10, 8, 'This is a demo 2'));
-let c1 = new SmallCard(cards.value.index(1), 1, '+', 1, 'This is a comment 1');
-let c2 = new SmallCard(cards.value.index(0), 1, '-', 1, 'This is a comment 2');
+let c1 = new SmallCard(cards.value.index(1), '+', 1, 'This is a comment 1');
+let c2 = new SmallCard(cards.value.index(0), '-', 1, 'This is a comment 2');
 cards.value.index(1).subCards.push(c1);
 cards.value.index(0).subCards.push(c2);
 
