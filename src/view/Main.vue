@@ -1,79 +1,179 @@
 <template>
-    <el-row>
-        <el-button type="primary" @click="mySet" style="margin-top: 50px; margin-left: 1200px">作业设置</el-button>
-        <el-button type="primary" @click="goBack" style="margin-top: 50px">退出登录</el-button>
-    </el-row>
-    <el-row>
-        <el-col :span="4" style="margin-left: 100px">
-            <h1>课程列表</h1>
-            <el-menu 
-            class="el-menu-vertical-demo">
-                <el-menu-item @click="exchange(index)" v-for="i, index in course" :key="index" :index="index">
-                    {{ i }}
-                </el-menu-item>
-            </el-menu>
+  <el-row>
+    <el-col :span="3" style="height: 100vh">
+      <el-menu
+          active-text-color="#ffd04b"
+          background-color="#545c64"
+          text-color="#fff"
+          default-active="1-1"
+      >
+        <el-sub-menu index="1">
+          <template #title>
+            <el-icon><icon-menu /></el-icon>
+            <span>Course</span>
+          </template>
+            <el-menu-item index="1-1">CS304</el-menu-item>
+            <el-menu-item index="1-2">CS305</el-menu-item>
+            <el-menu-item index="1-3">CS307</el-menu-item>
+        </el-sub-menu>
+      </el-menu>
+    </el-col>
+    <el-col :span="21" style="height: 100vh">
+      <div style="height: 6%; display: flex">
+        <el-col :span="6" style="height: 50%; margin-top: auto; margin-bottom: auto">
+          <div style="font-size: large;text-align: center">
+            Software Engineer
+          </div>
         </el-col>
-        <el-col :span="16" style="margin-left: 100px">
-            <h1>作业列表</h1>
-            <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="name" label="作业" width="150" />
-            <el-table-column prop="sdl" label="起始时间" width="150" />
-            <el-table-column prop="ddl" label="截止时间" width="150" />
-            <el-table-column label="操作" width="180">
-                <template v-slot="scope">
-                    <el-button type="primary" @click="myClick">查看</el-button>
-                </template>
-            </el-table-column>
+        <el-divider direction="vertical" style="height: 100%"></el-divider>
+        <el-col :span="3" style="height: 50%; margin-top: auto; margin-bottom: auto">
+          <div style="font-size: small;text-align: center">
+            Spring 2023
+          </div>
+        </el-col>
+      </div>
+      <div style="height: 4%; display: flex">
+        <el-col :span="6" style="height: 60%; margin-bottom: auto">
+          <div style="font-size: small;text-align: center">
+            id: CS304
+          </div>
+        </el-col>
+      </div>
+      <div style="height: 2%; display: flex">
+      </div>
+      <div>
+        <el-table
+            :data="tableData"
+            style="width: 100%; display: flex"
+        >
+          <el-table-column prop="name" label="作业" width="auto" align="center"/>
+          <el-table-column prop="releaseTime" sortable label="发布时间" width="auto"
+                           :formatter="dateFormat1" align="center"/>
+          <el-table-column prop="deadline" sortable label="截止时间" width="auto"
+                           :formatter="dateFormat2" align="center"/>
+          <el-table-column prop="delayTime" sortable label="延期时间" width="auto"
+                           :formatter="dateFormat3" align="center"/>
+          <el-table-column prop="submitRatio" label="提交比" width="auto" align="center"/>
+          <el-table-column prop="gradeRatio" label="评分比" width="auto" align="center"/>
+          <el-table-column prop="isReturn" sortable label="是否返回" width="auto" align="center">
+            <template v-slot="scope">
+              <el-image  style="width: 15px; height: 15px" :src="scope.row.isReturn.b"></el-image>
+            </template>
+          </el-table-column>>
+          <el-table-column label="查看作业" width="auto" align="center">
+            <template v-slot="scope">
+              <el-button type="primary" @click="checkAssignment">查看</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column label="修改作业" width="auto" align="center">
+            <template v-slot="scope">
+              <el-button type="primary" @click="setAssignment">设置</el-button>
+            </template>
+          </el-table-column>
         </el-table>
-        </el-col>
-    </el-row>
+      </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script lang="ts" setup scoped>
     import {reactive} from 'vue'
     import router from '@/router';
-    let course = ['OS', 'OOAD', 'JAVA2']
-    let tableData = reactive([
-        {
-            name: 'Assignment1',
-            sdl: '2023/3/1 00:00',
-            ddl: '2023/3/7 23:55'
-        },
-        {
-            name: 'Assignment2',
-            sdl: '2023/3/7 00:00',
-            ddl: '2023/3/14 23:55'
-        },
-        {
-            name: 'Assignment3',
-            sdl: '2023/3/14 00:00',
-            ddl: '2023/3/21 23:55'
-        }
+    import {
+      Menu as IconMenu,
+    } from '@element-plus/icons-vue'
+    import moment from "moment";
+
+    class CourseData{
+      name: string;
+      releaseTime: Date;
+      deadline: Date;
+      delayTime: Date;
+      submitRatio: string;
+      gradeRatio: string;
+      isReturn: {a: boolean, b: string};
+
+      constructor(name:string, releaseTime: Date, deadline: Date, delayTime: Date,
+                  submitRatio: string, gradeRatio: string, isReturn: boolean, url: string) {
+        this.name = name;
+        this.releaseTime = releaseTime;
+        this.deadline = deadline;
+        this.delayTime = delayTime;
+        this.submitRatio = submitRatio;
+        this.gradeRatio = gradeRatio;
+        this.isReturn = {a: isReturn, b: url};
+      }
+
+    }
+
+    const tableData: CourseData[] = reactive([
+      {
+        name: "Assignment one",
+        releaseTime: new Date('2023-01-27 23:59'),
+        deadline: new Date('2023-01-27 23:59'),
+        delayTime: new Date('2023-01-28 23:59'),
+        submitRatio: '155/0',
+        gradeRatio: '144/15',
+        isReturn: {a: true, b: "src/assets/icon/successful.png"},
+      },
+      {
+        name: "Assignment two",
+        releaseTime: new Date('2023-01-28 23:59'),
+        deadline: new Date('2023-01-28 23:59'),
+        delayTime: new Date('2023-01-29 23:59'),
+        submitRatio: '155/0',
+        gradeRatio: '144/15',
+        isReturn: {a: true, b: "src/assets/icon/successful.png"},
+      },
+      {
+        name: "Assignment three",
+        releaseTime: new Date('2023-01-29 23:59'),
+        deadline: new Date('2023-01-29 23:59'),
+        delayTime: new Date('2023-01-30 23:59'),
+        submitRatio: '155/0',
+        gradeRatio: '144/15',
+        isReturn: {a: false, b: "src/assets/icon/error.png"},
+      },
     ])
-    const myClick = () => {
+
+    const dateFormat1 = (row: {releaseTime: Date}) =>{
+      return moment(row.releaseTime).format("YYYY-MM-DD hh:mm")
+    }
+
+    const dateFormat2 = (row: {deadline: Date}) =>{
+      return moment(row.deadline).format("YYYY-MM-DD hh:mm")
+    }
+
+    const dateFormat3 = (row: {delayTime: Date}) =>{
+      return moment(row.delayTime).format("YYYY-MM-DD hh:mm")
+    }
+    const checkAssignment = () => {
         router.push('/Main/Homework')
     }
-    const mySet = () => {
+    const setAssignment = () => {
         router.push('/Main/Set')
-    }
-    const exchange = (course: number) => {
-        if (course === 0) {
-            tableData[0].name = 'Assignment1'
-            tableData[1].name = 'Assignment2'
-            tableData[2].name = 'Assignment3'
-        }
-        else if (course === 1) {
-            tableData[0].name = 'Assignment4'
-            tableData[1].name = 'Assignment5'
-            tableData[2].name = 'Assignment6'
-        }
-        else if (course === 2) {
-            tableData[0].name = 'Assignment7'
-            tableData[1].name = 'Assignment8'
-            tableData[2].name = 'Assignment9'
-        }
     }
     const goBack = () => {
         router.push('/')
     }
+</script>
+
+<script lang="ts">
+import {defineComponent} from 'vue';
+export default defineComponent({
+  name: 'Course',
+  created() {
+
+  },
+  mounted() {
+  },
+  data() {
+    return {
+
+    }
+  },
+  methods: {
+
+  }
+});
 </script>

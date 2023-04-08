@@ -28,8 +28,8 @@
             <el-table-column type="selection" v-if="myShow"> </el-table-column>
             <el-table-column prop="id" sortable label="学号" width="auto" align="center"/>
             <el-table-column prop="name" label="姓名" width="auto" align="center"/>
-            <el-table-column prop="submitState" sortable label="提交状态" width="auto"
-                             :formatter="dateFormat" align="center"/>
+            <el-table-column prop="submitState" sortable label="提交时间" width="auto"
+                             :formatter="dateFormat1" align="center"/>
             <el-table-column prop="modifyState"
                              sortable="custom"
                              label="批改状态" width="auto" align="center">
@@ -39,7 +39,7 @@
             </el-table-column>
             <el-table-column prop="lastModifiedBy" label="上次修改者" width="auto" align="center"/>
             <el-table-column prop="lastTime"
-                             label="上次修改时间" width="auto" :formatter="dateFormat" align="center"/>
+                             label="上次修改时间" width="auto" :formatter="dateFormat2" align="center"/>
             <el-table-column prop="score" sortable label="分数" width="auto" align="center"/>
             <el-table-column label="查看附件" width="auto" align="center">
               <template v-slot="scope">
@@ -92,48 +92,55 @@ const tableData: StudentContent[] = reactive([
   {
     id: 12010000,
     name: 'aaaa',
-    submitState: new Date('2023-01-23'),
+    submitState: new Date('2023-01-23 04:17:34'),
     modifyState: new UrlFile("src/assets/icon/error.png", AssignmentState.notModified),
     lastModifiedBy: "aaaa",
-    lastTime: new Date('2023-01-28'),
+    lastTime: new Date('2023-01-28 04:17:34'),
     score: 0
   },
   {
     id: 12010001,
     name: 'aaaa',
-    submitState: new Date('2023-01-24'),
+    submitState: new Date('2023-01-24 04:17:34'),
     modifyState: new UrlFile("src/assets/icon/warning.png", AssignmentState.modifying),
     lastModifiedBy: "aasda",
-    lastTime: new Date('2023-01-26'),
+    lastTime: new Date('2023-01-26 04:17:34'),
     score: 0
   },
   {
     id: 12010002,
     name: 'aaaa',
-    submitState: new Date('2023-01-29'),
+    submitState: new Date('2023-01-29 04:17:34'),
     modifyState: new UrlFile("src/assets/icon/error.png", AssignmentState.notModified),
     lastModifiedBy: "arra",
-    lastTime: new Date('2023-01-29'),
+    lastTime: new Date('2023-01-29 04:17:34'),
     score: 0
   },
   {
     id: 12010003,
     name: 'aaaa',
-    submitState: new Date('2023-01-20'),
+    submitState: new Date('2023-01-20 04:17:34'),
     modifyState: new UrlFile("src/assets/icon/successful.png", AssignmentState.finish),
     lastModifiedBy: "aafdbkp",
-    lastTime: new Date('2023-01-24'),
+    lastTime: new Date('2023-01-24 04:17:34'),
     score: 0
   },
 ])
 
-const dateFormat = (row: { submitState: moment.MomentInput | null; }) =>{
+const dateFormat1 = (row: { submitState: moment.MomentInput | null; }) =>{
   if (row.submitState === null) {
     return "";
   }else {
-    return moment(row.submitState).format("YYYY-MM-DD");
+    return moment(row.submitState).format("YYYY-MM-DD hh:mm:ss");
   }
+}
 
+const dateFormat2 = (row: { lastTime: moment.MomentInput | null; }) =>{
+  if (row.lastTime === null) {
+    return "";
+  }else {
+    return moment(row.lastTime).format("YYYY-MM-DD hh:mm:ss");
+  }
 }
 const compare = (custom: {modifyState: UrlFile}, order: string) => {
   return function (obj1: StudentContent, obj2:StudentContent) {
