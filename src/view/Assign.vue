@@ -1,5 +1,5 @@
 <template>
-  <el-row type="flex">
+  <el-container type="flex" style="height: 100vh; overflow-x: hidden">
     <el-col :span="myWidthLeft">
       <el-row type="flex" justify="space-between" style="margin-bottom: 50px">
         <div v-cloak v-show="blockShow">
@@ -9,13 +9,13 @@
         </div>
         <el-button justify="end" type="primary" @click="flexible"><el-icon><Menu /></el-icon></el-button>
       </el-row>
-      <el-row style="height: 27%">
+      <el-scrollbar style="height: 40%; margin-right: 2%;">
         <el-menu
             id="left"
             class="el-menu-vertical-demo"
             @select="handleSelect"
             :collapse="myCollapse"
-            style="max-height: 90%"
+            style="border-right: none; width: 100%;"
         >
           <h2>作业文件</h2>
           <template v-for="(item, index) in fileMap.values()" :key="index">
@@ -42,7 +42,7 @@
             </el-menu-item>
           </template>
         </el-menu>
-      </el-row>
+      </el-scrollbar>
       <el-row>
         <el-col :span="23">
           <span>留言板</span>
@@ -82,7 +82,7 @@
     <el-col :span="5" style="background-color: yellowgreen">
       <assign-right-bar></assign-right-bar>
     </el-col>
-  </el-row>
+  </el-container>
 </template>
 
 
@@ -283,13 +283,9 @@ export default defineComponent({
 </script>
 
 <style>
-.el-menu-vertical-demo:not(.el-menu--collapse) {
-  width: 200px;
-  min-height: 20px;
-}
 
 .el-menu-vertical-demo{
-  height: 100vh;
+  /*height: 60vh;*/
   overflow-y: auto;
   overflow-x: hidden;
 }
