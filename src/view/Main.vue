@@ -1,6 +1,6 @@
 <template>
-  <el-row>
-    <el-col :span="3" style="height: 100vh">
+  <el-container>
+    <el-aside style="width: 12.5%;">
       <el-menu
           active-text-color="#ffd04b"
           background-color="#545c64"
@@ -12,68 +12,70 @@
             <el-icon><icon-menu /></el-icon>
             <span>Course</span>
           </template>
-            <el-menu-item index="1-1">CS304</el-menu-item>
-            <el-menu-item index="1-2">CS305</el-menu-item>
-            <el-menu-item index="1-3">CS307</el-menu-item>
+          <el-menu-item index="1-1">CS304</el-menu-item>
+          <el-menu-item index="1-2">CS305</el-menu-item>
+          <el-menu-item index="1-3">CS307</el-menu-item>
         </el-sub-menu>
       </el-menu>
-    </el-col>
-    <el-col :span="21" style="height: 100vh">
-      <div style="height: 6%; display: flex">
-        <el-col :span="6" style="height: 50%; margin-top: auto; margin-bottom: auto">
-          <div style="font-size: large;text-align: center">
-            Software Engineer
+    </el-aside>
+    <el-container style="height: 100vh">
+      <el-header style="height: 10vh">
+        <div style="height: 70%; width: 100%;display: flex">
+          <div style="height: 50%; width: 15%;margin-top: auto; margin-bottom: auto">
+            <div style="font-size: large;text-align: center">
+              Software Engineer
+            </div>
           </div>
-        </el-col>
-        <el-divider direction="vertical" style="height: 100%"></el-divider>
-        <el-col :span="3" style="height: 50%; margin-top: auto; margin-bottom: auto">
-          <div style="font-size: small;text-align: center">
-            Spring 2023
+          <el-divider direction="vertical" style="height: 100%"></el-divider>
+          <div style="height: 50%; width: 30%;margin-top: auto; margin-bottom: auto">
+            <div style="font-size: small;">
+              Spring 2023
+            </div>
           </div>
-        </el-col>
-      </div>
-      <div style="height: 4%; display: flex">
-        <el-col :span="6" style="height: 60%; margin-bottom: auto">
-          <div style="font-size: small;text-align: center">
-            id: CS304
+        </div>
+        <div style="height: 30%; width: 100%; display: flex">
+          <div style="height: 60%; width: 15%; margin-bottom: auto">
+            <div style="font-size: small;text-align: center">
+              id: CS304
+            </div>
           </div>
-        </el-col>
-      </div>
-      <div style="height: 2%; display: flex">
-      </div>
-      <div>
-        <el-table
-            :data="tableData"
-            style="width: 100%; display: flex"
-        >
-          <el-table-column prop="name" label="作业" width="auto" align="center"/>
-          <el-table-column prop="releaseTime" sortable label="发布时间" width="auto"
-                           :formatter="dateFormat1" align="center"/>
-          <el-table-column prop="deadline" sortable label="截止时间" width="auto"
-                           :formatter="dateFormat2" align="center"/>
-          <el-table-column prop="delayTime" sortable label="延期时间" width="auto"
-                           :formatter="dateFormat3" align="center"/>
-          <el-table-column prop="submitRatio" label="提交比" width="auto" align="center"/>
-          <el-table-column prop="gradeRatio" label="评分比" width="auto" align="center"/>
-          <el-table-column prop="isReturn" sortable label="是否返回" width="auto" align="center">
-            <template v-slot="scope">
-              <el-image  style="width: 15px; height: 15px" :src="scope.row.isReturn.b"></el-image>
-            </template>
-          </el-table-column>>
-          <el-table-column label="查看作业" width="auto" align="center">
-            <template v-slot="scope">
-              <el-button type="primary" @click="checkAssignment">查看</el-button>
-            </template>
-          </el-table-column>
-          <el-table-column label="修改作业" width="auto" align="center">
-            <template v-slot="scope">
-              <el-button type="primary" @click="setAssignment">设置</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-    </el-col>
-  </el-row>
+        </div>
+      </el-header>
+      <el-main>
+        <div>
+          <el-table
+              :data="tableData"
+              style="width: 100%; display: flex"
+          >
+            <el-table-column prop="name" label="作业" width="auto" align="center"/>
+            <el-table-column prop="releaseTime" sortable label="发布时间" width="auto"
+                             :formatter="dateFormat1" align="center"/>
+            <el-table-column prop="deadline" sortable label="截止时间" width="auto"
+                             :formatter="dateFormat2" align="center"/>
+            <el-table-column prop="delayTime" sortable label="延期时间" width="auto"
+                             :formatter="dateFormat3" align="center"/>
+            <el-table-column prop="submitRatio" label="提交比" width="auto" align="center"/>
+            <el-table-column prop="gradeRatio" label="评分比" width="auto" align="center"/>
+            <el-table-column prop="isReturn" sortable label="是否返回" width="auto" align="center">
+              <template v-slot="scope">
+                <el-image  style="width: 15px; height: 15px" :src="scope.row.isReturn.b"></el-image>
+              </template>
+            </el-table-column>>
+            <el-table-column label="查看作业" width="auto" align="center">
+              <template v-slot="scope">
+                <el-button type="primary" @click="checkAssignment">查看</el-button>
+              </template>
+            </el-table-column>
+            <el-table-column label="修改作业" width="auto" align="center">
+              <template v-slot="scope">
+                <el-button type="primary" @click="setAssignment">设置</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
 <script lang="ts" setup scoped>

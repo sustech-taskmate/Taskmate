@@ -1,21 +1,20 @@
 <template>
-  <el-row type="flex">
-    <el-col :span="24">
-      <div style="height: 100vh;">
+  <el-container>
+      <div style="height: 100vh; width: 100%">
         <div style="height: 10%; display: flex">
-          <el-col :span="12" style="width: 50%; height: 100%">
+          <div style="width: 25%; height: 100%">
             <div style="font-size: 40px;text-align: center; margin-top: 10px">
               CS304
             </div>
-          </el-col>
+          </div>
 
-          <el-col :span="12" style="width: 50%; height: 100%">
+          <div style="width: 25%; height: 100%; margin-left: 25%">
             <div style="vertical-align: center; text-align: center">
               <el-button type="primary" style="width: 30%; height: 40px" @click="showDownload">
                 批量下载
               </el-button>
             </div>
-          </el-col>
+          </div>
         </div>
 
         <div>
@@ -49,8 +48,7 @@
           </el-table>
         </div>
       </div>
-    </el-col>
-  </el-row>
+  </el-container>
 </template>
 
 <script lang="ts" setup>
