@@ -51,17 +51,15 @@
                    @input="updateTotalPoints(item)" v-model="item.pointInput"
                    @blur="setPointUneditable(item)" class="point-input">
           </div>
-
         </div>
         <div class="descript-box-big">
           <el-popover
-              placement="left"
+              placement="top"
               :title="'Q' + item.questionIdx.toString()"
-              width="400"
+              popper-style="width: 400px;"
               trigger="click"
               :content="item.comment"
               hide-after="200"
-              offset="[0, 0]"
               @after-leave="hideInput(item)"
           >
             <span v-show="!item.isShowInput" @click="showInput(item)">
@@ -71,7 +69,9 @@
                       placeholder="Please add comments here" maxlength="1000" show-word-limit
             ></el-input>
             <template #reference>
-              <div class="description-big"><span>{{ item.comment }}</span></div>
+              <div class="description-big">
+                {{ item.comment }}
+              </div>
             </template>
           </el-popover>
         </div>
@@ -190,24 +190,9 @@ const updateSubPoints = (sub: SmallCard) => {
   sub.pointInput = sub.pointInput.match(/^(?!0\d|$)(?:\d{1,4}(?:\.\d{0,2})?|\.\d{1,2})$/)?.[0] || '';
   sub.points = sub.pointInput === '' ? 0 : parseFloat(sub.pointInput);
 }
-const handleKeydown = (e: { key: string; preventDefault: () => void; }, reg: RegExp, flag: boolean) => {
-  const keyCode = e.key;
-  if (keyCode === 'ArrowLeft' || keyCode === 'ArrowRight'
-      || keyCode === 'Delete' || keyCode === 'Backspace') {
-    return;
-  } else if (!reg.test(keyCode)) {
-    e.preventDefault();
-  } else if (flag) {
-    e.preventDefault();
-  }
-}
-const onlyNumberAndDecimal = (item: BigCard, e: { key: string; preventDefault: () => void; }) => {
-  let flag = (item.totalPoints.toString().length >= 5);
-  handleKeydown(e, /^[0-9.]+$/, flag);
-}
 
 let cards = ref(new UniqueList<BigCard>());
-cards.value.add(new BigCard(1, 9421.99, 8321.12, 'This is a demo 1'));
+cards.value.add(new BigCard(1, 9421.99, 8321.12, 'This is a demo 1 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'));
 cards.value.add(new BigCard(2, 10, 8, 'This is a demo 2'));
 let c1 = new SmallCard(cards.value.index(1), '+', 1, 'This is a comment 1');
 let c2 = new SmallCard(cards.value.index(0), '-', 1, 'This is a comment 2');
