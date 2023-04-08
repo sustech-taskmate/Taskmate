@@ -7,7 +7,11 @@
           <br/>
           <span>姓名  郭希阳</span>
         </div>
-        <el-button justify="end" type="primary" @click="flexible"><el-icon><Menu /></el-icon></el-button>
+        <el-button justify="end" type="primary" @click="flexible">
+          <el-icon>
+            <Menu/>
+          </el-icon>
+        </el-button>
       </el-row>
       <el-scrollbar style="height: 40%; margin-right: 2%;">
         <el-menu
@@ -21,20 +25,20 @@
           <template v-for="(item, index) in fileMap.values()" :key="index">
             <tree-menu v-if="item.format===AssignFileType.zip" :index="item.filename" :nodes="zipNode">
               <el-icon>
-                <FolderOpened />
+                <FolderOpened/>
               </el-icon>
               <span>{{ item.filename }}</span>
             </tree-menu>
 
             <el-menu-item v-else :index="item.filename">
               <el-icon v-if="item.format===AssignFileType.video">
-                <VideoPlay />
+                <VideoPlay/>
               </el-icon>
               <el-icon v-else-if="item.format===AssignFileType.image">
-                <PictureFilled />
+                <PictureFilled/>
               </el-icon>
               <el-icon v-else>
-                <Document />
+                <Document/>
               </el-icon>
               <template #title>
                 <span>{{ item.filename }}</span>
@@ -55,19 +59,21 @@
         </el-col>
       </el-row>
     </el-col>
-    <el-col :span="myWidthCenter" style="background-color: blue">
+    <el-col :span="myWidthCenter" style="background-color: blue;display: flex;
+    align-items: center;text-align: center;justify-content: center;height: 100%;overflow: hidden;">
       <iframe v-if="format===AssignFileType.pdf" style="width: 100%; height: 98.5%;" :src="url"></iframe>
       <iframe v-if="format===AssignFileType.office" style="width: 100%; height: 98.5%;" :src="url"></iframe>
-      <el-image
-          v-if="format===AssignFileType.image"
-          ref="image"
-          lazy
-          class="image"
-          :src="url"
-          :preview-src-list="[url]"
-          style="position: absolute; left: 0; top: 25%"
-      >
-      </el-image>
+      <div style="flex: 1">
+        <el-image
+            v-if="format===AssignFileType.image"
+            ref="image"
+            lazy
+            class="image"
+            :src="url"
+            :preview-src-list="[url]"
+        >
+        </el-image>
+      </div>
       <div v-if="format===AssignFileType.markdown">
         <v-md-preview :text="md" style="overflow-y: auto;height: 100vh"></v-md-preview>
       </div>
@@ -75,10 +81,9 @@
                     ref="videoPlayer"
                     :playsinline="true"
                     :options="playerOptions"
-                    style="position: absolute; left: 0; top: 25%"
       >
       </video-player>
-    </el-col >
+    </el-col>
     <el-col :span="5" style="background-color: yellowgreen">
       <assign-right-bar></assign-right-bar>
     </el-col>
@@ -108,29 +113,30 @@ let blockShow = ref(true)
 const textarea = ref('')
 
 const flexible = () => {
-    if (myCollapse.value) {
-        blockShow.value = true
-        myWidthLeft.value = 5
-        myWidthCenter.value = 14
-    }
-    else {
-        blockShow.value = false
-        myWidthLeft.value = 1
-        myWidthCenter.value = 18
-    }
-    myCollapse.value = !myCollapse.value
+  if (myCollapse.value) {
+    blockShow.value = true
+    myWidthLeft.value = 5
+    myWidthCenter.value = 14
+  } else {
+    blockShow.value = false
+    myWidthLeft.value = 1
+    myWidthCenter.value = 18
+  }
+  myCollapse.value = !myCollapse.value
 }
 
 
 let fileMap = new Map<string, AssignFile>([
   ['test.zip', new AssignFile('test.zip', AssignFileType.zip,
       'src/assets/test.zip', undefined)],
-  ['test.mp4', new AssignFile('test.mp4', AssignFileType.video,
-      'src/assets/test.mp4', undefined)],
+  ['test1.mp4', new AssignFile('test1.mp4', AssignFileType.video,
+      'src/assets/test1.mp4', undefined)],
   ['test.pdf', new AssignFile('test.pdf', AssignFileType.pdf,
       'src/assets/test.pdf', undefined)],
   ['test.png', new AssignFile('test.png', AssignFileType.image,
       'src/assets/test.png', undefined)],
+  ['test1.png', new AssignFile('test1.png', AssignFileType.image,
+      'src/assets/test1.png', undefined)],
 ])
 let format = ref(AssignFileType.placeholder);
 let url = ref("");
@@ -156,7 +162,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
 let playerOptions = ref({
   playbackRates: [0.7, 1.0, 1.25, 1.5, 2.0], //播放速度
-  autoplay: true, //如果true,浏览器准备好时开始回放。
+  autoplay: false, //如果true,浏览器准备好时开始回放。
   muted: false, // 默认情况下将会消除任何音频。
   loop: true, // 导致视频一结束就重新开始。
   preload: 'auto', // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
@@ -284,7 +290,7 @@ export default defineComponent({
 
 <style>
 
-.el-menu-vertical-demo{
+.el-menu-vertical-demo {
   /*height: 60vh;*/
   overflow-y: auto;
   overflow-x: hidden;
