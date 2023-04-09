@@ -59,10 +59,14 @@
         </el-col>
       </el-row>
     </el-col>
-    <el-col :span="myWidthCenter" style="background-color: blue;display: flex;
+    <el-col :span="myWidthCenter" style="background-color: white;display: flex;
     align-items: center;text-align: center;justify-content: center;height: 100%;overflow: hidden;">
-      <iframe v-if="format===AssignFileType.pdf" style="width: 100%; height: 98.5%;" :src="url"></iframe>
-      <iframe v-if="format===AssignFileType.office" style="width: 100%; height: 98.5%;" :src="url"></iframe>
+      <el-empty class="empty" v-if="format===AssignFileType.placeholder" description="No Opened File" />
+      <div v-if="format===AssignFileType.txt" class="txt">
+        {{ data }}
+      </div>
+      <iframe v-if="format===AssignFileType.pdf" style="width: 100%; height: 100%;" :src="url"></iframe>
+      <iframe v-if="format===AssignFileType.office" style="width: 100%; height: 100%;" :src="url"></iframe>
       <div style="flex: 1">
         <el-image
             v-if="format===AssignFileType.image"
@@ -74,9 +78,7 @@
         >
         </el-image>
       </div>
-      <div v-if="format===AssignFileType.markdown">
-        <v-md-preview :text="md" style="overflow-y: auto;height: 100vh"></v-md-preview>
-      </div>
+      <v-md-preview :text="data" v-if="format===AssignFileType.markdown" class="md"></v-md-preview>
       <video-player v-if="format===AssignFileType.video" class="video-player vjs-custom-skin"
                     ref="videoPlayer"
                     :playsinline="true"
@@ -125,7 +127,6 @@ const flexible = () => {
   myCollapse.value = !myCollapse.value
 }
 
-
 let fileMap = new Map<string, AssignFile>([
   ['test.zip', new AssignFile('test.zip', AssignFileType.zip,
       'src/assets/test.zip', undefined)],
@@ -137,9 +138,14 @@ let fileMap = new Map<string, AssignFile>([
       'src/assets/test.png', undefined)],
   ['test1.png', new AssignFile('test1.png', AssignFileType.image,
       'src/assets/test1.png', undefined)],
+  ['test.txt', new AssignFile('test.txt', AssignFileType.txt,
+      'src/assets/test.txt', 'Test TXT')],
+  ['test.md', new AssignFile('test.md', AssignFileType.markdown,
+      'src/assets/test.md', '# Test Markdown')],
 ])
 let format = ref(AssignFileType.placeholder);
 let url = ref("");
+let data = ref("");
 
 const handleSelect = (key: string, keyPath: string[]) => {
   let filename = key.split("\n")[0];
@@ -157,6 +163,14 @@ const handleSelect = (key: string, keyPath: string[]) => {
   } else if (file.format === AssignFileType.image) {
     format.value = file.format;
     url.value = file.url;
+  } else if (file.format === AssignFileType.txt) {
+    format.value = file.format;
+    url.value = file.url;
+    data.value = file.data;
+  } else if (file.format === AssignFileType.markdown) {
+    format.value = file.format;
+    url.value = file.url;
+    data.value = file.data;
   }
 }
 
@@ -294,5 +308,25 @@ export default defineComponent({
   /*height: 60vh;*/
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.empty {
+  width: 100%;
+  height: 100%;
+}
+
+.txt {
+  white-space: pre-wrap;
+  text-align: left;
+  max-height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.md {
+  text-align: left;
+  max-height: 100%;
+  width: 100%;
+  overflow-y: scroll;
 }
 </style>
