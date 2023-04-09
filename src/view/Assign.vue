@@ -24,10 +24,6 @@
           <h2>作业文件</h2>
           <template v-for="(item, index) in fileMap.values()" :key="index">
             <tree-menu v-if="item.format===AssignFileType.zip" :index="item.filename" :nodes="zipNode">
-              <el-icon>
-                <FolderOpened/>
-              </el-icon>
-              <span>{{ item.filename }}</span>
             </tree-menu>
 
             <el-menu-item v-else :index="item.filename">
@@ -100,7 +96,6 @@ import {
   Document,
   VideoPlay,
   PictureFilled,
-  FolderOpened,
 } from '@element-plus/icons-vue'
 import TreeMenu from "@/components/TreeMenu.vue";
 import AssignRightBar from "@/components/AssignRightBar.vue";
