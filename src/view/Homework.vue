@@ -11,7 +11,10 @@
           <div style="width: 25%; height: 100%; margin-left: 25%">
             <div style="vertical-align: center; text-align: center">
               <el-button type="primary" style="width: 30%; height: 40px" @click="showDownload">
-                批量下载
+                Batch Download
+              </el-button>
+              <el-button type="primary" style="width: 30%; height: 40px" @click="view">
+                Statistics
               </el-button>
             </div>
           </div>
@@ -155,14 +158,18 @@ const sortChange = (custom: any) => {
   tableData.sort(compare(custom.prop, custom.order))
 }
 const check = () => {
-  router.push('/Main/Homework/Assign')
+  router.push('/Assign')
+}
+
+const view = () => {
+  router.push('/View')
 }
 
 const handleSelectionChange = () => {
   // 暂时不写，后面添加下载语句
 }
 const mySet = () => {
-  router.push('/Main/Set')
+  router.push('/Set')
 }
 const goBack = () => {
   router.push('/Main')
