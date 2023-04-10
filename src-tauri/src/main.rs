@@ -5,9 +5,12 @@
 
 mod file_handler;
 mod protocol;
+mod tray;
 
 fn main() {
     tauri::Builder::default()
+        .system_tray(tray::menu())
+        .on_system_tray_event(tray::handler)
         .invoke_handler(tauri::generate_handler![protocol::reg_url_protocol])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
