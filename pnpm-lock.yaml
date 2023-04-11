@@ -7,6 +7,9 @@ dependencies:
   '@tauri-apps/api':
     specifier: ^1.2.0
     version: 1.2.0
+  echarts:
+    specifier: ^5.4.2
+    version: 5.4.2
   element-plus:
     specifier: ^2.3.0
     version: 2.3.0(vue@3.2.47)
@@ -1699,6 +1702,13 @@ packages:
     resolution: {integrity: sha512-kD+f8qEaa42+mjdOpKeztu9Mfx5bv9gVLO6K9jRx4uGvh6Wv06Srn4jr1wPNY2OOUGGSKHNFN+A8MA3v0E0QAQ==}
     dev: false
 
+  /echarts@5.4.2:
+    resolution: {integrity: sha512-2W3vw3oI2tWJdyAz+b8DuWS0nfXtSDqlDmqgin/lfzbkB01cuMEN66KWBlmur3YMp5nEDEEt5s23pllnAzB4EA==}
+    dependencies:
+      tslib: 2.3.0
+      zrender: 5.4.3
+    dev: false
+
   /element-plus@2.3.0(vue@3.2.47):
     resolution: {integrity: sha512-3s3JO4+LHLi61tFwF2emIHx6nxwKKdj5YWcj3GUBoXKhbuRjhq6xqaxWpBlPk7jySr/8Eci5++T2THbvrpGn7A==, tarball: https://registry.npm.taobao.org/element-plus/-/element-plus-2.3.0.tgz}
     peerDependencies:
@@ -3233,6 +3243,10 @@ packages:
     dev: false
     optional: true
 
+  /tslib@2.3.0:
+    resolution: {integrity: sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==}
+    dev: false
+
   /typescript@4.9.5:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==, tarball: https://registry.npm.taobao.org/typescript/-/typescript-4.9.5.tgz}
     engines: {node: '>=4.2.0'}
@@ -3499,3 +3513,9 @@ packages:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==, tarball: https://registry.npm.taobao.org/yallist/-/yallist-4.0.0.tgz}
     dev: false
     optional: true
+
+  /zrender@5.4.3:
+    resolution: {integrity: sha512-DRUM4ZLnoaT0PBVvGBDO9oWIDBKFdAVieNWxWwK0niYzJCMwGchRk21/hsE+RKkIveH3XHCyvXcJDkgLVvfizQ==}
+    dependencies:
+      tslib: 2.3.0
+    dev: false
