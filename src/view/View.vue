@@ -91,7 +91,7 @@ const addFigure1 = () => {
       data: ['Point'],
       textStyle: {
         fontSize: 14,
-        color: '#F5FFFA'
+        color: '#000'
       }
     },
     grid: {
@@ -226,7 +226,7 @@ h1 {
   overflow-y: auto;
   height: 95%;
   width: 100%;
-  background-color: #03a9f4;
+  background-color: white;
 }
 
 .table-container {
