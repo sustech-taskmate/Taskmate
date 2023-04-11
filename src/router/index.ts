@@ -14,16 +14,20 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../view/Register.vue')
   },
   {
-    path: '/Main/Homework',
+    path: '/Homework',
     component: () => import('../view/Homework.vue')
   },
   {
-    path: '/Main/Set',
+    path: '/Set',
     component: () => import('../view/Set.vue')
   },
   {
-    path: '/Main/Homework/Assign',
+    path: '/Assign',
     component: () => import('../view/Assign.vue')
+  },
+  {
+    path: '/View',
+    component: () => import('../view/View.vue')
   }
 
 ]

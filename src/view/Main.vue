@@ -150,10 +150,10 @@
       return moment(row.delayTime).format("YYYY-MM-DD hh:mm")
     }
     const checkAssignment = () => {
-        router.push('/Main/Homework')
+        router.push('/Homework')
     }
     const setAssignment = () => {
-        router.push('/Main/Set')
+        router.push('/Set')
     }
     const goBack = () => {
         router.push('/')
