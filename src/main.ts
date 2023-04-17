@@ -1,8 +1,8 @@
 import {createApp} from "vue";
 import "./styles.css";
 import App from "./App.vue";
-import router from './router'
-import store from './store'
+import {setupRouter} from './router'
+import {setupStore} from './store'
 import Ele from 'element-plus'
 import 'element-plus/dist/index.css'
 import VueVideoPlayer from 'vue-video-player'
@@ -36,7 +36,13 @@ async function setupApp() {
     VMdPreview.use(createCopyCodePlugin())
     VMdPreview.use(createEmojiPlugin())
 
-    createApp(App).use(VMdPreview).use(VueVideoPlayer).use(store).use(Ele).use(router).mount('#app')
+    const app = createApp(App).use(VMdPreview).use(VueVideoPlayer).use(Ele)
+
+    await setupStore(app)
+
+    await setupRouter(app)
+
+    app.mount('#app')
 }
 
 await setupApp()
