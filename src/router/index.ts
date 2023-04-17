@@ -30,7 +30,7 @@ const routes: Array<RouteRecordRaw> = [
     children: [{
       path: 'file/',
       name: 'render',
-      component: () => import('../components/FileContent.vue')
+      component: () => import('../components/AssignContent/FileContent.vue')
     }]
   }
 

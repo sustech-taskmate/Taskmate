@@ -49,7 +49,7 @@ import {ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {useElementBounding} from '@vueuse/core';
 import {useTabStore} from "@/store";
-import Sider from "@/components/Sider.vue";
+import Sider from "@/components/AssignLeftBar/Sider.vue";
 import AssignRightBar from "@/components/AssignRightBar.vue";
 import {App} from "@/typing/system";
 
