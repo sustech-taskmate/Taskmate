@@ -39,7 +39,7 @@ import {
   PictureFilled,
 } from '@element-plus/icons-vue'
 import {defineComponent, PropType} from 'vue';
-import TreeMenu from "@/components/TreeMenu.vue";
+import TreeMenu from "@/components/AssignLeftBar/TreeMenu.vue";
 import JSZip, {JSZipObject} from 'jszip';
 import {FileTreeNode, ZipFile} from '@/store/assign';
 import {useRouterPush} from "@/composable";
