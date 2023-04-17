@@ -1,41 +1,32 @@
-use std::{env, fs, io};
-use std::error::Error;
-use std::fmt::{Display, Formatter};
-use std::fs::{File, create_dir_all, read, OpenOptions};
-use std::io::{BufReader, copy, Read, Write};
-use std::path::{Path, PathBuf};
+use std::fs::{File, create_dir_all, OpenOptions, remove_file};
+use std::io::{Write};
+use std::path::Path;
 use reqwest::blocking::get;
 use anyhow::{anyhow, Result};
+use flate2::read::GzDecoder;
+use tar::Archive;
+use walkdir::WalkDir;
 
-pub fn remove_all() -> Result<()> {
-    todo!()
-}
-
-fn extract(test: &Path, target: &Path, origin: &Path) -> Result<()> {
-    let zipfile = File::open(&test)?;
-    let mut zip = zip::ZipArchive::new(zipfile)?;
-
-    if !target.exists() {
-        create_dir_all(target)?;
-    }
-
+fn analyze_dir(target: &Path, origin: &Path) -> Result<()>{
+    //target is dir in origin
     let json_file = origin.join(Path::new("path.json"));
+    File::create(&json_file)?;
+    let mut json_file = OpenOptions::new().write(true).open(&json_file)?;
+    let dir = WalkDir::new(target);
+    write!(json_file, "{{")?;
+    let target = target.to_str().ok_or(anyhow::format_err!("OsStr Error"))?;
+    let len=target.len();
 
-    let mut json_file = OpenOptions::new().write(true).append(true).open(&json_file)?;
-
-
-    zip.extract(target)?;
-
-    let mut dir = fs::read_dir(target)?;
     for f in dir {
         let f = f?;
         let p = f.path();
         let path = p.to_str().ok_or(anyhow::format_err!("OsStr Error"))?;
-        let simple_path = path;
-        let is_dir = f.file_type()?.is_dir();
-        let path = p.canonicalize()?;
+        let simple_path = path.to_string();
+        let simple_path = &simple_path[len..];
+        let is_dir = f.file_type().is_dir();
+        let path = Path::new(path);
         #[cfg(target_os = "windows")]
-        let path = {
+            let path = {
             let path_str = path.to_str().ok_or(anyhow!("??"))?;
             if let Some(path_str) = path_str.strip_prefix("\\\\?\\") {
                 path_str
@@ -45,26 +36,48 @@ fn extract(test: &Path, target: &Path, origin: &Path) -> Result<()> {
                 path_str
             }
         };
-        write!(json_file, "ZipFile {{ name : '{}', dir : {}, url : 'file://{}' }}\n", simple_path, is_dir, path)?;
+        write!(json_file, "{{ \"name\" : \"{}\", \"dir\" : {}, \"url\" : \"{}\" }}\n", simple_path, is_dir, path)?;
     }
-
+    write!(json_file, "}}")?;
     Ok(())
-
 }
 
+fn extract_zip(test: &Path, target: &Path) -> Result<()> {
+    let zipfile = File::open(&test)?;
+    let mut zip = zip::ZipArchive::new(zipfile)?;
+
+    if !target.exists() {
+        create_dir_all(target)?;
+    }
+    zip.extract(target)?;
+    remove_file(&test)?;
+    Ok(())
+}
+
+fn extract_targz(test: &Path, target: &Path) -> Result<()>{
+    let tar_gz = File::open(test)?;
+    let tar = GzDecoder::new(tar_gz);
+    let mut archive = Archive::new(tar);
+    if !target.exists() {
+        create_dir_all(target)?;
+    }
+    archive.unpack(target)?;
+    // remove_file(&test)?;
+    Ok(())
+}
 #[derive(Default, Copy, Clone, PartialEq, Eq)]
 enum ExtractOperationType {
     #[default]
     None,
     Zip,
+    TarGz,
 }
 
 
 pub fn download_file(url: &str, file_path: &str) -> Result<()> {
-    dbg!("Are you here?");
 
     let should_extract : ExtractOperationType;
-    let mut response = get(url)?;
+    let response = get(url)?;
     let bytes = response.bytes()?;
     let bit = bytes.iter();
     let slice = bit.as_slice();
@@ -77,31 +90,38 @@ pub fn download_file(url: &str, file_path: &str) -> Result<()> {
         }
     }
     let file_name = Path::new(url).file_name().ok_or(FileNameMiss)?;
-    let origin_path = Path::new(file_path);
-    let file_path = Path::new(file_path).join(file_name);
-    let zip_path = file_path.file_stem().ok_or(FilePostfixMiss)?;
-    let zip_path = Path::new(zip_path);
-    dbg!("Are you here?");
 
+    let root_path = Path::new(file_path).join("student_file");
+    let file_path = Path::new(file_path).join("student_file").join(file_name);
+    let zip_path = file_path.file_stem().ok_or(FilePostfixMiss)?;
+    let zip_path = Path::new(&root_path).join(zip_path);
+    if !root_path.exists(){
+        create_dir_all(&root_path)?;
+    }
+    drop(root_path);
     let result = File::create(&file_path);
     match result {
         Ok(mut file) => {
             file.write_all(slice)?;
             drop(file);
-            dbg!("Are you here?");
 
             #[cfg(target_os = "windows")]
             {
                 if should_extract == ExtractOperationType::Zip {
                     // extract(&file_path,  &zip_path, &origin_path);
-                    dbg!("Are you here?");
-                    extract(&file_path,  &zip_path, &origin_path)?;
+                    extract_zip(&file_path,  &zip_path)?;
+                    //delete file_path
+                }
+                if should_extract == ExtractOperationType::TarGz{
+                    extract_targz(&file_path, &zip_path)?;
+                    //delete file_path
                 }
             }
             #[cfg(target_os = "macos")]
-            if should_extract {
-                extract(&file_path,  &zip_path, &origin_path);
-            }
+                todo!();
+            // if should_extract {
+            //     extract(&file_path,  &zip_path, &origin_path);
+            // }
             #[cfg(not(any(target_os = "windows", target_os = "macos")))]
             {
                 compile_error!("test");
@@ -124,9 +144,12 @@ mod tests {
     #[test]
     fn test_bad_add() {
         // download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-large-zip-file.zip", "C:\\Users\\31028\\Desktop\\test").unwrap();
-        download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip", "D:\\Desktop\\test").unwrap();
+        // download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample.tar", "D:\\Desktop\\test").unwrap();
         // let file_path=Path::new("C:\\Users\\31028\\Desktop\\test").join("qwq.zip");
         // extract(&file_path,Path::new("C:\\Users\\31028\\Desktop\\test\\qwq"));
+        // let file_path=Path::new("D:\\Desktop\\test\\student_file").join("sample.tar");
+        // extract_targz(&file_path,Path::new("D:\\Desktop\\test\\student_file\\sample")).unwrap();
+        // analyze_dir(Path::new("D:\\Desktop\\test\\student_file"), Path::new("D:\\Desktop\\test")).unwrap();
     }
 
     #[test]
@@ -134,7 +157,6 @@ mod tests {
         let name = "D:/Desktop";
         let path = Path::new(name);
         let canonical = path.canonicalize();
-        dbg!(canonical);
         Ok(())
     }
 }
