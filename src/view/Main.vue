@@ -80,7 +80,7 @@
 
 <script lang="ts" setup scoped>
     import {reactive} from 'vue'
-    import router from '@/router';
+    import {router} from '@/router';
     import {
       Menu as IconMenu,
     } from '@element-plus/icons-vue'
@@ -150,7 +150,7 @@
       return moment(row.delayTime).format("YYYY-MM-DD hh:mm")
     }
     const checkAssignment = () => {
-        router.push('/Homework')
+        router.push('/Main/Homework')
     }
     const setAssignment = () => {
         router.push('/Set')

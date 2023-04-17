@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import {App} from "vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -14,27 +15,34 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../view/Register.vue')
   },
   {
-    path: '/Homework',
+    path: '/Main/Homework',
+    name: 'homework',
     component: () => import('../view/Homework.vue')
   },
   {
-    path: '/Set',
+    path: '/Main/Set',
     component: () => import('../view/Set.vue')
   },
   {
-    path: '/Assign',
-    component: () => import('../view/Assign.vue')
-  },
-  {
-    path: '/View',
-    component: () => import('../view/View.vue')
+    path: '/Main/Homework/Assign',
+    name: 'assign',
+    component: () => import('../view/Assign.vue'),
+    children: [{
+      path: 'file/',
+      name: 'render',
+      component: () => import('../components/FileContent.vue')
+    }]
   }
 
 ]
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
+  scrollBehavior: () => ({left:0, top:0})
 })
 
-export default router
+export async function setupRouter(app: App) {
+  app.use(router);
+  await router.isReady();
+}

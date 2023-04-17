@@ -21,7 +21,7 @@
 
 
 <script lang="ts" setup>
-  import router from '@/router';
+  import {router} from '@/router';
   const register = () => {
     router.push('/Register')
   },
@@ -32,7 +32,7 @@
 
 <style scoped>
   #app {
-    background-image: url("../assets/images/background.jpg");
+    /*background-image: url("../assets/images/background.jpg");*/
   } 
   body{
     padding: 0px;

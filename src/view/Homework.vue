@@ -57,7 +57,7 @@
 <script lang="ts" setup>
 
 import {reactive} from 'vue'
-import router from '@/router'
+import {router} from '@/router'
 import moment from 'moment'
 
 enum AssignmentState{
@@ -158,7 +158,7 @@ const sortChange = (custom: any) => {
   tableData.sort(compare(custom.prop, custom.order))
 }
 const check = () => {
-  router.push('/Assign')
+  router.push('/Main/Homework/Assign')
 }
 
 const view = () => {
