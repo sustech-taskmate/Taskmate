@@ -1,13 +1,6 @@
-.top-box {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .box1 {
     position: relative;
     width: 40%;
-    height: 140px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -27,8 +20,6 @@
 }
 
 .percent svg circle {
-    width: 30px;
-    height: 30px;
     fill: none;
     stroke-width: 4px;
     stroke: #000;
@@ -57,7 +48,7 @@
     justify-content: center;
     align-items: center;
     color: #111;
-    margin-top: -12px;
+    margin-top: -12%
 }
 
 .percent .number h2 {
@@ -80,11 +71,11 @@
     justify-content: center;
     align-items: center;
     color: #111;
-    margin-top: -15px;
+    margin-top: -10%
 }
 
 .point h3 {
-    font-size: 24px;
+    font-size: calc(100vw * 24 / 1500);
     font-weight: bold;
 }
 
@@ -94,14 +85,13 @@
 
 .box1 .text-prog {
     color: #999;
-    font-size: 18px;
+    font-size: calc(100vw * 18 / 1500);
     letter-spacing: 1px;
 }
 
 .box2 {
     position: relative;
     width: 60%;
-    height: 140px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -110,7 +100,7 @@
 
 .box2 .text-prog {
     color: #999;
-    font-size: 18px;
+    font-size: calc(100vw * 18 / 1500);
     letter-spacing: 1px;
 }
 

@@ -34,19 +34,17 @@ class BigCard implements UniqueKey {
     questionIdx: number = 0;
     totalPoints: number = 0;
     givenPoints: number = 0;
-    pointInput: string = '';
     comment: string = '';
-    isShowInput: boolean = false;
-    isPullDown: boolean = false;
-    pointEditable: boolean = false;
+    controller: BigCardController = new BigCardController();
     subCards: SmallCard[] = [];
 
 
     constructor(questionIdx: number, totalPoints: number, givenPoints: number, comment: string) {
         this.questionIdx = questionIdx;
         this.totalPoints = totalPoints;
+        this.controller.totalPointInput = this.totalPoints.toString();
         this.givenPoints = givenPoints;
-        this.pointInput = this.totalPoints.toString();
+        this.controller.givenPointInput = this.givenPoints.toString();
         this.comment = comment;
     }
 
@@ -55,23 +53,36 @@ class BigCard implements UniqueKey {
     }
 }
 
+class BigCardController {
+    isShowInput: boolean = false;
+    isPullDown: boolean = false;
+    totalPointEditable: boolean = false;
+    totalPointInput: string = '';
+    givenPointEditable: boolean = false;
+    givenPointInput: string = '';
+}
+
 class SmallCard {
     parentCard: BigCard | null = null;
     sign: string = ''
     points: number = 0;
     comment: string = '';
-    isSmallActive: boolean = false;
-    isShowInput: boolean = false;
-    pointEditable: boolean = false;
-    pointInput: string = '';
+    controller: SmallCardController = new SmallCardController();
 
     constructor(parentCard: BigCard | null, sign: string, points: number, comment: string) {
         this.parentCard = parentCard;
         this.sign = sign;
         this.points = points;
-        this.pointInput = this.points.toString();
+        this.controller.pointInput = this.points.toString();
         this.comment = comment;
     }
+}
+
+class SmallCardController {
+    isSmallActive: boolean = false;
+    isShowInput: boolean = false;
+    pointEditable: boolean = false;
+    pointInput: string = '';
 }
 
 export {UniqueList, BigCard, SmallCard}
