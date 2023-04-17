@@ -50,8 +50,9 @@ import {useRoute} from "vue-router";
 import {useElementBounding} from '@vueuse/core';
 import {useTabStore} from "@/store";
 import Sider from "@/components/AssignLeftBar/Sider.vue";
-import AssignRightBar from "@/components/AssignRightBar.vue";
+import AssignRightBar from "@/components/AssignRightBar/AssignRightBar.vue";
 import {App} from "@/typing/system";
+import {invoke} from "@tauri-apps/api/tauri";
 
 const route = useRoute();
 const tab = useTabStore();
