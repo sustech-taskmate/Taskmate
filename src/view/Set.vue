@@ -85,7 +85,7 @@
 
 <script lang="ts" setup scoped>
     import { reactive, ref } from 'vue'
-    import router from '@/router';
+    import {router} from '@/router';
     const dialogFormVisible = ref(false)
     let form = reactive({
         Ass: '',

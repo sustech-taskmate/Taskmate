@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import {FileTreeNode} from '@/store/assign';
+import type {FileTreeNode} from '@/store/assign';
 import {Document, Folder, FolderOpened} from "@element-plus/icons-vue";
 const props = defineProps({
   nodes:{
