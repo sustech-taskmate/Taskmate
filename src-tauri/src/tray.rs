@@ -1,6 +1,4 @@
-use std::alloc::System;
-use tauri::{AppHandle, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem, SystemTraySubmenu};
-use tauri::utils::config::SystemTrayConfig;
+use tauri::{AppHandle, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
 
 // 托盘菜单
 pub fn menu() -> SystemTray {
