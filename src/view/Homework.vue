@@ -162,7 +162,7 @@ const check = () => {
 }
 
 const view = () => {
-  router.push('/View')
+  router.push('/Main/Homework/View')
 }
 
 const handleSelectionChange = () => {

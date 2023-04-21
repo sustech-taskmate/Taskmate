@@ -32,6 +32,10 @@ const routes: Array<RouteRecordRaw> = [
       name: 'render',
       component: () => import('../components/AssignContent/FileContent.vue')
     }]
+  },
+  {
+    path: '/Main/Homework/View',
+    component: () => import('../view/View.vue')
   }
 
 ]
