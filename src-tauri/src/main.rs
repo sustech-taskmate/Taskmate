@@ -11,7 +11,7 @@ fn main() {
     tauri::Builder::default()
         .system_tray(tray::menu())
         .on_system_tray_event(tray::handler)
-        .invoke_handler(tauri::generate_handler![protocol::reg_url_protocol])
+        .invoke_handler(tauri::generate_handler![protocol::reg_url_protocol,file_handler::download_file,file_handler::analyze_dir])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

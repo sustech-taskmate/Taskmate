@@ -28,12 +28,12 @@
     </el-col>
     <el-col :span="myWidthCenter" style="background-color: white;display: flex; flex-direction: column;
     align-items: center;text-align: center;justify-content: center;height: 100%;overflow: hidden;">
-<!--      <el-empty class="empty" v-if="format===AssignFileType.placeholder" description="No Opened File" />-->
-<!--      <div ref="bsWrapper" class="flex-1-hidden h-full">-->
-<!--        <tab-detail @scroll="handleScroll" />-->
-<!--      </div>-->
+      <!--      <el-empty class="empty" v-if="format===AssignFileType.placeholder" description="No Opened File" />-->
+      <!--      <div ref="bsWrapper" class="flex-1-hidden h-full">-->
+      <!--        <tab-detail @scroll="handleScroll" />-->
+      <!--      </div>-->
       <router-view v-slot="{ Component }">
-        <component :is="Component" />
+        <component :is="Component"/>
       </router-view>
     </el-col>
     <el-col :span="5" style="background-color: yellowgreen">
@@ -52,13 +52,12 @@ import {useTabStore} from "@/store";
 import Sider from "@/components/AssignLeftBar/Sider.vue";
 import AssignRightBar from "@/components/AssignRightBar/AssignRightBar.vue";
 import {App} from "@/typing/system";
-import {invoke} from "@tauri-apps/api/tauri";
 
 const route = useRoute();
 const tab = useTabStore();
 
 const bsWrapper = ref<HTMLElement>();
-const { width: bsWrapperWidth, left: bsWrapperLeft } = useElementBounding(bsWrapper);
+const {width: bsWrapperWidth, left: bsWrapperLeft} = useElementBounding(bsWrapper);
 
 const bsScroll = ref();
 
@@ -66,7 +65,7 @@ function handleScroll(clientX: number) {
   const currentX = clientX - bsWrapperLeft.value;
   const deltaX = currentX - bsWrapperWidth.value / 2;
   if (bsScroll.value) {
-    const { maxScrollX, x: leftX } = bsScroll.value.instance;
+    const {maxScrollX, x: leftX} = bsScroll.value.instance;
     const rightX = maxScrollX - leftX;
     const update = deltaX > 0 ? Math.max(-deltaX, rightX) : Math.min(-deltaX, -leftX);
     bsScroll.value?.instance.scrollBy(update, 0, 300);
@@ -88,11 +87,14 @@ watch(
 init()
 
 let all_data = new Map<string, App.AssignMenu>([
-  ['src/assets/test.zip', {index: "src/assets/test.zip", name: "test.zip", format: AssignFileType.zip
+  ['src/assets/test.zip', {
+    index: "src/assets/test.zip", name: "test.zip", format: AssignFileType.zip
   }],
-  ['src/assets/test1.mp4', {index: "src/assets/test1.mp4", name: "test1.mp4", format: AssignFileType.video,
+  ['src/assets/test1.mp4', {
+    index: "src/assets/test1.mp4", name: "test1.mp4", format: AssignFileType.video,
   }],
-  ['src/assets/test.pdf', {index: "src/assets/test.pdf", name: "test.pdf", format: AssignFileType.pdf,
+  ['src/assets/test.pdf', {
+    index: "src/assets/test.pdf", name: "test.pdf", format: AssignFileType.pdf,
   }]
 ])
 
@@ -167,8 +169,13 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
 <script lang="ts">
 import {defineComponent} from 'vue';
+
 import JSZip, {JSZipObject} from 'jszip';
 import {AssignFile, AssignFileType, FileTreeNode, ZipFile} from '@/store/assign';
+import {invoke} from '@tauri-apps/api/tauri'
+import { exists, readTextFile } from '@tauri-apps/api/fs';
+import {appDataDir} from '@tauri-apps/api/path';
+import * as path from 'path';
 
 export default defineComponent({
   name: 'Assign',
@@ -204,11 +211,11 @@ export default defineComponent({
           let file = zipFile.files[key];
           let f = undefined;
           if (file.dir) {
-            f = new ZipFile(file.name, true, undefined);
+            f = new ZipFile(file.name, true, '');
           } else {
             let tmpName = zipFile.files[key].name;
             let fileBlob = await (zipFile.file(tmpName) as JSZipObject).async("blob");
-            f = new ZipFile(file.name, false, fileBlob);
+            f = new ZipFile(file.name, false, '');
           }
           zips.push(f);
         }
@@ -222,24 +229,58 @@ export default defineComponent({
         resolve(templateData);
       })
     },
+    async getDownloadPath(): Promise<string> {
+      return appDataDir()
+    },
+    async downloadFile(url: string) {
+      /*
+        test url : "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip"
+       */
+      const path = await this.getDownloadPath();
+      const origin = await this.getDownloadPath();
+      console.log(path)
+      invoke('download_file', {url: url, filePath: path}).then(
+          (resolved:any) => {
+            console.log(resolved)
+          }
+      ).catch((err) =>{
+        console.log(err)
+      });
+      await invoke('analyze_dir', {target: path + "\\student_file", origin: origin})
+      /*
+        from origin path get path.json and buildFileTree
+      * */
+      const ZipName = "student_file";
+      let fPath: string = path.concat("\\").concat("path.json");
+      console.log(fPath);
+      exists(fPath).then()
+      .catch((err)=>{
+        console.log(err);
+      })
+      const fileContent=await  readTextFile(fPath);
+      const zipFiles: ZipFile[] = JSON.parse(fileContent).data as ZipFile[];
+      const fileTree = this.buildFileTree("student_file", zipFiles);
+      console.log(fileTree)
+    },
     buildFileTree(zipName: string, zipFiles: ZipFile[]): FileTreeNode {
-      const root = new FileTreeNode(zipName, true, true, undefined);
+      const root = new FileTreeNode(zipName, true, true, '');
       zipFiles.sort((a: ZipFile, b: ZipFile) => a.name.length - b.name.length);
       const map = new Map<string, FileTreeNode>();
       map.set('', root);
       for (const file of zipFiles) {
         let dirName = file.name;
         if (file.dir) {
+          dirName+='/';
           let substring = dirName.substring(0, dirName.length - 1);
           let index = substring.lastIndexOf('/');
           if (index === -1) {
-            let p = new FileTreeNode(substring, true, false, file.data);
+            let p = new FileTreeNode(substring, true, false, file.url);
             p.parent = root;
             root.children.push(p);
             map.set(dirName, p);
           } else {
             substring = dirName.substring(index + 1, dirName.length - 1);
-            let p = new FileTreeNode(substring, true, false, file.data);
+            let p = new FileTreeNode(substring, true, false, file.url);
             p.parent = map.get(dirName.substring(0, index + 1));
             (map.get(dirName.substring(0, index + 1)) as FileTreeNode).children.push(p);
             map.set(dirName, p);
@@ -247,11 +288,11 @@ export default defineComponent({
         } else {
           let index = dirName.lastIndexOf('/');
           if (index === -1) {
-            let p = new FileTreeNode(dirName, false, false, file.data);
+            let p = new FileTreeNode(dirName, false, false, file.url);
             p.parent = root;
             root.children.push(p);
           } else {
-            let p = new FileTreeNode(dirName.substring(index + 1), false, false, file.data);
+            let p = new FileTreeNode(dirName.substring(index + 1), false, false, file.url);
             p.parent = map.get(dirName.substring(0, index + 1));
             (map.get(dirName.substring(0, index + 1)) as FileTreeNode).children.push(p);
           }
