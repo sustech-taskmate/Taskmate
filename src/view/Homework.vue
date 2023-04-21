@@ -259,10 +259,10 @@
     <span style="font-size: 200%; position: absolute; left: 0; top: 320px; padding-left: 5%">...</span>
     <div id="second-row">
       <span style="font-size: 150%; position: absolute; left: 0; top: 10px">CS 6789</span>
-      <svg t="1682076390364" class="icon" viewBox="0 0 1024 1024" version="1.1"
-           xmlns="http://www.w3.org/2000/svg" p-id="2071" width="40" height="40"
+      <svg t="1682075254103" class="icon" viewBox="0 0 1024 1024" version="1.1"
+           xmlns="http://www.w3.org/2000/svg" p-id="1384" width="40" height="40"
            style="position: absolute; right: 0">
-        <path d="M534.4 553.6L262.4 284.8l-89.6 89.6 272 272 89.6 89.6 89.6-89.6 272-272-89.6-89.6z" p-id="2072"></path>
+        <path d="M467.2 512l272-272-92.8-89.6-272 272L284.8 512l89.6 92.8 272 268.8 92.8-89.6z" p-id="1385"></path>
       </svg>
     </div>
 
