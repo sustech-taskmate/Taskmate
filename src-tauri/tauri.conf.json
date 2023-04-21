@@ -17,10 +17,14 @@
         "all": false,
         "open": true
       },
+      "path": {
+        "all": true
+      },
       "fs": {
         "all": true,
         "scope": [
-          "$DESKTOP/*"
+          "$APP/*",
+          "$appDataDir/*"
         ]
       }
     },

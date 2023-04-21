@@ -174,6 +174,7 @@ import JSZip, {JSZipObject} from 'jszip';
 import {AssignFile, AssignFileType, FileTreeNode, ZipFile} from '@/store/assign';
 import {invoke} from '@tauri-apps/api/tauri'
 import { exists, readTextFile } from '@tauri-apps/api/fs';
+import {appDataDir} from '@tauri-apps/api/path';
 import * as path from 'path';
 
 export default defineComponent({
@@ -210,11 +211,11 @@ export default defineComponent({
           let file = zipFile.files[key];
           let f = undefined;
           if (file.dir) {
-            f = new ZipFile(file.name, true, undefined);
+            f = new ZipFile(file.name, true, '');
           } else {
             let tmpName = zipFile.files[key].name;
             let fileBlob = await (zipFile.file(tmpName) as JSZipObject).async("blob");
-            f = new ZipFile(file.name, false, fileBlob);
+            f = new ZipFile(file.name, false, '');
           }
           zips.push(f);
         }
@@ -228,17 +229,16 @@ export default defineComponent({
         resolve(templateData);
       })
     },
-    getDownloadPath(): string {
-      return "C:\\Users\\Eternity_279\\Desktop";
-      //TODO:
+    async getDownloadPath(): Promise<string> {
+      return appDataDir()
     },
-    async downloadFile() {
-      let url = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip"
+    async downloadFile(url: string) {
       /*
         test url : "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip"
        */
-      const path = this.getDownloadPath();
-      const origin = this.getDownloadPath();
+      const path = await this.getDownloadPath();
+      const origin = await this.getDownloadPath();
+      console.log(path)
       invoke('download_file', {url: url, filePath: path}).then(
           (resolved:any) => {
             console.log(resolved)
@@ -246,7 +246,7 @@ export default defineComponent({
       ).catch((err) =>{
         console.log(err)
       });
-      const b = await invoke('analyze_dir', {target: path + "\\student_file", origin: origin});
+      await invoke('analyze_dir', {target: path + "\\student_file", origin: origin})
       /*
         from origin path get path.json and buildFileTree
       * */
@@ -257,23 +257,10 @@ export default defineComponent({
       .catch((err)=>{
         console.log(err);
       })
-      // if () {
-      //
-      //   console.log("find file");
       const fileContent=await  readTextFile(fPath);
       const zipFiles: ZipFile[] = JSON.parse(fileContent).data as ZipFile[];
       const fileTree = this.buildFileTree("student_file", zipFiles);
-      //
-      // }
-      // readFile(fPath, "utf8", (err:any, data:any) => {
-      //   if (err){
-      //     return console.log(err);
-      //   }
-      //   const jsonContent=data;
-      //   const zipFiles :  ZipFile[]= JSON.parse(jsonContent);
-      //   const fileTree = this.buildFileTree("student_file", (zipFiles as ZipFile[]));
-      //   //get file tree and print?
-      // });
+      console.log(fileTree)
     },
     buildFileTree(zipName: string, zipFiles: ZipFile[]): FileTreeNode {
       const root = new FileTreeNode(zipName, true, true, '');
