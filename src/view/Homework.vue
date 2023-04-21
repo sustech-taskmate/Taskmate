@@ -206,7 +206,7 @@
   <div id="left-col">
     <svg t="1682074951908" class="icon" viewBox="0 0 1024 1024" version="1.1"
          xmlns="http://www.w3.org/2000/svg" p-id="1245" width="40" height="40"
-         style="position: absolute; left: 5%; top: 3%">
+         style="position: absolute; left: 5%; top: 3%" @click="goMain()">
       <path d="M512 0L51.2 358.4v665.6h358.4v-358.4h204.8v358.4h358.4V358.4l-460.8-358.4z" fill="#333333" p-id="1246"></path>
     </svg>
     <svg t="1682075254103" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -480,5 +480,9 @@ const sortChange = (custom: any) => {
 
 const mySet = () => {
   router.push('/Main/Set')
+}
+
+const goMain = () => {
+  router.push('/Main')
 }
 </script>
