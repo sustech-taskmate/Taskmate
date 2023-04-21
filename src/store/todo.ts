@@ -1,53 +1,32 @@
-enum AssignFileType {
-    pdf,
-    image,
-    video,
-    office,
-    txt,
-    markdown,
-    zip,
-    placeholder
-}
-
-class AssignFile {
-    filename: string = '';
-    format: AssignFileType = AssignFileType.placeholder;
-    url: string = '';
-    data: any
-    constructor(filename: string, format: AssignFileType, url: string, data: any) {
-        this.filename = filename;
-        this.format = format;
-        this.url = url;
-        this.data = data;
-    }
-}
-
-class ZipFile {
-    name: string = '';
-    dir: boolean = false;
-    data: Blob | undefined;
-
-    constructor(name: string, dir: boolean, data: Blob | undefined) {
+class TodoItem{
+    name: string;
+    time: Date;
+    constructor(name: string, time: Date) {
         this.name = name;
-        this.dir = dir;
-        this.data = data;
+        this.time = time;
     }
 }
 
-class FileTreeNode {
-    filename: string = '';
-    isDir: boolean = false;
-    isRoot: boolean = false;
-    data: Blob | undefined;
-    parent: FileTreeNode | undefined;
-    children: FileTreeNode[] = [];
-
-    constructor(filename: string, isDir: boolean, isRoot: boolean, data: Blob | undefined) {
-        this.filename = filename;
-        this.isDir = isDir;
-        this.isRoot = isRoot;
-        this.data = data;
+class ContainCard{
+    name: string;
+    description: string;
+    identify: string;
+    constructor(name: string, description: string, identify: string) {
+        this.name = name;
+        this.description = description;
+        this.identify = identify;
     }
 }
 
-export {AssignFileType, AssignFile, ZipFile, FileTreeNode}
+class Card{
+    name: string;
+    listContainCard: ContainCard[];
+    down: boolean;
+    constructor(name: string, listContainCard: ContainCard[], down: boolean) {
+        this.name = name
+        this.listContainCard = listContainCard
+        this.down = down
+    }
+}
+
+export {TodoItem, Card, ContainCard}
