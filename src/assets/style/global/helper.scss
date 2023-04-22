@@ -1,0 +1,42 @@
+.vac-svg-button {
+  max-height: 24px;
+  display: flex;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    transform: scale(1.03);
+    opacity: 0.7;
+  }
+}
+
+.vac-textarea {
+  max-height: 100%;
+  overflow-y: auto;
+  height: calc(100vw * 20 / 1500);
+  width: 70%;
+  line-height: calc(100vw * 20 / 1500);
+  outline: 0;
+  resize: none;
+  border-radius: 20px;
+  padding: calc(100vw * 12 / 1500) calc(100vw * 16 / 1500);
+  box-sizing: content-box;
+  font-size: 16px;
+  background: var(--chat-bg-color-input);
+  color: var(--chat-color);
+  caret-color: var(--chat-color-caret);
+  border: var(--chat-border-style-input);
+
+  &::placeholder {
+    color: var(--chat-color-placeholder);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.vac-app-box-shadow {
+  transition: all 0.5s;
+  box-shadow: 0 2px 2px -4px rgba(0, 0, 0, 0.1),
+  0 2px 2px 1px rgba(0, 0, 0, 0.12), 0 1px 8px 1px rgba(0, 0, 0, 0.12);
+}
