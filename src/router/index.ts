@@ -4,7 +4,7 @@ import {App} from "vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    component: () => import('../view/Login.vue')
+    component: () => import('../view/Overview.vue')
   },
   {
     path: '/Main',
@@ -32,6 +32,10 @@ const routes: Array<RouteRecordRaw> = [
       name: 'render',
       component: () => import('../components/AssignContent/FileContent.vue')
     }]
+  },
+  {
+    path: '/Main/Homework/View',
+    component: () => import('../view/View.vue')
   }
 
 ]
