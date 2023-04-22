@@ -51,7 +51,6 @@ let CardList = reactive([
     new Card("2077 Summer", [
         new ContainCard("CS101", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "SA"),
         new ContainCard("CS102", "AAAAAAAAAAAA", "SA"),
-        new ContainCard("CS103", "AAAAAAAAAAAA", "Student"),
         new ContainCard("CS104", "AAAAAAAAAAAA", "SA"),
         new ContainCard("CS104", "AAAAAAAAAAAA", "Student"),
     ], false),
@@ -59,22 +58,13 @@ let CardList = reactive([
         new ContainCard("CS101", "AAAAAAAAAAAA", "SA"),
         new ContainCard("CS102", "AAAAAAAAAAAA", "SA"),
         new ContainCard("CS103", "AAAAAAAAAAAA", "Student"),
-        new ContainCard("CS104", "AAAAAAAAAAAA", "SA"),
-        new ContainCard("CS104", "AAAAAAAAAAAA", "Student"),
     ], false),
     new Card("2077 Winter", [
         new ContainCard("CS101", "AAAAAAAAAAAA", "SA"),
         new ContainCard("CS102", "AAAAAAAAAAAA", "SA"),
-        new ContainCard("CS103", "AAAAAAAAAAAA", "Student"),
-        new ContainCard("CS104", "AAAAAAAAAAAA", "SA"),
-        new ContainCard("CS104", "AAAAAAAAAAAA", "Student"),
     ], false),
     new Card("2077 Winter", [
         new ContainCard("CS101", "AAAAAAAAAAAA", "SA"),
-        new ContainCard("CS102", "AAAAAAAAAAAA", "SA"),
-        new ContainCard("CS103", "AAAAAAAAAAAA", "Student"),
-        new ContainCard("CS104", "AAAAAAAAAAAA", "SA"),
-        new ContainCard("CS104", "AAAAAAAAAAAA", "Student"),
     ], false),
     new Card("2077 Winter", [
         new ContainCard("CS101", "AAAAAAAAAAAA", "SA"),

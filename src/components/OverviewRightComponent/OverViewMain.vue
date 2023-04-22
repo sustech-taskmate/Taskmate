@@ -2,7 +2,7 @@
     <el-header type="flex" style="height: 10vh;
     border-bottom: 2px solid black; border-left: 2px solid black; border-top: 2px solid black; border-radius: 10px 0 0 0">
         <el-row type="flex" style="height: 100%">
-            <el-col :span="18" style="height: 100%" type="flex">
+            <el-col :span="17" style="height: 100%" type="flex">
             </el-col>
             <el-col :span="3" style="height: 100%" type="flex">
                 <el-row style="height: 100%" type="flex">
@@ -14,12 +14,12 @@
                     </svg>
                     <div style="height: 100%; width: 50%; text-align: center; vertical-align: center;
                                      display: flex; align-items: center; justify-content: center;
-                                     color: blue;" type="flex">
+                                     color: blue; font-size: calc(100vw * 24 / 1500)" type="flex">
                         SA
                     </div>
                 </el-row>
             </el-col>
-            <el-col :span="3" style="height: 100%" type="flex">
+            <el-col :span="4" style="height: 100%" type="flex">
                 <el-row style="height: 100%" type="flex">
                     <svg
                             style="text-align: center; vertical-align: center; height: 100%; width: 50%"
@@ -29,7 +29,7 @@
                     </svg>
                     <div style="height: 100%; width: 50%; text-align: center; vertical-align: center;
                                      display: flex; align-items: center; justify-content: center;
-                                     color: green;" type="flex">
+                                     color: green; font-size: calc(100vw * 20 / 1500)" type="flex">
                         Student
                     </div>
                 </el-row>

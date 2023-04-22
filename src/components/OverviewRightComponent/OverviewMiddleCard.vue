@@ -1,7 +1,7 @@
 <template>
   <el-col :span="24" style="height: 100%; width: 100%">
       <div v-for="item in CardList">
-      <el-row style="height: 10vh">
+      <el-row style="height: 10vh" @click="rotate(item)">
           <el-col :span="21"
                   style="display: flex; align-items: center; padding-left: 10px; border-radius: 10px 0 0 10px;
                         border-bottom: 2px solid black; border-top: 2px solid black; border-left: 2px solid black;">
@@ -12,7 +12,6 @@
               <svg x="1682076109200" class="icon rotate" :class="{active: item.down}" viewBox="0 0 1024 1024" version="1.1"
                    xmlns="http://www.w3.org/2000/svg" p-id="2609" width="20" height="20"
                    style="transform-box:fill-box; transform-origin:center; rotate: 180deg"
-                   @click="rotate(item)"
                   >
                   <path d="M93.37191 57.154573 930.62809 540.635608 93.37191 1024Z" fill="#272636" p-id="2610">
                   </path>
@@ -41,7 +40,7 @@
                                     {{context.description}}
                                 </el-col>
                                 <el-col style="height: 10%; width: 100%; text-align: right; padding-right: 10px;">
-                                    {{context.identify}}
+<!--                                    {{context.identify}}-->
                                 </el-col>
                             </el-col>
                         </el-col>
