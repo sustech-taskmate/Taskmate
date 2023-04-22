@@ -1,0 +1,14 @@
+
+
+// Reply message box animation
+.vac-slide-up-enter-active {
+  transition: all 0.1s ease;
+}
+.vac-slide-up-leave-active {
+  transition: all 0.1s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.vac-slide-up-enter-from,
+.vac-slide-up-leave-to {
+  transform: translateY(10px);
+  opacity: 0;
+}
