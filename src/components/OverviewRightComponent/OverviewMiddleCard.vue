@@ -21,7 +21,7 @@
       <el-row class="downList" v-if="item.down"
               style="overflow-y: auto; border-radius: 10px;
                      border-bottom: 2px solid black; border-left: 2px solid black; border-right: 2px solid black; ">
-                    <div style="display: flex; flex-wrap: wrap; width: 100%">
+                    <div style="display: flex; flex-wrap: wrap; width: 100%" @click="push">
                         <el-col :span="8" v-for="context in item.listContainCard"
                                 style="height: 30vh; width: 100%; flex: 1 0 30%;
                                       display: flex; justify-content: center; align-items: center;"
@@ -57,6 +57,7 @@
 
 <script lang="ts" setup>
 import {Card, ContainCard} from "@/store/todo";
+import {router} from "@/router";
 const rotate = (p: Card) => {
     p.down = !p.down
 }
@@ -66,6 +67,9 @@ const contextColor = (context: ContainCard) =>{
     }else{
         return 'lightgreen'
     }
+}
+const push = () => {
+    router.push('/Main');
 }
 
 </script>
