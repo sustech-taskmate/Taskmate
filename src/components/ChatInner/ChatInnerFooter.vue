@@ -42,17 +42,15 @@
         <svg-icon name="emoji" color="#000"/>
       </div>
       <template v-if="showEmoji">
-        <transition name="vac-slide-up" appear>
-          <div
-              class="vac-emoji-picker"
-          >
-            <emoji-picker
-                :disable-skin-tones="true"
-                v-if="showEmoji"
-                @select="selectEmoji"
-            />
-          </div>
-        </transition>
+        <div
+            class="vac-emoji-picker"
+        >
+          <emoji-picker
+              :disable-skin-tones="true"
+              v-if="showEmoji"
+              @select="selectEmoji"
+          />
+        </div>
       </template>
       <div
           class="vac-svg-button"
