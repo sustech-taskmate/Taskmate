@@ -21,26 +21,26 @@
       <el-row class="downList" v-if="item.down"
               style="overflow-y: auto; border-radius: 10px;
                      border-bottom: 2px solid black; border-left: 2px solid black; border-right: 2px solid black; ">
-                    <div style="display: flex; flex-wrap: wrap; width: 100%" @click="push">
+                    <div style="display: flex; flex-wrap: wrap; width: 100%;
+                               align-items: center;" @click="push">
                         <el-col :span="8" v-for="context in item.listContainCard"
-                                style="height: 30vh; width: 100%; flex: 1 0 30%;
-                                      display: flex; justify-content: center; align-items: center;"
+                                style="height: 20vh; width: 100%; flex: 1 0 30%; max-width: 24vh;
+                                      display: flex; justify-content: center; align-items: center;
+                                      "
                                 >
                             <el-col :span="20"
                                     style="height: 95%; width: 95%; border: 2px solid black; border-radius: 10px;"
                                     :style="{ background: contextColor(context)}">
                                 <el-col style="height: 30%; width: 100%;
                                 display: flex; justify-content: center; align-items: center;
-                                border-bottom: 2px solid black;">
+                                border-bottom: 2px solid black; font-size: calc(100vw * 25 / 1500)">
                                     {{context.name}}
                                 </el-col>
                                 <el-col style="height: 60%; width: 100%; word-wrap: break-word; padding-left: 5px;
-                                /*display: flex; justify-content: center; align-items: center;*/
-                                ">
+                                font-size: calc(100vw * 14 / 1500)">
                                     {{context.description}}
                                 </el-col>
                                 <el-col style="height: 10%; width: 100%; text-align: right; padding-right: 10px;">
-<!--                                    {{context.identify}}-->
                                 </el-col>
                             </el-col>
                         </el-col>
@@ -84,12 +84,6 @@ export default {
             required: true
         },
     },
-    methods:{
-
-    },
-    data() {
-
-    }
 }
 </script>
 
