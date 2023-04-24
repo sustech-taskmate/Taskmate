@@ -10,7 +10,7 @@
         @click="emits('remove-file', index)"
     >
       <slot name="image-close-icon">
-        <svg-icon name="close" param="image" color="white"/>
+        <svg-icon name="close" color="white"/>
       </slot>
     </div>
 

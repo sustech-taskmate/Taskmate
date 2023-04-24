@@ -9,22 +9,21 @@
                   :preview-teleported="true"/>
       </div>
       <div style="font-size: calc(100vw * 14 / 1500);width: fit-content;" v-if="msg.senderName!=='me'">
-        <teacher-svg v-if="msg.senderType==='Teacher'"/>
-        <student-svg v-if="msg.senderType==='SA'"/>
+        <svg-icon name="teacher" v-if="msg.senderType==='Teacher'"/>
+        <svg-icon name="student" v-if="msg.senderType==='SA'"/>
         <span>{{ msg.senderName }}</span>&ensp;<span>{{ msg.dateToString() }}</span>
       </div>
       <div style="font-size: calc(100vw * 14 / 1500);width: fit-content;margin-left: auto;" v-if="msg.senderName==='me'">
         <span>{{ msg.dateToString() }}</span>&ensp;<span>{{ msg.senderName }}</span>
-        <teacher-svg v-if="msg.senderType==='Teacher'"/>
-        <student-svg v-if="msg.senderType==='SA'"/>
+        <svg-icon name="teacher" v-if="msg.senderType==='Teacher'"/>
+        <svg-icon name="student" v-if="msg.senderType==='SA'"/>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import StudentSvg from '@/components/util/StudentSvg.vue'
-import TeacherSvg from "@/components/util/TeacherSvg.vue";
+import SvgIcon from "@/components/util/SvgIcon.vue";
 
 const props = defineProps({
   messages: {

@@ -14,16 +14,8 @@
         </el-button>
       </el-row>
       <sider :AssignMap="all_data" :zipNode="zipNode"></sider>
-      <el-row>
-        <el-col :span="23">
-          <span>留言板</span>
-          <el-input
-              v-model="textarea"
-              :rows="10"
-              type="textarea"
-              placeholder="请输入你的留言"
-          />
-        </el-col>
+      <el-row style="height: 45%;margin-top: 6%">
+        <chat-inner></chat-inner>
       </el-row>
     </el-col>
     <el-col :span="myWidthCenter" style="background-color: white;display: flex; flex-direction: column;
@@ -53,6 +45,7 @@ import Sider from "@/components/AssignLeftBar/Sider.vue";
 import AssignRightBar from "@/components/AssignRightBar/AssignRightBar.vue";
 import {App} from "@/typing/system";
 import {invoke} from "@tauri-apps/api/tauri";
+import ChatInner from "@/components/ChatInner/ChatInner.vue";
 
 const route = useRoute();
 const tab = useTabStore();
