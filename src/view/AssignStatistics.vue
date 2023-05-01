@@ -3,7 +3,7 @@
     <el-header style="height: 60px; background-color:  #F0F2F5;">
       <el-row :gutter="40">
         <el-col span="4">
-          <el-button :icon="ArrowLeft" circle size="large" style="margin: 10px" />
+          <el-button :icon="ArrowLeft" @click="toAssign" circle size="large" style="margin: 10px" />
         </el-col>
         <el-col span="2">
           <div/>
@@ -73,8 +73,11 @@
 import {
   ArrowLeft
 } from '@element-plus/icons-vue'
-import {onMounted} from 'vue';
+import {onMounted, createApp} from 'vue';
 import {ECharts, EChartsOption, init} from 'echarts';
+import * as echarts from 'echarts';
+import {router} from "@/router";
+
 const colorList =[
   '#f7797d','#fbd786', '#c6ffdd',
 ]
@@ -83,7 +86,6 @@ const card ='style= "border-radius: 10px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 
 const card_body ='style =  "width: 100%;"';
 const card_head ='style = "padding: 18px;border-top-left-radius: 10px;border-top-right-radius: 10px;width: 100%;"'
 const division = 'style = "width: 100% ;color: lightslategrey;"'
-
 
 const problemData = [
     [
@@ -357,10 +359,6 @@ function getProblemFigure(id: number) {
   });
   return ele
 }
-import { createApp } from 'vue';
-import * as echarts from 'echarts';
-
-
 
 function fillFigureContent(id :number){
   getProblemFigure(id)
@@ -467,7 +465,6 @@ const addFigure2 = () => {
   const xData = ['Less than 60', '60-69', '70-79', '80-89', '90-99', '100']
   const yData= [24, 41, 22, 56, 21, 12]
   const dataLen = xData.length
-  console.log(dataLen)
   const option: EChartsOption = {
     tooltip: {
       trigger: 'axis'
@@ -543,6 +540,12 @@ onMounted(() => {
   addProblem(1);
   addProblem(2);
 });
+
+const toAssign = () => {
+  let cid = router.currentRoute.value.params.cid;
+  let aid = router.currentRoute.value.params.aid;
+  router.push({name: 'teacherAssign', params: {cid: cid, aid: aid}});
+}
 
 </script>
 

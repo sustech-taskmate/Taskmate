@@ -4,11 +4,17 @@
       <div style="border-right: 1px solid darkseagreen; height: 100vh; position: relative"
            v-bind:style="{ width: leftSize.width }">
         <div style="background-color: steelblue; position: relative; display: flex" v-bind:style="{width: leftSize.width, height: leftSize.height}">
-          <svg-icon name="home" color="white" @click="router.push('/')" style="position: absolute; height: 6vh; width: 6vw"
+          <svg-icon name="home" color="white"
+                    @click="toIndex"
+                    style="position: absolute; height: 6vh; width: 6vw; cursor: pointer"
                     v-bind:style="{left: leftSize.left1, top: leftSize.top1}"></svg-icon>
-          <svg-icon name="arrayLeft2" color="white" @click="router.push('/Main')" style="position: absolute; height: 6vh; width: 5.5vw"
+          <svg-icon name="arrayLeft2" color="white"
+                    @click="toCourse"
+                    style="position: absolute; height: 6vh; width: 5vw; cursor: pointer"
                     v-bind:style="{left: leftSize.left2, top: leftSize.top2}"></svg-icon>
-          <svg-icon name="menu2" color="white" style="position: absolute; width: 6vw; height: 8vh" @click="flexible()"
+          <svg-icon name="menu2" color="white"
+                    @click="flexible()"
+                    style="position: absolute; width: 6vw; height: 8vh; cursor: pointer"
                     v-bind:style="{left: leftSize.left3, top: leftSize.top3}"></svg-icon>
         </div>
         <div v-if="leftShow" style="height: 90vh">
@@ -59,20 +65,19 @@
         <div style="left: 0; top: 2vh; position: relative">
           <span class="word" style="line-height: 3vh; position: absolute; left: 2.5vw; top: 2vh;">Assignment2(st_time, ed_time, delay_time)...</span>
           <div style="width: 27vw; height: 7vh; position: absolute; right: 0; top: 10vh;">
-            <svg-icon name="download" style="width: 6vw; height: 6vh"></svg-icon>
-            <svg-icon name="transmit" style="width: 6vw; height: 6vh"></svg-icon>
-            <svg-icon name="signal" style="width: 6vw; height: 6vh"></svg-icon>
-            <svg-icon name="set" style="width: 7vw; height: 7vh" @click="router.push('/Main/Set')"></svg-icon>
+            <svg-icon name="download" style="width: 6vw; height: 6vh; cursor: pointer"></svg-icon>
+            <svg-icon name="transmit" style="width: 6vw; height: 6vh; cursor: pointer"></svg-icon>
+            <svg-icon name="signal" style="width: 6vw; height: 6vh; cursor: pointer" @click="toStatistics"></svg-icon>
+<!--            <svg-icon name="set" style="width: 7vw; height: 7vh" @click="router.push('/Main/Set')"></svg-icon>-->
           </div>
         </div>
         <div style="position: relative; height: 68vh; top: 22vh" v-bind:style="{ width: rightWidth }">
           <div style="background-color: steelblue; height: 10vh">
             <span class="word" style="line-height: 3vh; color: white; position: absolute; left: 2.5vw; top: 4vh;">Student List</span>
-            <svg-icon name="play2" color="white" @click="router.push('/Main/View')" style="position: absolute; right: 0; top: 1vh; width: 8vw; height: 8vh"></svg-icon>
+            <svg-icon name="play2" color="white" style="position: absolute; right: 0; top: 1vh; width: 8vw; height: 8vh"></svg-icon>
           </div>
           <el-table
               :data="tableData"
-              @sort-change="sortChange"
               :row-style="getRowStyle"
               :header-row-style="{height: '10vh', background: 'pink'}"
           >
@@ -87,7 +92,7 @@
 
             <el-table-column label="查看附件" width="auto" align="center">
               <template v-slot="scope">
-                <el-button type="primary" @click="router.push('/Main/Homework/Assign')">批改</el-button>
+                <el-button type="primary" @click="toGrade">批改</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -141,27 +146,49 @@ import {reactive, ref} from "vue";
 import {router} from '@/router';
 import SvgIcon from "@/components/util/SvgIcon.vue";
 
+const toIndex = () => {
+  router.push({name: 'index'});
+}
+
+const toCourse = () => {
+  let fullPath = router.currentRoute.value.fullPath;
+  let cid = router.currentRoute.value.params.cid;
+  let paths = fullPath.split('/');
+  let path = '/' + paths[1] + '/' + paths[2];
+  let name = '';
+  if (path === '/grade/t') {
+    name = 'teacherCourse';
+  } else {
+    // TODO: for student
+  }
+  router.push({name: name, params: {cid: cid}});
+}
+
+const toStatistics = () => {
+  let cid = router.currentRoute.value.params.cid;
+  let aid = router.currentRoute.value.params.aid;
+  router.push({name: 'statistics', params: {cid: cid, aid: aid}});
+}
+
+const toGrade = () => {
+  //TODO: get grading id
+  let cid = router.currentRoute.value.params.cid;
+  let aid = router.currentRoute.value.params.aid;
+  let gid = 1;
+  router.push({name: 'grade', params: {cid: cid, aid: aid, gid: gid}});
+}
+
 enum AssignmentState{
   notModified,
   modifying,
-  finish
+  finished
 }
 
-class UrlFile{
-  fileUrl: string;
-  assignState: AssignmentState;
-
-  constructor(str: string, state: AssignmentState) {
-    this.fileUrl = str;
-    this.assignState = state;
-  }
-
-}
 interface StudentContent {
   id: number,
   name: string,
   submitState: string | null,
-  modifyState: UrlFile,
+  modifyState: AssignmentState,
   lastModifiedBy: string,
   lastTime: string | null,
   score: number,
@@ -175,55 +202,39 @@ const tableData: StudentContent[] = reactive([
     id: 12010000,
     name: 'aaaa',
     submitState: '04-28',
-    modifyState: new UrlFile("src/assets/icon/error.png", AssignmentState.notModified),
+    modifyState: AssignmentState.notModified,
     lastModifiedBy: "aaaa",
     lastTime: '04-28',
-    score: 0
+    score: 66
   },
   {
     id: 12010001,
     name: 'aaaa',
     submitState: '04-28',
-    modifyState: new UrlFile("src/assets/icon/warning.png", AssignmentState.modifying),
+    modifyState: AssignmentState.modifying,
     lastModifiedBy: "aasda",
     lastTime: '04-28',
-    score: 0
+    score: 87
   },
   {
     id: 12010002,
     name: 'aaaa',
     submitState: '04-28',
-    modifyState: new UrlFile("src/assets/icon/error.png", AssignmentState.notModified),
+    modifyState: AssignmentState.finished,
     lastModifiedBy: "arra",
     lastTime: '04-28',
-    score: 0
+    score: 33
   },
   {
     id: 12010003,
     name: 'aaaa',
     submitState: '04-28',
-    modifyState: new UrlFile("src/assets/icon/successful.png", AssignmentState.finish),
+    modifyState: AssignmentState.modifying,
     lastModifiedBy: "aafdbkp",
     lastTime: '04-28',
-    score: 0
+    score: 99
   },
 ])
-
-const compare = (custom: {modifyState: UrlFile}, order: string) => {
-  return function (obj1: StudentContent, obj2:StudentContent) {
-    const value1 = obj1["modifyState"];
-    const value2 = obj2["modifyState"];
-    if (value1.assignState <= value2.assignState) {
-      return order === 'ascending' ? -1 : 1
-    } else {
-      return order === 'ascending' ? 1 : -1
-    }
-  }
-}
-
-const sortChange = (custom: any) => {
-  tableData.sort(compare(custom.prop, custom.order))
-}
 
 let courseShow = ref(true);
 let courseShow2 = ref(true);
@@ -245,7 +256,7 @@ const myClick = () => {
 
 let leftSize = reactive({
   left1: '0',
-  left2: '4vw',
+  left2: '5vw',
   left3: '16vw',
   top1: '2vh',
   top2: '2vh',
@@ -272,7 +283,7 @@ const flexible = () => {
   else if (leftSize.width === '6vw') {
     leftSize = reactive({
       left1: '0',
-      left2: '4vw',
+      left2: '5vw',
       left3: '16vw',
       top1: '2vh',
       top2: '2vh',
@@ -286,13 +297,12 @@ const flexible = () => {
 
 const getRowStyle = ({ rowIndex }: { rowIndex: number }) => {
   let color = '';
-  if (rowIndex === 0 || rowIndex === 2) {
+  let data = tableData[rowIndex];
+  if (data.modifyState === AssignmentState.notModified) {
     color = 'rgb(255, 228, 227)'
-  }
-  else if (rowIndex === 1) {
+  } else if (data.modifyState === AssignmentState.modifying) {
     color = 'rgb(255, 255, 224)'
-  }
-  else if (rowIndex === 3) {
+  } else {
     color = 'rgb(229, 255, 234)'
   }
   return {

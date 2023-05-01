@@ -1,3 +1,4 @@
+<script src="../router/index.ts"></script>
 <template>
   <el-container type="flex" style="height: 100vh; width: 100%">
       <el-col :span="16" type="flex" style="border-bottom: 2px solid black;">
@@ -35,7 +36,7 @@ let StudentTodo = reactive([])
 
 let CardList = reactive([
     new Card("2077 Spring", [
-        new ContainCard("CS101", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "SA"),
+        new ContainCard("CS101", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Student"),
         new ContainCard("CS101", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "SA"),
         new ContainCard("CS101", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "SA"),
         new ContainCard("CS101", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "SA"),

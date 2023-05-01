@@ -1,32 +1,40 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import {App} from "vue";
 
-const routes: Array<RouteRecordRaw> = [
+const routes = [
   {
     path: '/',
-    component: () => import('../view/Overview.vue')
+    name: 'index',
+    component: () => import('../view/Index.vue')
   },
   {
-    path: '/Main',
-    component: () => import('../view/Main.vue')
+    path: '/loading',
+    name: 'loading',
+    component: () => import('../view/Loading.vue')
   },
   {
-    path: '/Register',
-    component: () => import('../view/Register.vue')
+    path: '/grade/t/:cid',
+    name: 'teacherCourse',
+    component: () => import('../view/CourseView.vue')
   },
   {
-    path: '/Main/Homework',
-    name: 'homework',
-    component: () => import('../view/Homework.vue')
+    path: '/grade/t/:cid/:aid',
+    name: 'teacherAssign',
+    component: () => import('../view/AssignView.vue')
   },
   {
-    path: '/Main/Set',
-    component: () => import('../view/Set.vue')
+    path: '/grade/t/:cid/:aid/statistics',
+    name: 'statistics',
+    component: () => import('../view/AssignStatistics.vue')
   },
+  // {
+  //   path: '/Main/Set',
+  //   component: () => import('../view/AssignSetting.vue')
+  // },
   {
-    path: '/Main/Homework/Assign',
-    name: 'assign',
-    component: () => import('../view/Assign.vue'),
+    path: '/grade/t/:cid/:aid/:gid',
+    name: 'grade',
+    component: () => import('../view/Grading.vue'),
     children: [{
       path: 'file/',
       name: 'render',
@@ -35,7 +43,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/Main/View',
-    component: () => import('../view/View.vue')
+    component: () => import('../view/AssignStatistics.vue')
   }
 
 ]

@@ -4,15 +4,12 @@
       <div style="border-right: 1px solid darkseagreen; height: 100vh; position: relative"
            v-bind:style="{ width: leftSize.width }">
         <div style="background-color: steelblue; position: relative; display: flex" v-bind:style="{width: leftSize.width, height: leftSize.height}">
-          <svg-icon name="home" color="white" @click="router.push('/')" style="position: absolute; height: 6vh; width: 6vw"
+          <svg-icon name="home" color="white" @click="toIndex"
+                    style="position: absolute; height: 6vh; width: 6vw;cursor: pointer"
                     v-bind:style="{left: leftSize.left1, top: leftSize.top1}"></svg-icon>
-  <!--        <div v-show="leftShow">-->
-  <!--          <span style="font-size: 2vw; line-height: 4vh; position: absolute; left: 9.5vw; top: 3vh"-->
-  <!--                v-bind:style="{ color: idColor}">{{ identity }}</span>-->
-  <!--          <svg-icon name="circle" :color="idColor" style="position: absolute; left: 6vw; top: 2vh; width: 3vw; height: 6vh"-->
-  <!--          @click="changeID()"></svg-icon>-->
-  <!--        </div>-->
-          <svg-icon name="menu2" color="white" style="position: absolute; width: 6vw; height: 8vh" @click="flexible()"
+          <svg-icon name="menu2" color="white"
+                    style="position: absolute; width: 6vw; height: 8vh; cursor: pointer"
+                    @click="flexible()"
                     v-bind:style="{left: leftSize.left2, top: leftSize.top2}"></svg-icon>
         </div>
         <div v-if="leftShow" style="height: 90vh">
@@ -70,6 +67,7 @@
               :data="tableData"
               :row-style="getRowStyle"
               :header-row-style="{height: '10vh', background: 'pink'}"
+              height="100%"
           >
             <el-table-column prop="name" label="作业" width="auto" align="center"/>
             <el-table-column prop="releaseTime" sortable label="发布时间" width="auto" align="center"/>
@@ -78,15 +76,15 @@
             <el-table-column prop="submitRatio" label="提交比" width="auto" align="center"/>
             <el-table-column prop="gradeRatio" label="评分比" width="auto" align="center"/>
             <el-table-column label="查看作业" width="auto" align="center">
-              <template v-slot="scope">
-                <el-button type="primary" @click="router.push('/Main/Homework')">查看</el-button>
+              <template  #default="scope">
+                <el-button type="primary" @click="toAssign(scope.$index)">查看</el-button>
               </template>
             </el-table-column>
-            <el-table-column label="修改作业" width="auto" align="center">
-              <template v-slot="scope">
-                <el-button type="primary" @click="router.push('/Main/Set')">修改</el-button>
-              </template>
-            </el-table-column>
+<!--            <el-table-column label="修改作业" width="auto" align="center">-->
+<!--              <template v-slot="scope">-->
+<!--                <el-button type="primary" @click="router.push('/Main/Set')">修改</el-button>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
           </el-table>
         </div>
       </div>
@@ -145,17 +143,17 @@ class CourseData{
   delayTime: string;
   submitRatio: string;
   gradeRatio: string;
-  isReturn: {a: boolean, b: string};
+  isReturn: boolean;
 
   constructor(name:string, releaseTime: string, deadline: string, delayTime: string,
-              submitRatio: string, gradeRatio: string, isReturn: boolean, url: string) {
+              submitRatio: string, gradeRatio: string, isReturn: boolean) {
     this.name = name;
     this.releaseTime = releaseTime;
     this.deadline = deadline;
     this.delayTime = delayTime;
     this.submitRatio = submitRatio;
     this.gradeRatio = gradeRatio;
-    this.isReturn = {a: isReturn, b: url};
+    this.isReturn = isReturn;
   }
 }
 
@@ -167,7 +165,7 @@ const tableData: CourseData[] = reactive([
     delayTime: '04-29',
     submitRatio: '155/0',
     gradeRatio: '144/15',
-    isReturn: {a: true, b: "src/assets/icon/successful.png"},
+    isReturn: true,
   },
   {
     name: "Assignment two",
@@ -176,76 +174,9 @@ const tableData: CourseData[] = reactive([
     delayTime: '04-29',
     submitRatio: '155/0',
     gradeRatio: '144/15',
-    isReturn: {a: true, b: "src/assets/icon/successful.png"},
-  },
-  {
-    name: "Assignment three",
-    releaseTime: '04-29',
-    deadline: '04-29',
-    delayTime: '04-29',
-    submitRatio: '155/0',
-    gradeRatio: '144/15',
-    isReturn: {a: false, b: "src/assets/icon/error.png"},
+    isReturn: false,
   },
 ])
-
-const tableDataStudent = reactive([
-  {
-    name: "Assignment one",
-    releaseTime: new Date('2023-01-27 23:59'),
-    deadline: new Date('2023-01-27 23:59'),
-    delayTime: new Date('2023-01-28 23:59'),
-  },
-  {
-    name: "Assignment two",
-    releaseTime: new Date('2023-01-28 23:59'),
-    deadline: new Date('2023-01-28 23:59'),
-    delayTime: new Date('2023-01-29 23:59'),
-  },
-  {
-    name: "Assignment three",
-    releaseTime: new Date('2023-01-29 23:59'),
-    deadline: new Date('2023-01-29 23:59'),
-    delayTime: new Date('2023-01-30 23:59'),
-  },
-])
-
-// let identity = ref('Student');
-// let idColor = ref('rgb(255, 183, 185)')
-// let idShow = ref(true)
-//
-// onBeforeMount(() => {
-//   if (identity.value === 'SA') {
-//     idColor.value = 'rgb(255, 183, 185)';
-//     idShow.value = true;
-//   }
-//   else if (identity.value === 'Student') {
-//     idColor.value = 'rgb(182, 255, 191)';
-//     idShow.value = false;
-//   }
-// });
-//
-// const changeID = () => {
-//   if (identity.value === 'SA') {
-//     identity.value = 'Student'
-//     idShow.value = false
-//     idColor.value = 'rgb(182, 255, 191)'
-//   }
-//   else if (identity.value === 'Student') {
-//     identity.value = 'SA'
-//     idShow.value = true
-//     idColor.value = 'rgb(255, 183, 185)'
-//   }
-// }
-//
-// const check = () => {
-//   if (identity.value === 'SA') {
-//     router.push('/Main/Homework')
-//   }
-//   else if (identity.value === 'Student') {
-//     //跳转到学生查看作业页面
-//   }
-// }
 
 let courseShow = ref(true);
 let courseShow2 = ref(true);
@@ -262,7 +193,18 @@ const hidden2 = () => {
 }
 
 const myClick = () => {
-  alert(1)
+
+}
+
+const toIndex = () => {
+  router.push({name: 'index'})
+}
+
+const toAssign = (index: any) => {
+  let assignment = tableData[index];
+  let aid = assignment.name;
+  let cid = router.currentRoute.value.params.cid;
+  router.push({name: 'teacherAssign', params: {cid: cid, aid: aid}})
 }
 
 let leftSize = reactive({
@@ -302,10 +244,10 @@ const flexible = () => {
 
 const getRowStyle = ({ rowIndex }: { rowIndex: number }) => {
   let color = '';
-  if (rowIndex === 0 || rowIndex === 1) {
+  let assignment = tableData[rowIndex];
+  if (assignment.isReturn) {
     color = 'rgb(229, 255, 234)'
-  }
-  else if (rowIndex === 2) {
+  } else {
     color = 'rgb(255, 228, 227)'
   }
   return {

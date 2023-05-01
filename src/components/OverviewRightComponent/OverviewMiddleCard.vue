@@ -21,16 +21,15 @@
       <el-row class="downList" v-if="item.down"
               style="overflow-y: auto; border-radius: 10px;
                      border-bottom: 2px solid black; border-left: 2px solid black; border-right: 2px solid black; ">
-                    <div style="display: flex; flex-wrap: wrap; width: 100%;
-                               align-items: center;" @click="push">
+                    <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;" >
                         <el-col :span="8" v-for="context in item.listContainCard"
                                 style="height: 20vh; width: 100%; flex: 1 0 30%; max-width: 24vh;
-                                      display: flex; justify-content: center; align-items: center;
-                                      "
-                                >
+                                      display: flex; justify-content: center; align-items: center;">
                             <el-col :span="20"
-                                    style="height: 95%; width: 95%; border: 2px solid black; border-radius: 10px;"
-                                    :style="{ background: contextColor(context)}">
+                                    style="height: 95%; width: 95%; border: 2px solid black;
+                                    border-radius: 10px;cursor: pointer"
+                                    :style="{ background: contextColor(context)}"
+                                    @click="toCourse(context)">
                                 <el-col style="height: 30%; width: 100%;
                                 display: flex; justify-content: center; align-items: center;
                                 border-bottom: 2px solid black; font-size: calc(100vw * 25 / 1500)">
@@ -68,8 +67,14 @@ const contextColor = (context: ContainCard) =>{
         return 'lightgreen'
     }
 }
-const push = () => {
-    router.push('/Main');
+const toCourse = (item: any) => {
+    let identify = item.identify;
+    let name = item.name;
+    if (identify == "SA") {
+        router.push({name: 'teacherCourse', params: {cid: name}});
+    } else {
+        console.log('Student Course')
+    }
 }
 
 </script>
