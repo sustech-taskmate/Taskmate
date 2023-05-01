@@ -13,7 +13,7 @@
         </el-col>
       </el-row>
     </el-header>
-    <el-main id='body' class="main" style="background-color:  #F0F2F5;">
+    <el-main id='body' class="main" style="background-color:  #F0F2F5;width: 100%;overflow-x: hidden">
       <el-row :gutter="40">
         <el-col :span="8">
           <div class="card-container" >
@@ -239,7 +239,7 @@ function getTable(data: any,height : number): HTMLElement {
   const table = document.createElement('table');
   table.setAttribute('style',"margin-top: 10px;  border-collapse: collapse;  box-sizing: border-box;  width: 100%;  text-align: center;  border-collapse:separate;border-spacing:0px 10px;")
   if (height>0){
-    container.setAttribute('style', 'overflow-y:scroll;height:' + height + 'px')
+    container.setAttribute('style', 'overflow-y:auto;height:' + height + 'px')
   }
   table.appendChild(head)
   table.appendChild(body)
@@ -258,7 +258,7 @@ function getProblemDistribution(id: number):HTMLElement{
           </div>
           <hr ${division}/>
           <div ${card_body}>
-            <div id="problem${id}Table" style="width: 100%;height:398px"/>
+            <div id="problem${id}Table" style="width: 100%;height:398px;"/>
           </div>
         </div>
       </div>
