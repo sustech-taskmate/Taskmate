@@ -1,4 +1,3 @@
-<script src="../router/index.ts"></script>
 <template>
   <el-container type="flex" style="height: 100vh; width: 100%">
       <el-col :span="16" type="flex" style="border-bottom: 2px solid black;">
