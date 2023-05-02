@@ -45,10 +45,9 @@ export default {
 <style>
 .chat {
   display: flex;
-  width: 98%;
-  height: 100%;
+  width: 100%;
+  height: 90%;
   background-color: #F5F5F5;
-  border-radius: 10px;
   box-sizing: border-box;
   flex-direction: column;
 }

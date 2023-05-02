@@ -21,7 +21,7 @@
       <div class="vac-icon-close">
         <div class="vac-svg-button" @click="emits('reset-files')">
           <slot name="files-close-icon">
-            <svg-icon name="close-outline"/>
+            <svg-icon name="closeoutline"/>
           </slot>
         </div>
       </div>

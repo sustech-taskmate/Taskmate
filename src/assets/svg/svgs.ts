@@ -104,3 +104,6 @@ let menu2Paths = ['M192.037 287.953h640.124c17.673 0 32-14.327 32-32s-14.327-32-
 let menu2 = new Svg('menu2', 1024, menu2Paths)
 svgMap[menu2.name] = menu2
 
+let subtractPaths = ['M587.229378 437.990403 580.722174 437.990403 76.975139 437.990403 76.975139 581.918419 580.722174 581.918419 587.229378 581.918419 940.542216 581.918419 940.542216 437.990403Z']
+let subtract = new Svg('subtract', 1024, subtractPaths)
+svgMap[subtract.name] = subtract

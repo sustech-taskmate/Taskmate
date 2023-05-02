@@ -8,8 +8,8 @@
         @select="handleUpdateMenu"
         style="border-right: none; width: 100%;"
     >
-      <h2>作业文件</h2>
-      <template v-for="(item, index) in this.AssignMap.values()" :key="index">
+      <h2 v-if="!myCollapse">Assignment Files</h2>
+      <template v-for="(item, index) in this.assignMap.values()" :key="index">
         <TreeMenu v-if="item.format===AssignFileType.zip" :index="item.index" :nodes="zipNode">
         </TreeMenu>
 
@@ -51,12 +51,16 @@ import {useRoute} from "vue-router";
 export default defineComponent({
   name: 'Sider',
   props: {
-    AssignMap: {
+    assignMap: {
       type: Object as PropType<Map<string, App.AssignMenu>>,
       required: true
     },
     zipNode: {
       type: Array as () => FileTreeNode[],
+      required: true
+    },
+    myCollapse: {
+      type: Boolean,
       required: true
     }
   },
@@ -78,7 +82,7 @@ export default defineComponent({
       routerPush({
         name: 'render',
         query: {
-          detail: encrypt(this.AssignMap.get(_key.split('_')[0])),
+          detail: encrypt(this.assignMap.get(_key.split('_')[0])),
         }
       })
     }
