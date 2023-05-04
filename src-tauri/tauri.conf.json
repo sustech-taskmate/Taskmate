@@ -17,6 +17,16 @@
         "all": false,
         "open": true
       },
+      "path": {
+        "all": true
+      },
+      "fs": {
+        "all": true,
+        "scope": [
+          "$APP/*",
+          "$appDataDir/*"
+        ]
+      },
       "http": {
         "all": true,
         "request": true,

@@ -25,12 +25,12 @@ class AssignFile {
 class ZipFile {
     name: string = '';
     dir: boolean = false;
-    data: Blob | undefined;
+    url: string = '';
 
-    constructor(name: string, dir: boolean, data: Blob | undefined) {
+    constructor(name: string, dir: boolean, url: string) {
         this.name = name;
         this.dir = dir;
-        this.data = data;
+        this.url=url;
     }
 }
 
@@ -38,15 +38,15 @@ class FileTreeNode {
     filename: string = '';
     isDir: boolean = false;
     isRoot: boolean = false;
-    data: Blob | undefined;
+    url: string = '';
     parent: FileTreeNode | undefined;
     children: FileTreeNode[] = [];
 
-    constructor(filename: string, isDir: boolean, isRoot: boolean, data: Blob | undefined) {
+    constructor(filename: string, isDir: boolean, isRoot: boolean, url: string) {
         this.filename = filename;
         this.isDir = isDir;
         this.isRoot = isRoot;
-        this.data = data;
+        this.url=url;
     }
 }
 
