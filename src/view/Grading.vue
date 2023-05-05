@@ -53,14 +53,14 @@
 
 
 <script lang="ts" setup>
-import {AssignFile, AssignFileType} from '@/store/assign';
+import {downloadFile} from '@/composable/grade'
+import {AssignFile, AssignFileType, FileTreeNode, ZipFile} from '@/store/assign';
 import {ref, watch} from "vue";
 import {useElementBounding} from '@vueuse/core';
 import {useTabStore} from "@/store";
 import Sider from "@/components/AssignLeftBar/Sider.vue";
 import AssignRightBar from "@/components/AssignRightBar/AssignRightBar.vue";
 import {App} from "@/typing/system";
-import {invoke} from "@tauri-apps/api/tauri";
 import ChatInner from "@/components/ChatInner/ChatInner.vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
@@ -152,189 +152,11 @@ const flexible = () => {
   topbarMenu.value = leftCollapse.value ? 24 : 4;
 }
 
-let fileMap = new Map<string, AssignFile>([
-  ['test.zip', new AssignFile('test.zip', AssignFileType.zip,
-      'src/assets/test.zip', undefined)],
-  ['test1.mp4', new AssignFile('test1.mp4', AssignFileType.video,
-      'src/assets/test1.mp4', undefined)],
-  ['test.pdf', new AssignFile('test.pdf', AssignFileType.pdf,
-      'src/assets/test.pdf', undefined)],
-  ['test.png', new AssignFile('test.png', AssignFileType.image,
-      'src/assets/test.png', undefined)],
-  ['test1.png', new AssignFile('test1.png', AssignFileType.image,
-      'src/assets/test1.png', undefined)],
-  ['test.txt', new AssignFile('test.txt', AssignFileType.txt,
-      'src/assets/test.txt', 'Test TXT')],
-  ['test.md', new AssignFile('test.md', AssignFileType.markdown,
-      'src/assets/test.md', '# Test Markdown')],
-])
-let format = ref(AssignFileType.placeholder);
-let url = ref("");
-let data = ref("");
+let zipNode = ref([] as FileTreeNode[]);
+downloadFile().then((res) => {
+  zipNode.value.push(res);
+})
 
-const handleSelect = (key: string, keyPath: string[]) => {
-  let filename = key.split("\n")[0];
-  let file = fileMap.get(filename);
-  if (!file) return;
-  if (file.format === AssignFileType.pdf) {
-    format.value = file.format;
-    url.value = file.url;
-  } else if (file.format === AssignFileType.video) {
-    format.value = file.format;
-    url.value = file.url;
-  } else if (file.format === AssignFileType.zip) {
-    format.value = file.format;
-    url.value = file.url;
-  } else if (file.format === AssignFileType.image) {
-    format.value = file.format;
-    url.value = file.url;
-  } else if (file.format === AssignFileType.txt) {
-    format.value = file.format;
-    url.value = file.url;
-    data.value = file.data;
-  } else if (file.format === AssignFileType.markdown) {
-    format.value = file.format;
-    url.value = file.url;
-    data.value = file.data;
-  }
-}
-
-</script>
-
-<script lang="ts">
-import {defineComponent} from 'vue';
-import JSZip, {JSZipObject} from 'jszip';
-import {AssignFile, AssignFileType, FileTreeNode, ZipFile} from '@/store/assign';
-import {invoke} from '@tauri-apps/api/tauri'
-import { exists, readTextFile } from '@tauri-apps/api/fs';
-import {appDataDir} from '@tauri-apps/api/path';
-import * as path from 'path';
-
-export default defineComponent({
-  name: 'Assign',
-  created() {
-    let zipFiles = this.getTemplateZipData("src/assets/test.zip");
-    zipFiles.then(data => {
-      this.zipNode.push(this.buildFileTree("test.zip", (data as ZipFile[])));
-    });
-  },
-  mounted() {
-  },
-  data() {
-    return {
-      zipNode: [] as FileTreeNode[],
-    }
-  },
-  methods: {
-    urlToBlob(url: string) {
-      return new Promise((resolve, reject) => {
-        fetch(url).then(response => {
-          return response.blob();
-        }).then(blobData => {
-          resolve(blobData)
-        })
-      })
-    },
-    getZipData(blobData: Blob) {
-      return new Promise(async (resolve, reject) => {
-        let zips = [] as ZipFile[];
-        let zipObj = new JSZip();
-        let zipFile = await zipObj.loadAsync(blobData as any);
-        for (let key in zipFile.files) {
-          let file = zipFile.files[key];
-          let f = undefined;
-          if (file.dir) {
-            f = new ZipFile(file.name, true, undefined);
-          } else {
-            let tmpName = zipFile.files[key].name;
-            let fileBlob = await (zipFile.file(tmpName) as JSZipObject).async("blob");
-            f = new ZipFile(file.name, false, fileBlob);
-          }
-          zips.push(f);
-        }
-        resolve(zips);
-      })
-    },
-    getTemplateZipData(url: string) {
-      return new Promise(async (resolve, reject) => {
-        let blobData = await this.urlToBlob(url) as Blob;
-        let templateData = await this.getZipData(blobData)
-        resolve(templateData);
-      })
-    },
-    async getDownloadPath(): Promise<string> {
-      return appDataDir()
-    },
-    async downloadFile(url: string) {
-      /*
-        test url : "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip"
-       */
-      const path = await this.getDownloadPath();
-      const origin = await this.getDownloadPath();
-      console.log(path)
-      invoke('download_file', {url: url, filePath: path}).then(
-          (resolved:any) => {
-            console.log(resolved)
-          }
-      ).catch((err) =>{
-        console.log(err)
-      });
-      await invoke('analyze_dir', {target: path + "\\student_file", origin: origin})
-      /*
-        from origin path get path.json and buildFileTree
-      * */
-      const ZipName = "student_file";
-      let fPath: string = path.concat("\\").concat("path.json");
-      console.log(fPath);
-      exists(fPath).then()
-          .catch((err)=>{
-            console.log(err);
-          })
-      const fileContent=await  readTextFile(fPath);
-      const zipFiles: ZipFile[] = JSON.parse(fileContent).data as ZipFile[];
-      const fileTree = this.buildFileTree("student_file", zipFiles);
-      console.log(fileTree)
-    },
-    buildFileTree(zipName: string, zipFiles: ZipFile[]): FileTreeNode {
-      const root = new FileTreeNode(zipName, true, true, '');
-      zipFiles.sort((a: ZipFile, b: ZipFile) => a.name.length - b.name.length);
-      const map = new Map<string, FileTreeNode>();
-      map.set('', root);
-      for (const file of zipFiles) {
-        let dirName = file.name;
-        if (file.dir) {
-          dirName+='/';
-          let substring = dirName.substring(0, dirName.length - 1);
-          let index = substring.lastIndexOf('/');
-          if (index === -1) {
-            let p = new FileTreeNode(substring, true, false, file.url);
-            p.parent = root;
-            root.children.push(p);
-            map.set(dirName, p);
-          } else {
-            substring = dirName.substring(index + 1, dirName.length - 1);
-            let p = new FileTreeNode(substring, true, false, file.url);
-            p.parent = map.get(dirName.substring(0, index + 1));
-            (map.get(dirName.substring(0, index + 1)) as FileTreeNode).children.push(p);
-            map.set(dirName, p);
-          }
-        } else {
-          let index = dirName.lastIndexOf('/');
-          if (index === -1) {
-            let p = new FileTreeNode(dirName, false, false, file.url);
-            p.parent = root;
-            root.children.push(p);
-          } else {
-            let p = new FileTreeNode(dirName.substring(index + 1), false, false, file.url);
-            p.parent = map.get(dirName.substring(0, index + 1));
-            (map.get(dirName.substring(0, index + 1)) as FileTreeNode).children.push(p);
-          }
-        }
-      }
-      return root;
-    }
-  }
-});
 </script>
 
 <style>
