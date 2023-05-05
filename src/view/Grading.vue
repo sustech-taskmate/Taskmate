@@ -55,7 +55,6 @@
 <script lang="ts" setup>
 import {AssignFile, AssignFileType} from '@/store/assign';
 import {ref, watch} from "vue";
-import {useRoute} from "vue-router";
 import {useElementBounding} from '@vueuse/core';
 import {useTabStore} from "@/store";
 import Sider from "@/components/AssignLeftBar/Sider.vue";
@@ -64,16 +63,19 @@ import {App} from "@/typing/system";
 import {invoke} from "@tauri-apps/api/tauri";
 import ChatInner from "@/components/ChatInner/ChatInner.vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
-import {router} from "@/router";
-
-const toAssign = () => {
-  let cid = router.currentRoute.value.params.cid;
-  let aid = router.currentRoute.value.params.aid;
-  router.push({name: 'teacherAssign', params: {cid: cid, aid: aid}});
-}
+import {useRoute} from "vue-router";
+import {useRouterPush} from "@/composable";
 
 const route = useRoute();
+const {routerPush} = useRouterPush();
 const tab = useTabStore();
+
+const toAssign = () => {
+  let cid = route.params.cid;
+  let aid = route.params.aid;
+  routerPush({name: 'teacherAssign', params: {cid: cid, aid: aid}});
+}
+
 
 const bsWrapper = ref<HTMLElement>();
 const {width: bsWrapperWidth, left: bsWrapperLeft} = useElementBounding(bsWrapper);

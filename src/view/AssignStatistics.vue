@@ -76,7 +76,11 @@ import {
 import {onMounted, createApp} from 'vue';
 import {ECharts, EChartsOption, init} from 'echarts';
 import * as echarts from 'echarts';
-import {router} from "@/router";
+import {useRoute} from "vue-router";
+import {useRouterPush} from "@/composable";
+
+const route = useRoute();
+const {routerPush} = useRouterPush();
 
 const colorList =[
   '#f7797d','#fbd786', '#c6ffdd',
@@ -542,9 +546,9 @@ onMounted(() => {
 });
 
 const toAssign = () => {
-  let cid = router.currentRoute.value.params.cid;
-  let aid = router.currentRoute.value.params.aid;
-  router.push({name: 'teacherAssign', params: {cid: cid, aid: aid}});
+  let cid = route.params.cid;
+  let aid = route.params.aid;
+  routerPush({name: 'teacherAssign', params: {cid: cid, aid: aid}});
 }
 
 </script>

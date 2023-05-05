@@ -135,6 +135,11 @@ import {reactive, ref, defineComponent, onBeforeMount} from 'vue';
 import {router} from '@/router';
 import moment from "moment";
 import SvgIcon from "@/components/util/SvgIcon.vue";
+import {useRoute} from "vue-router";
+import {useRouterPush} from "@/composable";
+
+const route = useRoute();
+const {routerPush} = useRouterPush();
 
 class CourseData{
   name: string;
@@ -197,14 +202,14 @@ const myClick = () => {
 }
 
 const toIndex = () => {
-  router.push({name: 'index'})
+  routerPush({name: 'index'});
 }
 
 const toAssign = (index: any) => {
   let assignment = tableData[index];
-  let aid = assignment.name;
-  let cid = router.currentRoute.value.params.cid;
-  router.push({name: 'teacherAssign', params: {cid: cid, aid: aid}})
+  let aid = assignment.name; // TODO: update to aid
+  let cid = route.params.cid;
+  routerPush({name: 'teacherAssign', params: {cid: cid, aid: aid}});
 }
 
 let leftSize = reactive({

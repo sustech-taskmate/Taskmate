@@ -57,6 +57,10 @@
 <script lang="ts" setup>
 import {Card, ContainCard} from "@/store/todo";
 import {router} from "@/router";
+import {useRouterPush} from "@/composable";
+
+const {routerPush} = useRouterPush();
+
 const rotate = (p: Card) => {
     p.down = !p.down
 }
@@ -71,7 +75,7 @@ const toCourse = (item: any) => {
     let identify = item.identify;
     let name = item.name;
     if (identify == "SA") {
-        router.push({name: 'teacherCourse', params: {cid: name}});
+        routerPush({name: 'teacherCourse', params: {cid: name}})
     } else {
         console.log('Student Course')
     }

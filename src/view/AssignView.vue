@@ -143,16 +143,20 @@ a {
 
 <script setup lang="ts">
 import {reactive, ref} from "vue";
-import {router} from '@/router';
 import SvgIcon from "@/components/util/SvgIcon.vue";
+import {useRoute} from "vue-router";
+import {useRouterPush} from "@/composable";
+
+const route = useRoute();
+const {routerPush} = useRouterPush();
 
 const toIndex = () => {
-  router.push({name: 'index'});
+  routerPush({name: 'index'});
 }
 
 const toCourse = () => {
-  let fullPath = router.currentRoute.value.fullPath;
-  let cid = router.currentRoute.value.params.cid;
+  let fullPath = route.fullPath;
+  let cid = route.params.cid;
   let paths = fullPath.split('/');
   let path = '/' + paths[1] + '/' + paths[2];
   let name = '';
@@ -161,21 +165,21 @@ const toCourse = () => {
   } else {
     // TODO: for student
   }
-  router.push({name: name, params: {cid: cid}});
+  routerPush({name: name, params: {cid: cid}});
 }
 
 const toStatistics = () => {
-  let cid = router.currentRoute.value.params.cid;
-  let aid = router.currentRoute.value.params.aid;
-  router.push({name: 'statistics', params: {cid: cid, aid: aid}});
+  let cid = route.params.cid;
+  let aid = route.params.aid;
+  routerPush({name: 'statistics', params: {cid: cid, aid: aid}});
 }
 
 const toGrade = () => {
   //TODO: get grading id
-  let cid = router.currentRoute.value.params.cid;
-  let aid = router.currentRoute.value.params.aid;
+  let cid = route.params.cid;
+  let aid = route.params.aid;
   let gid = 1;
-  router.push({name: 'grade', params: {cid: cid, aid: aid, gid: gid}});
+  routerPush({name: 'grade', params: {cid: cid, aid: aid, gid: gid}});
 }
 
 enum AssignmentState{
