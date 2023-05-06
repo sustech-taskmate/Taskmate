@@ -1,6 +1,6 @@
 <template>
   <div class="title-box">
-    CS307 Assignment1
+    <div style="color: white">CS307 Assignment1</div>
   </div>
   <div class="top-box">
     <assign-info></assign-info>
@@ -36,17 +36,18 @@ export default {
   width: 100%;
   height: 8%;
   font-size: calc(100vw * 20 / 1500);
+  background-color: steelblue;
 }
 
 .top-box {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 16%;
+  height: 20%;
 }
 
 .card-box-max {
-  height: 64%;
+  height: 60%;
   overflow-x: hidden;
   overflow-y: auto;
 }

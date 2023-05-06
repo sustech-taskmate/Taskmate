@@ -45,7 +45,7 @@
         <component :is="Component"/>
       </router-view>
     </el-col>
-    <el-col :span="5" style="background-color: yellowgreen">
+    <el-col :span="5" style="background-color: #EEF0F1">
       <assign-right-bar></assign-right-bar>
     </el-col>
   </el-container>

@@ -27,21 +27,20 @@ export default {
 }
 
 .submit {
-  color: #f038ff;
+  color: #6A7FA0;
 }
 
 .submit:hover {
-  background-color: #f038ff;
-  -moz-box-shadow: 10px 10px 99px 6px rgba(240, 56, 255, 1);
+  background-color: #6A7FA0;
 }
 
 .next {
-  color: teal;
+  color: #548585;
   margin-left: calc(100vw * 10 / 1500);
 }
 
 .next:hover {
-  background-color: teal;
+  background-color: #548585;
   -moz-box-shadow: 10px 10px 99px 6px rgba(0, 128, 128, 1);
 }
 </style>
