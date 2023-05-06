@@ -23,8 +23,8 @@
       "fs": {
         "all": true,
         "scope": [
-          "$APP/*",
-          "$appDataDir/*"
+          "$APP/**",
+          "$appDataDir/**"
         ]
       },
       "http": {

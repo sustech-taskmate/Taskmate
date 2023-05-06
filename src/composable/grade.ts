@@ -3,13 +3,18 @@ import {exists, readTextFile} from "@tauri-apps/api/fs";
 import {FileTreeNode, ZipFile} from "@/store/assign";
 import {appDataDir} from "@tauri-apps/api/path";
 
-async function downloadFile(/*url: string*/) {
+async function downloadFile(/*url: string, submitId: string*/) {
     /*
-      test url : "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip"
+        test url:
+        let url = "https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.pdf"      //pdf
+        let url = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip";    //small zip
+        let url = "https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.zip";      //zip
      */
-    let url = "https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.zip";
-    const path = await getDownloadPath();
-    const origin = await getDownloadPath();
+    let url = "https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.pdf"      //pdf
+    let submitId = "123456";
+
+    let path = await getDownloadPath();
+    path += "\\taskmate"+"\\"+submitId;
     // console.log(path)
     invoke('download_file', {url: url, filePath: path}).then(
         (resolved: any) => {
@@ -18,6 +23,14 @@ async function downloadFile(/*url: string*/) {
     ).catch((err) => {
         // console.log(err)
     });
+}
+
+async function analyzeDir(/*submitId: string*/){
+    let submitId = "123456";
+    let path = await getDownloadPath();
+    path += "\\taskmate"+"\\"+submitId;
+    const origin = path;
+
     await invoke('analyze_dir', {target: path + "\\student_file", origin: origin})
     // from origin path get path.json and buildFileTree
     let fPath: string = path.concat("\\").concat("path.json");
@@ -31,6 +44,7 @@ async function downloadFile(/*url: string*/) {
     return buildFileTree("student_file", zipFiles);
 }
 
+
 async function getDownloadPath(): Promise<string> {
     return appDataDir()
 }
@@ -42,6 +56,8 @@ function buildFileTree(zipName: string, zipFiles: ZipFile[]): FileTreeNode {
     map.set('', root);
     for (const file of zipFiles) {
         let dirName = file.name;
+        if (dirName=="")continue;
+        dirName=dirName.substring(1);
         if (file.dir) {
             dirName += '/';
             let substring = dirName.substring(0, dirName.length - 1);
@@ -74,4 +90,4 @@ function buildFileTree(zipName: string, zipFiles: ZipFile[]): FileTreeNode {
     return root;
 }
 
-export {downloadFile}
+export {downloadFile, analyzeDir}

@@ -53,7 +53,7 @@
 
 
 <script lang="ts" setup>
-import {downloadFile} from '@/composable/grade'
+import {downloadFile, analyzeDir} from '@/composable/grade'
 import {AssignFile, AssignFileType, FileTreeNode, ZipFile} from '@/store/assign';
 import {ref, watch} from "vue";
 import {useElementBounding} from '@vueuse/core';
@@ -153,7 +153,9 @@ const flexible = () => {
 }
 
 let zipNode = ref([] as FileTreeNode[]);
-downloadFile().then((res) => {
+downloadFile()
+
+analyzeDir().then((res) => {
   zipNode.value.push(res);
 })
 
