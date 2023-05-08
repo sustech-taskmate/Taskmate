@@ -18,8 +18,7 @@
                     style="cursor: pointer; width: 5vw; height: 5vh"/>
         </el-col>
       </el-row>
-      <sider :assignMap="allData" :zipNode="zipNode" :myCollapse="leftCollapse"
-             v-bind:style="{height: siderHeight}"></sider>
+      <sider :nodes="nodes" :myCollapse="leftCollapse" v-bind:style="{height: siderHeight}"/>
       <div style="display: flex;background-color: steelblue;width: 100%;height: 5%;
                   font-size: calc(100vh * 28 / 1500);text-align: center;align-items: center;
                   justify-content: center;color: white;border-radius: 100px;cursor: pointer"
@@ -53,14 +52,13 @@
 
 
 <script lang="ts" setup>
-import {downloadFile, analyzeDir} from '@/composable/grade'
-import {AssignFile, AssignFileType, FileTreeNode, ZipFile} from '@/store/assign';
+import {analyzeDir, downloadAll} from '@/composable/grade'
+import {FileTreeNode} from '@/store/assign';
 import {ref, watch} from "vue";
 import {useElementBounding} from '@vueuse/core';
 import {useTabStore} from "@/store";
 import Sider from "@/components/AssignLeftBar/Sider.vue";
 import AssignRightBar from "@/components/AssignRightBar/AssignRightBar.vue";
-import {App} from "@/typing/system";
 import ChatInner from "@/components/ChatInner/ChatInner.vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
@@ -70,11 +68,12 @@ const route = useRoute();
 const {routerPush} = useRouterPush();
 const tab = useTabStore();
 
-const toAssign = () => {
-  let cid = route.params.cid;
-  let aid = route.params.aid;
-  routerPush({name: 'teacherAssign', params: {cid: cid, aid: aid}});
-}
+const cid = route.params.cid;
+const aid = route.params.aid;
+const gid = route.params.gid;
+
+const toAssign = () =>
+    routerPush({name: 'teacherAssign', params: {cid: cid, aid: aid}});
 
 
 const bsWrapper = ref<HTMLElement>();
@@ -106,18 +105,6 @@ watch(
 );
 
 init()
-
-let allData = new Map<string, App.AssignMenu>([
-  ['src/assets/test.zip', {
-    index: "src/assets/test.zip", name: "test.zip", format: AssignFileType.zip
-  }],
-  ['src/assets/test1.mp4', {
-    index: "src/assets/test1.mp4", name: "test1.mp4", format: AssignFileType.video,
-  }],
-  ['src/assets/test.pdf', {
-    index: "src/assets/test.pdf", name: "test.pdf", format: AssignFileType.pdf,
-  }]
-])
 
 let leftCollapse = ref(false)
 let myWidthLeft = ref(5)
@@ -152,48 +139,20 @@ const flexible = () => {
   topbarMenu.value = leftCollapse.value ? 24 : 4;
 }
 
-let zipNode = ref([] as FileTreeNode[]);
-downloadFile()
 
-analyzeDir().then((res) => {
-  zipNode.value.push(res);
+let urls = ['https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/a.zip', 'https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.pdf']
+// TODO
+downloadAll(urls, (gid as string));
+let nodes = ref(new Map<string, FileTreeNode>());
+analyzeDir((gid as string)).then((res) => {
+  for (let i = 0; i < res.children.length; i++) {
+    nodes.value.set(res.children[i].url, res.children[i]);
+  }
 })
 
 </script>
 
 <style>
-
-.empty {
-  width: 100%;
-  height: 100%;
-}
-
-.txt {
-  white-space: pre-wrap;
-  text-align: left;
-  max-height: 100%;
-  width: 100%;
-  overflow-y: scroll;
-}
-
-.md {
-  text-align: left;
-  max-height: 100%;
-  width: 100%;
-  overflow-y: scroll;
-}
-
-.scale-enter-active,
-.scale-leave-active {
-  transition: all 0.5s ease;
-}
-
-
-.scale-enter-from,
-.scale-leave-to {
-  opacity: 0;
-  transform: scale(0.9);
-}
 
 .chatbar {
   display: flex;

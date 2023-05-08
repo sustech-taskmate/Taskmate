@@ -1,4 +1,3 @@
-import {AssignFileType} from "@/store/assign";
 import type {HttpOptions, RequestOptions, Response as res} from '@tauri-apps/api/http'
 
 declare namespace Service {
@@ -33,12 +32,6 @@ declare namespace Service {
 }
 
 declare namespace App {
-    type AssignMenu = {
-        index: string // path/name
-        name: string
-        format: AssignFileType
-    }
-
     interface AssignTabRoute
         extends Pick<import('vue-router').RouteLocationNormalizedLoaded, 'name' | 'fullPath' | 'meta'> {
         scrollPosition: {
