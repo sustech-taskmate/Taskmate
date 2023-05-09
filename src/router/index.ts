@@ -5,7 +5,7 @@ const routes = [
   {
     path: '/',
     name: 'index',
-    component: () => import('../view/Index.vue')
+    component: () => import('../view/Submit.vue')
   },
   {
     path: '/loading',
