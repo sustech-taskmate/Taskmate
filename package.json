@@ -18,16 +18,13 @@
     "element-plus": "^2.3.0",
     "jszip": "^3.10.1",
     "moment": "2.24.0",
-    "pdfjs-dist": "^3.4.120",
     "pinia": "^2.0.34",
     "pnpm": "^7.29.1",
     "prismjs": "^1.29.0",
     "vue": "^3.2.45",
-    "vue-pdf-embed": "^1.1.5",
     "vue-router": "^4.1.6",
     "vue-video-player": "6.0.0",
     "vue3-emoji-picker": "^1.1.7",
-    "vue3-pdfjs": "^0.1.6",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
