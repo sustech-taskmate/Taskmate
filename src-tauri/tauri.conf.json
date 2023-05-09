@@ -22,9 +22,11 @@
       },
       "fs": {
         "all": true,
+        "readFile": true,
         "scope": [
           "$APP/**",
-          "$appDataDir/**"
+          "$appDataDir/**",
+          "$APPDATA/**"
         ]
       },
       "http": {
@@ -34,6 +36,11 @@
           "http://**",
           "https://**"
         ]
+      },
+      "protocol": {
+        "all": true,
+        "asset": true,
+        "assetScope": ["$APPDATA/**"]
       }
     },
     "bundle": {
@@ -45,7 +52,7 @@
       "targets": "all"
     },
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
     },
     "updater": {
       "active": false
