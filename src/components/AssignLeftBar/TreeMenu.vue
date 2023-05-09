@@ -1,6 +1,6 @@
 <template>
   <template v-for="(node, index) in nodes" :key="index">
-    <el-sub-menu v-if="node.isRoot" :index="node.filename">
+    <el-sub-menu v-if="node.isRoot" :index="node.url">
       <template #title>
         <el-icon>
           <FolderOpened/>
@@ -9,7 +9,7 @@
       </template>
       <tree-menu :nodes="node.children"></tree-menu>
     </el-sub-menu>
-    <el-sub-menu v-else-if="node.isDir" :index="node.filename">
+    <el-sub-menu v-else-if="node.isDir" :index="node.url">
       <template #title>
         <el-icon>
           <Folder/>
@@ -18,7 +18,7 @@
       </template>
       <tree-menu :nodes="node.children"></tree-menu>
     </el-sub-menu>
-    <el-menu-item v-else :index="node.filename">
+    <el-menu-item v-else :index="node.url">
       <el-icon>
         <Document/>
       </el-icon>

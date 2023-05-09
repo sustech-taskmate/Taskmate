@@ -6,6 +6,7 @@ enum AssignFileType {
     txt,
     markdown,
     zip,
+    other,
     placeholder
 }
 
@@ -14,6 +15,7 @@ class AssignFile {
     format: AssignFileType = AssignFileType.placeholder;
     url: string = '';
     data: any
+
     constructor(filename: string, format: AssignFileType, url: string, data: any) {
         this.filename = filename;
         this.format = format;
@@ -30,24 +32,38 @@ class ZipFile {
     constructor(name: string, dir: boolean, url: string) {
         this.name = name;
         this.dir = dir;
-        this.url=url;
+        this.url = url;
     }
 }
 
 class FileTreeNode {
     filename: string = '';
     isDir: boolean = false;
-    isRoot: boolean = false;
-    url: string = '';
+    isRoot: boolean = false; // indicate whether it is the root node
+    url: string = ''; // index
+    format: AssignFileType = AssignFileType.placeholder;
     parent: FileTreeNode | undefined;
     children: FileTreeNode[] = [];
 
-    constructor(filename: string, isDir: boolean, isRoot: boolean, url: string) {
+    constructor(filename: string, isDir: boolean,
+                isRoot: boolean, url: string,
+                format: AssignFileType) {
         this.filename = filename;
         this.isDir = isDir;
         this.isRoot = isRoot;
-        this.url=url;
+        this.url = url;
+        this.format = format;
     }
 }
 
-export {AssignFileType, AssignFile, ZipFile, FileTreeNode}
+class FileTo {
+    url: string = '';
+    format: AssignFileType = AssignFileType.placeholder;
+
+    constructor(url: string, format: AssignFileType) {
+        this.url = url;
+        this.format = format;
+    }
+}
+
+export {AssignFileType, AssignFile, ZipFile, FileTreeNode, FileTo}

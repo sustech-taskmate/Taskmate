@@ -3,17 +3,14 @@
     <el-menu
         id="assign-sider"
         class="el-menu-vertical-demo"
-        :default-active="route.query?.path"
         :collapse="myCollapse"
         @select="handleUpdateMenu"
         style="border-right: none; width: 100%;"
     >
       <h2 v-if="!myCollapse">Assignment Files</h2>
-      <template v-for="(item, index) in this.assignMap.values()" :key="index">
-        <TreeMenu v-if="item.format===AssignFileType.zip" :index="item.index" :nodes="zipNode">
-        </TreeMenu>
-
-        <el-menu-item v-else :index="item.index">
+      <template v-for="(item, index) in this.nodes.values()" :key="index">
+        <tree-menu v-if="item.format===AssignFileType.zip" :index="item.url" :nodes="[item]"/>
+        <el-menu-item v-else :index="item.url">
           <el-icon v-if="item.format===AssignFileType.video">
             <VideoPlay/>
           </el-icon>
@@ -24,7 +21,7 @@
             <Document/>
           </el-icon>
           <template #title>
-            <span>{{ item.name }}</span>
+            <span>{{ item.filename }}</span>
           </template>
         </el-menu-item>
       </template>
@@ -40,23 +37,18 @@ import {
 } from '@element-plus/icons-vue'
 import {defineComponent, PropType} from 'vue';
 import TreeMenu from "@/components/AssignLeftBar/TreeMenu.vue";
-import JSZip, {JSZipObject} from 'jszip';
-import {FileTreeNode, ZipFile} from '@/store/assign';
+import {FileTo, FileTreeNode} from '@/store/assign';
 import {useRouterPush} from "@/composable";
 import {AssignFileType} from "@/store/assign";
-import {App} from "@/typing/system";
-import {encrypt, decrypt} from "@/util/crypto";
+import {encrypt} from "@/util/crypto";
 import {useRoute} from "vue-router";
+import {findNode} from "@/composable/grade";
 
 export default defineComponent({
   name: 'Sider',
   props: {
-    assignMap: {
-      type: Object as PropType<Map<string, App.AssignMenu>>,
-      required: true
-    },
-    zipNode: {
-      type: Array as () => FileTreeNode[],
+    nodes: {
+      type: Object as PropType<Map<string, FileTreeNode>>,
       required: true
     },
     myCollapse: {
@@ -77,12 +69,20 @@ export default defineComponent({
     }
   },
   methods: {
-    handleUpdateMenu(_key: string, keyPath: string) {
+    handleUpdateMenu(_key: string, keyPath: string[]) {
+      let node = undefined;
+      if (_key == keyPath[0]) {
+        node = this.nodes.get(_key) as FileTreeNode;
+      } else  {
+        let root = this.nodes.get(keyPath[0]) as FileTreeNode;
+        node = findNode(root, keyPath);
+      }
+      let to = new FileTo(node.url, node.format);
       const {routerPush} = useRouterPush();
       routerPush({
         name: 'render',
         query: {
-          detail: encrypt(this.assignMap.get(_key.split('_')[0])),
+          detail: encrypt(to),
         }
       })
     }
