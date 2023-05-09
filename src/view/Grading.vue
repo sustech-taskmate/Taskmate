@@ -68,12 +68,12 @@ const route = useRoute();
 const {routerPush} = useRouterPush();
 const tab = useTabStore();
 
-const cid = route.params.cid;
-const aid = route.params.aid;
-const gid = route.params.gid;
+const cid = ref(route.params.cid);
+const aid = ref(route.params.aid);
+const gid = ref(route.params.gid);
 
 const toAssign = () =>
-    routerPush({name: 'teacherAssign', params: {cid: cid, aid: aid}});
+    routerPush({name: 'teacherAssign', params: {cid: cid.value, aid: aid.value}});
 
 
 const bsWrapper = ref<HTMLElement>();
@@ -141,10 +141,9 @@ const flexible = () => {
 
 
 let urls = ['https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/a.zip', 'https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.pdf']
-// TODO
-downloadAll(urls, (gid as string));
+downloadAll(urls, (gid.value as string));
 let nodes = ref(new Map<string, FileTreeNode>());
-analyzeDir((gid as string)).then((res) => {
+analyzeDir((gid.value as string)).then((res) => {
   for (let i = 0; i < res.children.length; i++) {
     nodes.value.set(res.children[i].url, res.children[i]);
   }

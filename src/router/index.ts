@@ -5,7 +5,7 @@ const routes = [
   {
     path: '/',
     name: 'index',
-    component: () => import('../view/Submit.vue')
+    component: () => import('../view/Index.vue')
   },
   {
     path: '/loading',
@@ -41,10 +41,6 @@ const routes = [
       component: () => import('../components/AssignContent/FileContent.vue')
     }]
   },
-  {
-    path: '/Main/View',
-    component: () => import('../view/AssignStatistics.vue')
-  }
 
 ]
 
