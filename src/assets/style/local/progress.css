@@ -1,107 +1,63 @@
-.box1 {
+.box {
+    height: 100%;
     position: relative;
-    width: 40%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.percent {
-    position: relative;
-    width: 110px;
-    height: 110px;
-}
-
-.percent svg {
-    position: relative;
-    width: 110px;
-    height: 110px;
-}
-
-.percent svg circle {
-    fill: none;
-    stroke-width: 4px;
-    stroke: #000;
-    transform: translate(15px, 2px);
-    stroke-dasharray: 251;
-    stroke-dashoffset: 251;
-}
-
-.box1 .percent svg circle:nth-child(1) {
-    stroke-dashoffset: 0;
-    stroke: #f3f3f3;
-}
-
-.box1 .percent svg circle:nth-child(1) {
-    stroke-dashoffset: calc(251 - (251 * 87) / 100);
-    stroke: steelblue;
-}
-
-.percent .number {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+.text-prog {
     display: flex;
+    height: 10%;
+    color: #999;
+    font-size: calc(100vw * 18 / 1500);
+    letter-spacing: 1px;
+    justify-content: center;
+}
+
+.cont-prog {
+    display: flex;
+    width: calc(100vw * 120 / 1500);
+    height: calc(100vw * 120 / 1500);
+    font-size: 16px;
+    text-align: center;
     justify-content: center;
     align-items: center;
-    color: #111;
-    margin-top: -12%
 }
 
-.percent .number h2 {
-    font-size: 16px;
+.progress-bar-bg {
+    fill: none;
+    stroke: #dddddd;
+    stroke-width: 6;
 }
 
-.point-box {
-    position: relative;
-    width: 100%;
-    height: 110px;
+.progress-bar {
+    fill: none;
+    stroke: #40a9ff;
+    stroke-width: 6;
+    stroke-dasharray: 0, 999;
+    animation: progress 1s ease forwards;
+}
+
+@keyframes progress {
+    to {
+        stroke-dasharray: 284, 999;
+    }
 }
 
 .point {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #111;
-    margin-top: -10%
-}
-
-.point h3 {
     font-size: calc(100vw * 24 / 1500);
+    line-height: calc(100vw * 24 / 1500);
     font-weight: bold;
+    text-align: center;
 }
 
-.percent .number span {
-    font-size: 18px;
-}
-
-.box1 .text-prog {
-    color: #999;
+.student-cnt {
+    position: absolute;
     font-size: calc(100vw * 18 / 1500);
-    letter-spacing: 1px;
+    line-height: calc(100vw * 18 / 1500);
+    font-weight: bold;
+    text-align: center;
 }
-
-.box2 {
-    position: relative;
-    width: 60%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.box2 .text-prog {
-    color: #999;
-    font-size: calc(100vw * 18 / 1500);
-    letter-spacing: 1px;
-}
-
 

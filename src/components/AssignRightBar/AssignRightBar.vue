@@ -3,7 +3,12 @@
     <div style="color: white">CS307 Assignment1</div>
   </div>
   <div class="top-box">
-    <assign-info></assign-info>
+    <assign-info
+        :finished-students="100"
+        :all-students="200"
+        :given-points="98.20"
+        :total-points="100.00"
+    />
   </div>
   <div class="card-box-max">
     <card></card>
