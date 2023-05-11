@@ -43,7 +43,7 @@
               @after-leave="hideInput(item)"
           >
             <span v-show="!item.controller.isShowInput" @click="showInput(item)">
-              {{ item.comment == '' ? 'Please add your comments here' : item.comment }}</span>
+              {{ item.comment === '' ? 'Please add your comments here' : item.comment }}</span>
             <el-input v-model="item.comment" slot="content" type="textarea" :rows="4" ref="input"
                       v-show="item.controller.isShowInput" @change="hideInput(item)" @blur="hideInput(item)"
                       placeholder="Please add comments here" maxlength="1000" show-word-limit
@@ -62,7 +62,9 @@
         </el-icon>
       </el-col>
     </el-row>
-    <el-row class="sub-card-box" :class="{'active': item.controller.isPullDown}" v-for="(sub, idx) in item.subCards">
+    <el-row class="sub-card-box" v-if="item.controller.isPullDown"
+            :class="{'active': item.controller.isPullDown}"
+            v-for="(sub, idx) in item.subCards">
       <el-row class="sub-card">
         <el-col :span="1"></el-col>
         <el-col :span="4">
@@ -81,7 +83,8 @@
                      @input="updateSubPoints(sub)" v-model="sub.controller.pointInput"
                      @blur="setSubPointUneditable(sub)" class="sub-point-input"
                      :id="'sub' + item.questionIdx.toString() + '_' + idx.toString()">
-              <div v-show="!sub.controller.pointEditable" @click="setSubPointEditable(sub, item, idx)" class="sub-point-display">
+              <div v-show="!sub.controller.pointEditable" @click="setSubPointEditable(sub, item, idx)"
+                   class="sub-point-display">
                 {{ sub.points }}
               </div>
             </div>
