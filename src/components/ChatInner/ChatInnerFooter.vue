@@ -32,7 +32,7 @@
             type="file"
             id="uploadFile"
             accept="image/*"
-            @change="onFileChange($event.target.files)"
+            @change="onFileChange($event.target)"
         />
       </div>
       <div
@@ -136,7 +136,8 @@ const onChangeInput = () => {
   }
 }
 
-async function onFileChange(choseFiles: any) {
+async function onFileChange(event: any) {
+  let choseFiles = event.files;
   focusTextarea()
   Array.from(choseFiles).forEach(
       async (file: any) => {

@@ -23,11 +23,13 @@
 </template>
 
 <script lang="ts" setup>
+import {PropType} from "vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
+import {ChatMessage} from "@/store/chat";
 
 const props = defineProps({
   messages: {
-    type: [],
+    type: Array as PropType<ChatMessage[]>,
     required: true
   }
 })
