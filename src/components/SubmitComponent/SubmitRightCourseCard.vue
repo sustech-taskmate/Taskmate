@@ -29,16 +29,6 @@
     </el-col>
 </template>
 
-
-<script lang="ts" setup>
-
-import {Assignment, Course} from "@/store/submit";
-
-const rotate = (item: Course) => {
-    item.down = !item.down
-}
-</script>
-
 <script lang="ts">
 import {Assignment, Course} from "@/store/submit";
 import { defineComponent } from 'vue';
@@ -55,7 +45,10 @@ export default defineComponent({
             console.log("aaa")
             this.$emit('child-event', context);
             this.$emit('order', courseName, context.name)
-        }
+        },
+      rotate (item: Course) {
+        item.down = !item.down
+      }
     }
 })
 </script>

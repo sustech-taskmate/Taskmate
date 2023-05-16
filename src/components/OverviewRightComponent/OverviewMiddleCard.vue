@@ -56,6 +56,14 @@
 <script lang="ts" setup>
 import {Card, ContainCard} from "@/store/todo";
 import {useRouterPush} from "@/composable";
+import {PropType} from "vue";
+
+const props = defineProps({
+  CardList: {
+    type: Array as PropType<Card[]>,
+    required: true
+  },
+})
 
 const {routerPush} = useRouterPush();
 
@@ -79,20 +87,6 @@ const toCourse = (item: any) => {
     }
 }
 
-</script>
-
-<script lang="ts">
-import {ContainCard} from '@/store/todo';
-
-export default {
-    name: "OverviewMiddleCard",
-    props: {
-        CardList: {
-            type: Array,
-            required: true
-        },
-    },
-}
 </script>
 
 <style scoped>

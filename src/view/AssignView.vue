@@ -81,14 +81,14 @@
               :row-style="getRowStyle"
               :header-row-style="{height: '10vh', background: 'pink'}"
           >
-            <el-table-column type="selection" v-if="myShow"> </el-table-column>
+            <el-table-column type="selection" v-if="true"> </el-table-column>
             <el-table-column prop="id" sortable label="学号" width="auto" align="center"/>
             <el-table-column prop="name" label="姓名" width="auto" align="center"/>
             <el-table-column prop="score" sortable label="分数" width="auto" align="center"/>
             <el-table-column prop="submitState" sortable label="提交时间" width="auto" align="center"/>
             <el-table-column prop="lastModifiedBy" label="上次修改者" width="auto" align="center"/>
             <el-table-column prop="lastTime"
-                             label="上次修改时间" width="auto" :formatter="dateFormat2" align="center"/>
+                             label="上次修改时间" width="auto" align="center"/>
 
             <el-table-column label="查看附件" width="auto" align="center">
               <template v-slot="scope">

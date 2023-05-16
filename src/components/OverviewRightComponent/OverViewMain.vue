@@ -44,12 +44,13 @@
 <script lang="ts">
 import OverviewMiddleCard from "@/components/OverviewRightComponent/OverviewMiddleCard.vue";
 import {Card} from '@/store/todo';
+import {PropType} from "vue";
 export default {
     name: "OverViewMain",
     components: {OverviewMiddleCard},
     props: {
         CardList: {
-            type: Array,
+            type: Array as PropType<Card[]>,
             required: true
         },
     }
