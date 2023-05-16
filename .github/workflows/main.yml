@@ -21,7 +21,7 @@ jobs:
           profile: minimal
           
       - name: Install Tauri CLI
-        run: pnpm install tauri-bundler --force
+        run: cargo install tauri-bundler --force
 
       - name: Build Tauri Application
         run: pnpm tauri build
