@@ -25,7 +25,7 @@
 import {AssignFileType, FileTo} from '@/store/assign';
 import {ref, watch} from "vue";
 import {useRoute} from "vue-router";
-import {decrypt} from "@/util/crypto";
+import {decrypt} from "@/util";
 import {convertFileSrc} from "@tauri-apps/api/tauri";
 import {readBinaryFile} from "@tauri-apps/api/fs";
 

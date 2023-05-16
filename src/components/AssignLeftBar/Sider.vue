@@ -35,7 +35,7 @@ import {PropType} from 'vue';
 import {FileTo, FileTreeNode} from '@/store/assign';
 import {useRouterPush} from "@/composable";
 import {AssignFileType} from "@/store/assign";
-import {encrypt} from "@/util/crypto";
+import {encrypt} from "@/util";
 import {findNode} from "@/composable/grade";
 
 const props = defineProps({
