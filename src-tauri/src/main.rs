@@ -4,14 +4,11 @@
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
 use std::env;
-use std::process;
-use std::process::Command;
 
 use tauri::{*};
 use url::Url;
 
 mod file_handler;
-mod protocol;
 mod tray;
 mod browser;
 
@@ -35,7 +32,7 @@ fn main() {
                     handle.emit_all("authenticate", Payload { token }).unwrap();
                 },
             );
-            app.once_global("authenticate", |event| { browser::open_browser("https://spaces.sustech.cloud/"); });
+            app.once_global("authenticate", |_event| { browser::open_browser("https://spaces.sustech.cloud/"); });
             Ok(())
         })
         .system_tray(tray::menu())

@@ -85,7 +85,7 @@ enum ExtractOperationType {
 }
 
 #[tauri::command]
-pub fn download_file(url: &str, filePath: &str) -> Result<(), String> {
+pub fn download_file(url: &str, file_path: &str) -> Result<(), String> {
     let should_extract : ExtractOperationType;
     let response = get(url).map_err(|err| err.to_string())?;
     let bytes = response.bytes().map_err(|err| err.to_string())?;
@@ -100,15 +100,15 @@ pub fn download_file(url: &str, filePath: &str) -> Result<(), String> {
         }
     }
     let file_name = Path::new(url).file_name().ok_or("get filename error")?;
-    let root_path = Path::new(filePath).join("student_file");
-    let filePath = Path::new(filePath).join("student_file").join(file_name);
-    let zip_path = filePath.file_stem().ok_or("get file stem error")?;
+    let root_path = Path::new(file_path).join("student_file");
+    let file_path = Path::new(file_path).join("student_file").join(file_name);
+    let zip_path = file_path.file_stem().ok_or("get file stem error")?;
     let zip_path = Path::new(&root_path).join(zip_path);
     if !root_path.exists(){
         create_dir_all(&root_path).map_err(|err| err.to_string())?;
     }
     // drop(root_path);
-    let result = File::create(&filePath);
+    let result = File::create(&file_path);
     match result {
         Ok(mut file) => {
             file.write_all(slice).map_err(|err| err.to_string())?;
@@ -118,11 +118,11 @@ pub fn download_file(url: &str, filePath: &str) -> Result<(), String> {
             {
                 if should_extract == ExtractOperationType::Zip {
                     // extract(&filePath,  &zip_path, &origin_path);
-                    extract_zip(&filePath,  &zip_path).map_err(|err| err.to_string())?;
+                    extract_zip(&file_path,  &zip_path).map_err(|err| err.to_string())?;
                     //delete filePath
                 }
                 if should_extract == ExtractOperationType::TarGz{
-                    extract_targz(&filePath, &zip_path).map_err(|err| err.to_string())?;
+                    extract_targz(&file_path, &zip_path).map_err(|err| err.to_string())?;
                     //delete filePath
                 }
             }
