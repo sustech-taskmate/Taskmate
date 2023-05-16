@@ -8,7 +8,11 @@ on:
 jobs:
   build:
     name: Build Tauri Application
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
 
     steps:
       - name: Checkout Repository
@@ -24,6 +28,9 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 7.x.x
+      
+      - name: install dependencies
+        run: pnpm install
 
       - name: Build Tauri Application
         run: pnpm tauri build
