@@ -19,6 +19,11 @@ jobs:
         with:
           toolchain: stable
           profile: minimal
+          
+      - name: install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7.x.x
 
       - name: Build Tauri Application
         run: pnpm tauri build
