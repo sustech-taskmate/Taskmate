@@ -9,7 +9,7 @@ import type {Service} from "@/typing/system";
 import {Body} from "@tauri-apps/api/http";
 import {loginAuth} from '@/util'
 
-await loginAuth()
+loginAuth()
 
 let listener = async function (e: any) {
   if (e.detail && e.detail.key == 'token' && e.detail.value) {
