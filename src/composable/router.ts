@@ -2,6 +2,10 @@ import type {RouteLocationRaw} from "vue-router";
 import {useRouter} from 'vue-router';
 import {router as globalRouter} from "@/router";
 
+
+export default {
+    useRouterPush
+}
 export function useRouterPush(inSetup = false) {
     const router = inSetup ? useRouter() : globalRouter;
     const route = globalRouter.currentRoute;
