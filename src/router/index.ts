@@ -1,4 +1,4 @@
-import {createRouter, createWebHashHistory, NavigationGuardNext, RouteLocationNormalized} from 'vue-router'
+import {createRouter, createWebHashHistory, NavigationGuardNext, RouteLocationNormalized, createMemoryHistory} from 'vue-router'
 import {App} from "vue";
 
 const routes = [
