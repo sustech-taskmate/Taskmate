@@ -1,0 +1,36 @@
+name: Build Tauri Application
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build Tauri Application
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          
+      - name: install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7.x.x
+      
+      - name: install dependencies
+        run: pnpm install
+
+      - name: Build Tauri Application
+        run: pnpm tauri build
