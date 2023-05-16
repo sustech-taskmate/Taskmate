@@ -40,7 +40,9 @@
       "protocol": {
         "all": true,
         "asset": true,
-        "assetScope": ["$APPDATA/**"]
+        "assetScope": [
+          "$APPDATA/**"
+        ]
       }
     },
     "bundle": {
@@ -48,7 +50,7 @@
       "icon": [
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "cn.taskmate.edu",
       "targets": "all"
     },
     "security": {
