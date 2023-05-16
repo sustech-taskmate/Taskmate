@@ -1,31 +1,43 @@
 use std::env;
-use std::process::Command;
 use std::fs::File;
 use std::io::prelude::*;
+use std::process::Command;
 
 #[tauri::command]
-pub async fn reg_url_protocol() -> Result<(), String>{
+pub fn reg_url_protocol() -> Result<(), String> {
     let os: &str = env::consts::OS;
-    let mut exe = env::current_exe().unwrap();
-
+    let exe = env::current_exe().unwrap();
     match os {
         "windows" => {
-            let exe: &str = exe.to_str().unwrap();
-
-            Command::new("reg.exe")
-                .args(&["add", "HKEY_CLASSES_ROOT\\taskmate"])
-                .args(&["/v", "URL Protocol"])
-                .args(&["/t", "REG_SZ"])
-                .args(&["/d", "taskmate Protocol"])
+            let exe = exe.to_str().unwrap();
+            let registry = Command::new("cmd")
+                .arg("/c")
+                .args(&["reg", "query", "HKCR\\taskmate", "/s"])
                 .output()
-                .unwrap();
+                .expect("failed to execute command");
+            let stdout = String::from_utf8_lossy(&registry.stdout).to_string();
+            if stdout.contains(&exe) {
+                return Ok(());
+            }
 
-            Command::new("reg.exe")
-                .args(&["add", "HKEY_CLASSES_ROOT\\taskmate", "\\shell\\open\\command"])
-                .arg(&"/ve")
-                .args(&["/d", &format!(r#""{}" "%1""#, exe)])
+            let exe = exe.replace("\\", "\\\\");
+            let output = Command::new("powershell")
+                .arg("-Command")
+                .arg("Start-Process")
+                .arg("-FilePath")
+                .arg("cmd")
+                .arg("\'/c")
+                .args(&["reg", "add", "HKEY_CLASSES_ROOT\\taskmate", "/v", "\"URL Protocol\"", "/t", "REG_SZ", "/d", "\"taskmate Protocol\"", "/f"])
+                .arg("&")
+                .args(&["reg", "add", "HKEY_CLASSES_ROOT\\taskmate\\shell\\open\\command", "/ve", "/d", &format!(r#"{}" "%1"#, exe), "/f"])
+                .arg("\'")
+                .arg("-Verb")
+                .arg("runas")
                 .output()
-                .unwrap();
+                .expect("failed to execute command");
+            if !output.status.success() {
+                panic!("Failed to register protocol handler: {:?}", String::from_utf8_lossy(&output.stdout));
+            }
 
             Ok(())
         }
