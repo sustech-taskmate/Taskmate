@@ -18,7 +18,7 @@
         class="vac-message-image"
         :class="{ 'vac-blur-loading': file.loading }"
         :style="{
-				'background-image': `url('${file.localUrl || file.url}')`
+				'background-image': `url('${file.localUrl}')`
 			}"
     />
   </div>
@@ -28,9 +28,10 @@
 import Loader from '@/components/util/Loader.vue'
 import SvgIcon from '@/components/util/SvgIcon.vue'
 import '@/assets/style/local/chatfile.scss'
+import {ChatFile} from "@/store/chat";
 
 const props = defineProps({
-  file: {type: Object, required: true},
+  file: {type: ChatFile, required: true},
   index: {type: Number, required: true}
 })
 

@@ -32,9 +32,11 @@
 <script lang="ts" setup>
 import ChatInnerFile from "./ChatInnerFile.vue";
 import SvgIcon from '@/components/util/SvgIcon.vue'
+import {PropType} from "vue";
+import {ChatFile} from "@/store/chat";
 
 const props = defineProps({
-  files: {type: Array, required: true}
+  files: {type: Array as PropType<ChatFile[]>, required: true}
 })
 const emits = defineEmits(['remove-file', 'reset-files'])
 </script>

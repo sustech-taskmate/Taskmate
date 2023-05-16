@@ -4,9 +4,8 @@
   </div>
   <iframe v-if="format===AssignFileType.pdf" style="width: 100%; height: 100%;" :src="url"/>
   <iframe v-if="format===AssignFileType.office" style="width: 100%; height: 100%;" :src="url"/>
-  <div style="flex: 1">
+  <div style="flex: 1" v-if="format===AssignFileType.image">
     <el-image
-        v-if="format===AssignFileType.image"
         ref="image"
         lazy
         class="image"
@@ -26,7 +25,7 @@
 import {AssignFileType, FileTo} from '@/store/assign';
 import {ref, watch} from "vue";
 import {useRoute} from "vue-router";
-import {decrypt} from "@/util/crypto";
+import {decrypt} from "@/util";
 import {convertFileSrc} from "@tauri-apps/api/tauri";
 import {readBinaryFile} from "@tauri-apps/api/fs";
 
@@ -41,12 +40,11 @@ let playerOptions = ref({})
 updateData()
 
 async function updateData(){
-  selectedFile.value = decrypt(route.query.detail as string) as FileTo
-  format.value = selectedFile.value.format
-  url.value = convertFileSrc(selectedFile.value.url)
+  selectedFile.value = decrypt(route.query.detail as string) as FileTo;
+  format.value = selectedFile.value.format;
+  url.value = convertFileSrc(selectedFile.value.url);
   const file = await readBinaryFile(selectedFile.value.url);
   data.value = new TextDecoder().decode(file);
-
   playerOptions.value = {
     playbackRates: [0.7, 1.0, 1.25, 1.5, 2.0], //播放速度
     autoplay: false, //如果true,浏览器准备好时开始回放。
@@ -89,13 +87,13 @@ watch(
   text-align: left;
   max-height: 100%;
   width: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .md {
   text-align: left;
   max-height: 100%;
   width: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 </style>
