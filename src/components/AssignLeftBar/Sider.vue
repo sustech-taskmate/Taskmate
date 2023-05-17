@@ -8,7 +8,7 @@
         style="border-right: none; width: 100%;"
     >
       <h2 v-if="!myCollapse">Assignment Files</h2>
-      <template v-for="(item, index) in props.nodes.values()" :key="index">
+      <template v-for="(item, index) in nodes.values()" :key="index">
         <tree-menu v-if="item.format===AssignFileType.zip" :index="item.url" :nodes="[item]"/>
         <el-menu-item v-else :index="item.url">
           <el-icon v-if="item.format===AssignFileType.video">

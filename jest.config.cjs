@@ -34,7 +34,8 @@ module.exports = {
   collectCoverageFrom: [ // 需要进行收集覆盖率的文件，会依次进行执行符合的文件
     'src/**/*.vue',
     'src/**/**/*.vue',
-    'src/**/**/**/*.vue'
+    'src/**/**/**/*.vue',
+      '!src/components/util/*.vue'
   ],
   coverageReporters: ['html', 'lcov', 'text-summary'], // Jest在编写覆盖率报告的配置，添加"text"或"text-summary"在控制台输出中查看覆盖率摘要
   coveragePathIgnorePatterns: ['/node_modules/'], // 需要跳过覆盖率信息收集的文件目录

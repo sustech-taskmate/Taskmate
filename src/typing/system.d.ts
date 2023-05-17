@@ -28,7 +28,7 @@ declare namespace Service {
 
     type RequestOption = RequestOptions
 
-    type Response = res<T>
+    type Response<T> = res<T>
 }
 
 declare namespace App {

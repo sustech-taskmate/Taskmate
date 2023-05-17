@@ -4,8 +4,8 @@
             <div style="height: 100%; width: 99%;border: 1px solid black; background: white; border-radius: 10px;">
                 <div style="height: 20%; width: 100%;
                            display: flex; align-items: center; justify-content: center;
-                           border-bottom: 1px solid black;">
-
+                           border-bottom: 1px solid black;"
+                data-test="title">
                     TODO LIST
                 </div>
                 <div style="height: 80%; width: 100%; overflow-y: auto;">
@@ -13,17 +13,22 @@
                         <el-row style="height: 100%; width: 100%;" class="row">
                             <div style="height: 100%; width: 25%; display: flex;
                                         align-items: center; justify-content: center;
-                                        font-size: calc(100vw * 20 / 1500)">
+                                        font-size: calc(100vw * 20 / 1500)"
+                                data-test="name">
                                 {{ item.name }}
                             </div>
                             <div style="height: 100%; width: 45%; display: flex;
                                         align-items: center; justify-content: center;
-                                        font-size: calc(100vw * 15 / 1500)">
+                                        font-size: calc(100vw * 15 / 1500)"
+                                data-test="time">
                                 {{ show(item.time) }}
                             </div>
                             <div style="height: 100%; width: 30%; display: flex;
                                         align-items: center; justify-content: center;">
-                                <button class="btn" :class="Todo.identify"> {{Todo.identify}}</button>
+                                <button class="btn" :class="Todo.identify"
+                                data-test="identify">
+                                    {{Todo.identify}}
+                                </button>
                             </div>
                         </el-row>
                         <div style="height: 5%; width: 100%;"></div>
@@ -38,26 +43,19 @@
 
 <script lang="ts" setup>
 import moment from "moment";
+import {ToDo, ToDoIdentity, TodoItem} from "@/store/todo";
 
 function show(time: Date){
     return moment(time).format("YYYY-MM-DD hh:mm")
 }
 
-
-</script>
-
-<script lang="ts">
-import {ToDo} from "@/store/todo";
-
-export default {
-    name: "OverViewRightCard",
-    props: {
-        Todo: {
-            type: ToDo,
-            required: true
-        },
+const props = defineProps({
+    Todo: {
+        type: ToDo,
+        required: true
     },
-}
+})
+
 </script>
 
 <style scoped>

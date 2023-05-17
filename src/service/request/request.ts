@@ -2,6 +2,12 @@ import {fetch, ResponseType} from '@tauri-apps/api/http';
 import {Service} from "@/typing/system";
 
 export function createRequest() {
+    let cookie = ''
+    let baseUrl = 'https://spaces.sustech.cloud/api'
+
+    function setCookie(val: string): void {
+        cookie = val
+    }
 
     /**
      * 异步promise请求
@@ -14,13 +20,14 @@ export function createRequest() {
      * - timeout: 请求超时限制
      * - responseType: 返回类型
      */
-    async function asyncRequest<T>(param: Service.HttpOption): Promise<Service.Response> {
+    async function asyncRequest<T>(param: Service.HttpOption): Promise<Service.Response<T>> {
         const {url, method, body, query, headers} = param;
+        const fullUrl = baseUrl + url;
         const timeout = param.timeout || 30;
         const type = param.responseType || ResponseType.JSON;
-        return (await fetch(url, {
+        return (await fetch<T>(fullUrl, {
             method: method,
-            headers: headers,
+            headers: {cookie, ...headers},
             body: body,
             query: query,
             timeout: timeout,
@@ -98,6 +105,7 @@ export function createRequest() {
         post,
         put,
         delete: handleDelete,
-        patch
+        patch,
+        setCookie
     };
 }

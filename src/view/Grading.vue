@@ -63,6 +63,7 @@ import ChatInner from "@/components/ChatInner/ChatInner.vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
+import {writeFile} from '@tauri-apps/api/fs'
 
 const route = useRoute();
 const {routerPush} = useRouterPush();
@@ -148,6 +149,15 @@ analyzeDir((gid.value as string)).then((res) => {
     nodes.value.set(res.children[i].url, res.children[i]);
   }
 })
+//     .then(() => {
+//     const store = JSON.stringify(nodes.value.values().next().value)
+//     console.log(store)
+// })
+
+// console.log(JSON.stringify(nodes.value.values().next().value))
+
+// const store = JSON.stringify(nodes.value.values().next().value)
+// fs.writeFileSync('tests/unit/store.json', store)
 
 </script>
 

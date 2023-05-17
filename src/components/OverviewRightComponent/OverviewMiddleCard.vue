@@ -4,7 +4,8 @@
             <el-row style="height: 10vh" @click="rotate(item)">
                 <el-col :span="21"
                         style="display: flex; align-items: center; padding-left: 10px; border-radius: 10px 0 0 10px;
-                        border-bottom: 2px solid black; border-top: 2px solid black; border-left: 2px solid black;" data-test="description">
+                        border-bottom: 2px solid black; border-top: 2px solid black; border-left: 2px solid black;"
+                        data-test="class">
                     {{ item.name }}
                 </el-col>
                 <el-col :span="3" style="display: flex; align-items: center; justify-content: center; border-radius: 0 10px 10px 0;
@@ -20,7 +21,8 @@
                 </el-col>
             </el-row>
             <el-row class="downList" v-if="item.down"
-                    style="overflow-y: auto; border-radius: 10px; border-bottom: 2px solid black; border-left: 2px solid black; border-right: 2px solid black; ">
+                    style="overflow-y: auto; border-radius: 10px; border-bottom: 2px solid black; border-left: 2px solid black; border-right: 2px solid black;"
+                    ref="down">
                 <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;">
                     <el-col :span="8" v-for="context in item.listContainCard"
                             style="height: 20vh; width: 100%; flex: 1 0 30%; max-width: 24vh;
@@ -32,11 +34,13 @@
                                 @click="toCourse(context)">
                             <el-col style="height: 30%; width: 100%;
                                 display: flex; justify-content: center; align-items: center;
-                                border-bottom: 2px solid black; font-size: calc(100vw * 25 / 1500)">
+                                border-bottom: 2px solid black; font-size: calc(100vw * 25 / 1500)"
+                                    data-test="name">
                                 {{ context.name }}
                             </el-col>
                             <el-col style="height: 60%; width: 100%; word-wrap: break-word; padding-left: 5px;
-                                font-size: calc(100vw * 14 / 1500)">
+                                font-size: calc(100vw * 14 / 1500)"
+                                    data-test="description">
                                 {{ context.description }}
                             </el-col>
                             <el-col style="height: 10%; width: 100%; text-align: right; padding-right: 10px;">
