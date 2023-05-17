@@ -39,6 +39,8 @@ pub async fn analyze_dir(target: &str, origin: &str) -> Result<(), String>{
                 path_str
             }
         };
+        #[cfg(target_os = "macos")]
+            let path = path.to_str().ok_or("to str error")?;
         let simple_path = simple_path.replace("\\","/");
         let path = path.replace("\\","/");
         if comma {
@@ -127,7 +129,13 @@ pub fn download_file(url: &str, file_path: &str) -> Result<(), String> {
                 }
             }
             #[cfg(target_os = "macos")]
-            todo!();
+            {
+                if should_extract == ExtractOperationType::Zip {
+                    // extract(&filePath,  &zip_path, &origin_path);
+                    extract_zip(&file_path,  &zip_path).map_err(|err| err.to_string())?;
+                    //delete filePath
+                }
+            }
             // if should_extract {
             //     extract(&filePath,  &zip_path, &origin_path);
             // }
@@ -148,18 +156,46 @@ pub fn download_file(url: &str, file_path: &str) -> Result<(), String> {
 
 #[cfg(test)]
 mod tests {
+    use tauri::async_runtime::block_on;
+
     // 注意这个惯用法：在 tests 模块中，从外部作用域导入所有名字。
     use super::*;
 
     #[test]
-    fn test_bad_add() {
+    fn test_win() {
+        download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample.tar",
+                      "D:\\Desktop\\test"
+                      // "./res"
+        ).unwrap();
+        let task = analyze_dir(Path::new(
+            "D:\\Desktop\\test\\student_file"
+            // "./res/student_file"
+        ).to_str().unwrap(), Path::new(
+            "D:\\Desktop\\test"
+            // "./res"
+        ).to_str().unwrap());
+        block_on(task).unwrap();
+    }
+
+    #[test]
+    fn test_mac() {
         // download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-large-zip-file.zip", "C:\\Users\\31028\\Desktop\\test").unwrap();
-        // download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample.tar", "D:\\Desktop\\test").unwrap();
+        download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample.tar",
+                      // "D:\\Desktop\\test"
+                      "./res"
+        ).unwrap();
         // let file_path=Path::new("C:\\Users\\31028\\Desktop\\test").join("qwq.zip");
         // extract(&file_path,Path::new("C:\\Users\\31028\\Desktop\\test\\qwq"));
         // let file_path=Path::new("D:\\Desktop\\test\\student_file").join("sample.tar");
         // extract_targz(&file_path,Path::new("D:\\Desktop\\test\\student_file\\sample")).unwrap();
-        // analyze_dir(Path::new("D:\\Desktop\\test\\student_file"), Path::new("D:\\Desktop\\test")).unwrap();
+        let task = analyze_dir(Path::new(
+            // "D:\\Desktop\\test\\student_file"
+            "./res/student_file"
+        ).to_str().unwrap(), Path::new(
+            // "D:\\Desktop\\test"
+            "./res"
+        ).to_str().unwrap());
+        block_on(task).unwrap();
     }
 
     #[test]
@@ -202,4 +238,3 @@ pub mod custom_error_set {
     }
 
 }
-
