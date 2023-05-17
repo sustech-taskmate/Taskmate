@@ -1,18 +1,27 @@
 import {createRouter, createWebHashHistory, NavigationGuardNext, RouteLocationNormalized, createMemoryHistory} from 'vue-router'
 import {App} from "vue";
+import {login} from "@/composable/serverRequest";
 
 const routes = [
     {
         path: '/',
         name: 'index',
         component: () => import('../view/Index.vue'),
-        beforeEnter: ((to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-            if (localStorage.getItem('token')) {
-                next()
+        beforeEnter: (async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+            const token = localStorage.getItem('token')
+            if (token) {
+                const res = await login(token)
+                if (res) {
+                    next()
+                } else {
+                    next({
+                        name: 'empty',
+                    })
+                }
             } else {
-              next({
-                name: 'empty',
-              })
+                next({
+                    name: 'empty',
+                })
             }
         })
     },

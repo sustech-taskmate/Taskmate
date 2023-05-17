@@ -12,7 +12,9 @@
 
 <!--</style>-->
 <template>
-  <router-view/>
+  <suspense>
+    <router-view/>
+  </suspense>
 </template>
 
 <style lang="scss" scoped>

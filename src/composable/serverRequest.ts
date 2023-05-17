@@ -1,4 +1,5 @@
 import {request} from "@/service/request";
+import {Body} from "@tauri-apps/api/http";
 
 
 /*    sample value:
@@ -114,6 +115,22 @@ interface SubmissionInfoResponseData {
     submission: SubmissionInfo;
 }
 
+async function login(token: string) {
+    const url = '/auth/login'
+    const response = await request.post(url, {
+        body: Body.json({
+            token: token
+        })
+    });
+    if (response.ok) {
+        const cookie = response.headers['set-cookie']
+
+        request.setCookie(cookie)
+        return true
+    }
+    return false
+}
+
 async function getClasses() {
     const url = `/class`;
     const response = await request.get<ClassesResponseData>(url)
@@ -151,6 +168,7 @@ async function getSubmissionInfo(submissionName: string) {
 }
 
 export {
+    login,
     getClasses,
     getAssignments,
     getAssignmentInfo,
