@@ -14,7 +14,8 @@
                     </svg>
                     <div style="height: 100%; width: 50%; text-align: center; vertical-align: center;
                                      display: flex; align-items: center; justify-content: center;
-                                     color: blue; font-size: calc(100vw * 24 / 1500)" type="flex">
+                                     color: blue; font-size: calc(100vw * 24 / 1500)" type="flex"
+                         data-test="name">
                         SA
                     </div>
                 </el-row>
@@ -29,7 +30,8 @@
                     </svg>
                     <div style="height: 100%; width: 50%; text-align: center; vertical-align: center;
                                      display: flex; align-items: center; justify-content: center;
-                                     color: green; font-size: calc(100vw * 20 / 1500)" type="flex">
+                                     color: green; font-size: calc(100vw * 20 / 1500)" type="flex"
+                        data-test="name">
                         Student
                     </div>
                 </el-row>

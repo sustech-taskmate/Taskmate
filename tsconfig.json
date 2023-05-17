@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "types": ["vue"],
+    "types": ["vue", "node"],
     "experimentalDecorators": true,
     "target": "ESNext",
     "useDefineForClassFields": true,

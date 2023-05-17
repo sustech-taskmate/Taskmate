@@ -54,6 +54,21 @@ class FileTreeNode {
         this.url = url;
         this.format = format;
     }
+
+    toJSON(){
+        const json: any = {
+            filename: this.filename,
+            isDir: this.isDir,
+            isRoot: this.isRoot,
+            url: this.url,
+            format: this.format,
+            children: []
+        }
+        for (const child of this.children.values()){
+            json.children.push(child.toJSON())
+        }
+        return json
+    }
 }
 
 class FileTo {
