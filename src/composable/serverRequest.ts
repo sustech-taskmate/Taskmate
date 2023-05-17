@@ -1,5 +1,4 @@
 import {request} from "@/service/request";
-import {createRequest} from "@/service/request/request";
 
 
 /*    sample value:
@@ -16,6 +15,7 @@ interface Class {
     title: string;
     role: string;
 }
+
 interface ClassesResponseData {
     classes: Class[];
 }
@@ -38,10 +38,10 @@ interface Assignment {
     availableTo: number;
 }
 
-interface Entry{
-    name:string;
-    title:string;
-    status:string;
+interface Entry {
+    name: string;
+    title: string;
+    status: string;
     penalty: number;
     penaltyAfter: number;
 }
@@ -55,6 +55,7 @@ interface AssignmentInfoResponseData {
     title: string;
     entries: Entry[];
 }
+
 interface EntryProblems {
     uuid: string;
     title: string;
@@ -67,6 +68,7 @@ interface Problem {
     title: string;
     description: string;
 }
+
 interface Submission {
     uuid: string,
     createdAt: 0,
@@ -74,25 +76,27 @@ interface Submission {
     penaltyScore: 0,
     finalScore: 0
 }
-interface Answer{
+
+interface Answer {
     uuid: string;
     problemType: string;
-    file:string;
-    score:number;
-    message:string;
-    result:any;
+    file: string;
+    score: number;
+    message: string;
+    result: any;
 }
+
 interface SubmissionInfo {
     id: number;
     uuid: string;
     answers: Answer[];
     score: number;
     time: number;
-    assigment:{
+    assigment: {
         name: string;
         title: string;
     }
-    entry:{
+    entry: {
         uuid: string;
         title: string;
     }
@@ -101,53 +105,58 @@ interface SubmissionInfo {
 interface EntryProblemResponseData {
     entry: EntryProblems;
 }
+
 interface SubmissionResponseData {
     submissions: Submission[];
 }
+
 interface SubmissionInfoResponseData {
     submission: SubmissionInfo;
 }
 
-
-
-async function getClasses(){
+async function getClasses() {
     const url = `/class`;
-    const request = createRequest()
-    const response=await request.get(url)
-    return response.data as ClassesResponseData;
+    const response = await request.get<ClassesResponseData>(url)
+    return response.data;
 }
-async function getAssignments(classId: number){
+
+async function getAssignments(classId: number) {
     const url = `/class/${classId}/assignment`;
-    const request = createRequest()
-    const response=await request.get(url)
-    return response.data as AssignmentsResponseData;
+    const response = await request.get<AssignmentsResponseData>(url)
+    return response.data;
 }
-async function getAssignmentInfo(classId: number, assignmentName: string){
+
+async function getAssignmentInfo(classId: number, assignmentName: string) {
     const url = `/class/${classId}/assignment/${assignmentName}`;
-    const request = createRequest()
-    const response=await request.get(url)
-    return response.data as AssignmentInfoResponseData;
+    const response = await request.get<AssignmentInfoResponseData>(url)
+    return response.data
 }
 
-async function getProblems(classId:string, entryId: number){
+async function getProblems(classId: string, entryId: number) {
     const url = `/class/${classId}/entry/${entryId}`;
-    const request = createRequest()
-    const response=await request.get(url)
-    return response.data as EntryProblemResponseData;
+    const response = await request.get<EntryProblemResponseData>(url)
+    return response.data;
 }
 
-async function getSubmissions(classId:string, entryId: number){
+async function getSubmissions(classId: string, entryId: number) {
     const url = `/class/${classId}/entry/${entryId}/submission`;
-    const request = createRequest()
-    const response=await request.get(url)
-    return response.data as SubmissionResponseData;
+    const response = await request.get<SubmissionResponseData>(url)
+    return response.data;
 }
 
-async function getSubmissionInfo(submissionName: string){
+async function getSubmissionInfo(submissionName: string) {
     const url = `/submission/${submissionName}`;
-    const request = createRequest()
-    const response=await request.get(url)
-    return response.data as SubmissionInfoResponseData;
+    const response = await request.get<SubmissionInfoResponseData>(url)
+    return response.data;
+}
+
+export {
+    getClasses,
+    getAssignments,
+    getAssignmentInfo,
+    getProblems,
+    getSubmissions,
+    getSubmissionInfo,
 }
 
 
