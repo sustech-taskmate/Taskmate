@@ -88,10 +88,8 @@ enum ExtractOperationType {
 
 #[tauri::command]
 pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), String> {
-    dbg!(file_name);
     let should_extract : ExtractOperationType;
     let response = get(url).map_err(|err| err.to_string())?;
-    dbg!(file_name);
     let bytes = response.bytes().map_err(|err| err.to_string())?;
     let bit = bytes.iter();
     let slice = bit.as_slice();
@@ -103,8 +101,6 @@ pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), 
             should_extract = ExtractOperationType::None;
         }
     }
-    dbg!(file_name);
-
     let file_name = {
         if file_name.to_string().is_empty() {
             Path::new(url).file_name().ok_or("get filename error")?.to_str().ok_or("trans to str error")?
@@ -173,7 +169,7 @@ mod tests {
     fn test_win() {
         download_file("https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.zip",
                       "D:\\Desktop\\test",
-                      "sample-zip-file.zip"
+                      "test.zip"
                       // "./res"
         ).unwrap();
         let task = analyze_dir(Path::new(
