@@ -6,31 +6,56 @@ on:
       - main
 
 jobs:
-  build:
-    name: Build Tauri Application
+  set-up:
+    name: Set Up Environment
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [windows-latest, macos-latest]
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Set up Rust
+      - name: Set Up Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           profile: minimal
           
-      - name: install pnpm
+      - name: Install Pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 7.x.x
-      
-      - name: install dependencies
+    
+      - name: Install Dependencies
         run: pnpm install
+      
+  build-tauri:
+    name: Build Tauri Application
+    runs-on: ${{ matrix.os }}
+    needs: set-up
+
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
 
       - name: Build Tauri Application
         run: pnpm tauri build
+      
+      
+  test: 
+    name: Test Tauri Application
+    runs-on: ${{ matrix.os }}
+    needs: set-up
+
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+    
+    steps:
+      - name: Run Test
+        run: pnpm test
