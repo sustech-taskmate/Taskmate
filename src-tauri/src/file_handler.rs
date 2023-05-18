@@ -87,7 +87,7 @@ enum ExtractOperationType {
 }
 
 #[tauri::command]
-pub fn download_file(url: &str, file_path: &str) -> Result<(), String> {
+pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), String> {
     let should_extract : ExtractOperationType;
     let response = get(url).map_err(|err| err.to_string())?;
     let bytes = response.bytes().map_err(|err| err.to_string())?;
@@ -101,7 +101,13 @@ pub fn download_file(url: &str, file_path: &str) -> Result<(), String> {
             should_extract = ExtractOperationType::None;
         }
     }
-    let file_name = Path::new(url).file_name().ok_or("get filename error")?;
+    let file_name = {
+        if file_name.to_string().is_empty() {
+            Path::new(url).file_name().ok_or("get filename error")?.to_str().ok_or("trans to str error")?
+        } else {
+            file_name
+        }
+    };
     let root_path = Path::new(file_path).join("student_file");
     let file_path = Path::new(file_path).join("student_file").join(file_name);
     let zip_path = file_path.file_stem().ok_or("get file stem error")?;
@@ -157,14 +163,13 @@ pub fn download_file(url: &str, file_path: &str) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use tauri::async_runtime::block_on;
-
-    // 注意这个惯用法：在 tests 模块中，从外部作用域导入所有名字。
     use super::*;
 
     #[test]
     fn test_win() {
-        download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample.tar",
-                      "D:\\Desktop\\test"
+        download_file("https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.zip",
+                      "D:\\Desktop\\test",
+                      "test.zip"
                       // "./res"
         ).unwrap();
         let task = analyze_dir(Path::new(
@@ -180,10 +185,7 @@ mod tests {
     #[test]
     fn test_mac() {
         // download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-large-zip-file.zip", "C:\\Users\\31028\\Desktop\\test").unwrap();
-        download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample.tar",
-                      // "D:\\Desktop\\test"
-                      "./res"
-        ).unwrap();
+        download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample.tar", "./res", "sample.tar").unwrap();
         // let file_path=Path::new("C:\\Users\\31028\\Desktop\\test").join("qwq.zip");
         // extract(&file_path,Path::new("C:\\Users\\31028\\Desktop\\test\\qwq"));
         // let file_path=Path::new("D:\\Desktop\\test\\student_file").join("sample.tar");
