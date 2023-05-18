@@ -63,7 +63,7 @@ import ChatInner from "@/components/ChatInner/ChatInner.vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
-import {writeFile} from '@tauri-apps/api/fs'
+import {getSubmissionInfo} from "@/composable/serverRequest";
 
 const route = useRoute();
 const {routerPush} = useRouterPush();
@@ -140,7 +140,8 @@ const flexible = () => {
   topbarMenu.value = leftCollapse.value ? 24 : 4;
 }
 
-
+const submissionInfo = await getSubmissionInfo(gid.value as string);
+// const url = [submissionInfo.submission.answers[0].file]
 let urls = ['https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/a.zip', 'https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.pdf']
 downloadAll(urls, (gid.value as string));
 let nodes = ref(new Map<string, FileTreeNode>());

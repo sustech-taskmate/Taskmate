@@ -12,19 +12,28 @@ class TodoItem{
     }
 }
 
+export enum ClassUserRole {
+    TEACHER = 'teacher',
+    ASSISTANT = 'assistant',
+    STUDENT = 'student',
+}
+
 /**
- * name: 课程
- * description: 描述
- * identify： 身份 取值为 "SA" 和 "Student"
+ * id: 课程唯一编号
+ * code: 课程代码
+ * title: 课程名称
+ * identify： 身份信息，分别为teacher, assistant, student
  * */
 class ContainCard{
-    name: string;
-    description: string;
-    identify: string;
-    constructor(name: string, description: string, identify: string) {
-        this.name = name;
-        this.description = description;
-        this.identify = identify;
+    id: number;
+    code: string;
+    title: string;
+    identify: ClassUserRole;
+    constructor(id: number, code: string, title: string, identify: string) {
+        this.id = id;
+        this.code = code;
+        this.title = title;
+        this.identify = identify as ClassUserRole;
     }
 }
 

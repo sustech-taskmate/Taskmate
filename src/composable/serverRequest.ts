@@ -10,11 +10,43 @@ import {Body} from "@tauri-apps/api/http";
       "role": "teacher"
     }
 */
-interface Class {
+
+enum SemesterSeason {
+    SPRING = 'Spring',
+    SUMMER = 'Summer',
+    FALL = 'Fall',
+    WINTER = 'Winter',
+}
+
+interface User {
+    user: {
+        id: string,
+        sid: string,
+    },
+    role: string,
+}
+
+interface Semester {
+    id: number;
+    year: number;
+    season: SemesterSeason;
+}
+
+export interface Class {
     id: number;
     name: string;
     title: string;
     role: string;
+    course: Course;
+    semester: Semester;
+    studentList: Array<User>;
+}
+
+interface Course {
+    id: number;
+    number: string;
+    name: string;
+    description: string;
 }
 
 interface ClassesResponseData {
@@ -30,7 +62,7 @@ interface ClassesResponseData {
       "availableTo": 0
     }
 */
-interface Assignment {
+export interface Assignment {
     name: string;
     title: string;
     status: string;
@@ -71,11 +103,16 @@ interface Problem {
 }
 
 interface Submission {
+    id: string,
     uuid: string,
     createdAt: 0,
-    originScore: 0,
-    penaltyScore: 0,
-    finalScore: 0
+    score: 0,
+    points: 0,
+    assignment: Assignment
+    entry: Entry,
+    submitter: {id: number, sid: string}
+    answers: Answer[],
+    time: number
 }
 
 interface Answer {
@@ -87,32 +124,16 @@ interface Answer {
     result: any;
 }
 
-interface SubmissionInfo {
-    id: number;
-    uuid: string;
-    answers: Answer[];
-    score: number;
-    time: number;
-    assigment: {
-        name: string;
-        title: string;
-    }
-    entry: {
-        uuid: string;
-        title: string;
-    }
-}
-
 interface EntryProblemResponseData {
     entry: EntryProblems;
 }
 
-interface SubmissionResponseData {
+interface SubmissionListResponseData {
     submissions: Submission[];
 }
 
 interface SubmissionInfoResponseData {
-    submission: SubmissionInfo;
+    submission: Submission;
 }
 
 async function login(token: string) {
@@ -124,11 +145,16 @@ async function login(token: string) {
     });
     if (response.ok) {
         const cookie = response.headers['set-cookie']
-
         request.setCookie(cookie)
         return true
     }
     return false
+}
+
+async function getClassbyId(classId: string) {
+    const url = `/class/${classId}`
+    const response = await request.get<Class>(url);
+    return response.data
 }
 
 async function getClasses() {
@@ -137,13 +163,13 @@ async function getClasses() {
     return response.data;
 }
 
-async function getAssignments(classId: number) {
+async function getAssignments(classId: string) {
     const url = `/class/${classId}/assignment`;
     const response = await request.get<AssignmentsResponseData>(url)
     return response.data;
 }
 
-async function getAssignmentInfo(classId: number, assignmentName: string) {
+async function getAssignmentInfo(classId: string, assignmentName: string) {
     const url = `/class/${classId}/assignment/${assignmentName}`;
     const response = await request.get<AssignmentInfoResponseData>(url)
     return response.data
@@ -155,9 +181,9 @@ async function getProblems(classId: string, entryId: number) {
     return response.data;
 }
 
-async function getSubmissions(classId: string, entryId: number) {
-    const url = `/class/${classId}/entry/${entryId}/submission`;
-    const response = await request.get<SubmissionResponseData>(url)
+async function getSubmissions(classId: string) {
+    const url = `/class/${classId}/submission`;
+    const response = await request.get<SubmissionListResponseData>(url)
     return response.data;
 }
 
@@ -169,6 +195,7 @@ async function getSubmissionInfo(submissionName: string) {
 
 export {
     login,
+    getClassbyId,
     getClasses,
     getAssignments,
     getAssignmentInfo,
