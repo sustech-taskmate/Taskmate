@@ -95,7 +95,7 @@
                    @change="hideInputSub(sub)"
                    @blur="hideInputSub(sub)"
                    placeholder="Please add the details"
-                   style="background-color: transparent;background-image: none;padding: 0;height: 24px"/>
+                   style="background-color: transparent;background-image: none;padding: 0;height: 24px;width: 100%;"/>
             <div class="subtext-text" @click="showInputSub(sub)" v-show="!sub.controller.isShowInput">{{
                 sub.comment
               }}

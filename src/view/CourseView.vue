@@ -3,7 +3,8 @@
     <div id="container">
       <div style="border-right: 1px solid darkseagreen; height: 100vh; position: relative"
            v-bind:style="{ width: leftSize.width }">
-        <div style="background-color: steelblue; position: relative; display: flex" v-bind:style="{width: leftSize.width, height: leftSize.height}">
+        <div style="background-color: steelblue; position: relative; display: flex"
+             v-bind:style="{width: leftSize.width, height: leftSize.height}">
           <svg-icon name="home" color="white" @click="toIndex"
                     style="position: absolute; height: 6vh; width: 6vw;cursor: pointer"
                     v-bind:style="{left: leftSize.left1, top: leftSize.top1}"></svg-icon>
@@ -13,42 +14,26 @@
                     v-bind:style="{left: leftSize.left2, top: leftSize.top2}"></svg-icon>
         </div>
         <div v-if="leftShow" style="height: 90vh">
-          <div style="width: 20vw; left: 1vw; position: relative">
-            <div style="position: relative; width: 20vw; height: 7vh">
-              <span style="margin-left: 1vw; line-height: 5vh; font-size: 2vw; position: absolute; left: 0; top: 1vh">CS 1234</span>
-              <svg-icon name="arrayLeft" @click="hidden()" v-if="!courseShow"
-                        style="position: absolute; right: 0; top: 0; width: 20%; height: 100%"></svg-icon>
-              <svg-icon name="arrayDown" @click="hidden()" v-show="courseShow"
-                        style="position: absolute; right: 0; top: 0; width: 20%; height: 100%"></svg-icon>
+          <template v-for="(item, index) in courses" :key="index">
+            <div style="width: 20vw; left: 1vw; position: relative">
+              <div style="position: relative; width: 20vw; height: 7vh">
+                <span style="margin-left: 1vw; line-height: 5vh; font-size: 2vw; position: absolute; left: 0; top: 1vh">{{item.name}}</span>
+                <svg-icon name="arrayLeft" @click="hidden()" v-if="!courseShow"
+                          style="position: absolute; right: 0; top: 0; width: 20%; height: 100%"></svg-icon>
+                <svg-icon name="arrayDown" @click="hidden()" v-show="courseShow"
+                          style="position: absolute; right: 0; top: 0; width: 20%; height: 100%"></svg-icon>
+              </div>
+              <div v-if="courseShow" style="width: 20vw; height: 28vh; position:relative; border-top: 2px solid black">
+                <ul style="list-style: none; padding-left: 3vw; padding-bottom: 5vh">
+                  <li v-for="course in item.listContainCard">
+                    <a style="padding-bottom: 10px" @click="myClick()">
+                      <span class="table-word" >{{ course.code }}</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div v-if="courseShow" style="width: 20vw; height: 28vh; position:relative; border-top: 2px solid black">
-              <ul style="position: absolute; left: 0; top: 0; list-style: none; padding-left: 3vw; line-height: 7vh; padding-bottom: 5vh">
-                <li v-for="course in courses" >
-                  <a @click="myClick()">
-                    <span class="table-word" style="line-height: 7vh">{{ course }}</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div style="width: 20vw; left: 1vw; position: relative; margin-top: 1vh;">
-            <div style="position: relative; width: 20vw; height: 7vh">
-              <span style="margin-left: 1vw; line-height: 5vh; font-size: 2vw; position: absolute; left: 0; top: 1vh">CS 6789</span>
-              <svg-icon name="arrayLeft" @click="hidden2()" v-if="courseShow2"
-                        style="position: absolute; right: 0; top: 0; width: 20%; height: 100%"></svg-icon>
-              <svg-icon name="arrayDown" @click="hidden2()" v-show="!courseShow2"
-                        style="position: absolute; right: 0; top: 0; width: 20%; height: 100%"></svg-icon>
-            </div>
-            <div v-if="!courseShow2" style="width: 20vw; height: 28vh; position:relative; border-top: 2px solid black">
-              <ul style="position: absolute; left: 0; top: 0; list-style: none; padding-left: 3vw; line-height: 7vh; padding-bottom: 5vh">
-                <li v-for="course in courses" >
-                  <a @click="myClick()">
-                    <span class="table-word" style="line-height: 7vh">{{ course }}</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
+          </template>
         </div>
       </div>
       <div style="height: 100vh; position: relative">
@@ -56,12 +41,14 @@
           <span class="word" style="line-height: 3vh; position: absolute; left: 3vw; top: 3vh;">课程信息</span>
         </div>
         <div style="left: 0; top: 2vh; position: relative">
-          <span class="word" style="line-height: 3vh; position: absolute; left: 2.5vw; top: 4vh;">Software Engineering(CS123)</span>
+          <span class="word"
+                style="line-height: 3vh; position: absolute; left: 2.5vw; top: 4vh;">{{ currentClass.course.name + ' ' + currentClass.course.number }}</span>
         </div>
         <div style="position: relative; height: 75vh; top: 15vh" v-bind:style="{ width: rightWidth }">
           <div style="background-color: steelblue; height: 10vh">
             <span class="word" style="line-height: 3vh; color: white; position: absolute; left: 2.5vw; top: 4vh;">Assignment List</span>
-            <svg-icon name="plus" color="white" style="position: absolute; right: 0; top: 1vh; width: 8vw; height: 8vh"></svg-icon>
+            <svg-icon name="plus" color="white"
+                      style="position: absolute; right: 0; top: 1vh; width: 8vw; height: 8vh"></svg-icon>
           </div>
           <el-table
               :data="tableData"
@@ -76,15 +63,15 @@
             <el-table-column prop="submitRatio" label="提交比" width="auto" align="center"/>
             <el-table-column prop="gradeRatio" label="评分比" width="auto" align="center"/>
             <el-table-column label="查看作业" width="auto" align="center">
-              <template  #default="scope">
+              <template #default="scope">
                 <el-button type="primary" @click="toAssign(scope.$index)">查看</el-button>
               </template>
             </el-table-column>
-<!--            <el-table-column label="修改作业" width="auto" align="center">-->
-<!--              <template v-slot="scope">-->
-<!--                <el-button type="primary" @click="router.push('/Main/Set')">修改</el-button>-->
-<!--              </template>-->
-<!--            </el-table-column>-->
+            <!--            <el-table-column label="修改作业" width="auto" align="center">-->
+            <!--              <template v-slot="scope">-->
+            <!--                <el-button type="primary" @click="router.push('/Main/Set')">修改</el-button>-->
+            <!--              </template>-->
+            <!--            </el-table-column>-->
           </el-table>
         </div>
       </div>
@@ -101,6 +88,7 @@ a {
   .word {
     font-size: 2.5vw;
   }
+
   .table-word {
     font-size: 2vw;
     margin-right: 2vw;
@@ -111,6 +99,7 @@ a {
   .word {
     font-size: 3vw;
   }
+
   .table-word {
     font-size: 2.5vw;
     margin-right: 0.5vw;
@@ -128,20 +117,21 @@ a {
   border: 2px solid black;
   border-radius: 5px;
 }
-</style >
+</style>
 
 <script lang="ts" setup scoped>
-import {reactive, ref, defineComponent, onBeforeMount} from 'vue';
-import {router} from '@/router';
+import {reactive, ref} from 'vue';
 import moment from "moment";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
+import {getAssignments, getClassbyId} from "@/composable/serverRequest";
+import {Card} from "@/store/todo";
 
 const route = useRoute();
 const {routerPush} = useRouterPush();
 
-class CourseData{
+class CourseData {
   name: string;
   releaseTime: string;
   deadline: string;
@@ -150,7 +140,7 @@ class CourseData{
   gradeRatio: string;
   isReturn: boolean;
 
-  constructor(name:string, releaseTime: string, deadline: string, delayTime: string,
+  constructor(name: string, releaseTime: string, deadline: string, delayTime: string,
               submitRatio: string, gradeRatio: string, isReturn: boolean) {
     this.name = name;
     this.releaseTime = releaseTime;
@@ -162,32 +152,29 @@ class CourseData{
   }
 }
 
-const tableData: CourseData[] = reactive([
-  {
-    name: "Assignment one",
-    releaseTime: '04-29',
-    deadline: '04-29',
-    delayTime: '04-29',
-    submitRatio: '155/0',
-    gradeRatio: '144/15',
-    isReturn: true,
-  },
-  {
-    name: "Assignment two",
-    releaseTime: '04-29',
-    deadline: '04-29',
-    delayTime: '04-29',
-    submitRatio: '155/0',
-    gradeRatio: '144/15',
-    isReturn: false,
-  },
-])
+const courses = reactive(JSON.parse(route.query.courses as string) as Card[])
+const classId = route.params.cid as string
+const tableData: CourseData[] = reactive([])
+const currentClass = await getClassbyId(classId);
+const studentLength = currentClass.studentList.filter((s) => s.role == 'student').length
+const AssignmentList = await getAssignments(classId);
+
+AssignmentList.assignments.forEach((value) => {
+  let {name, title, status, due, availableFrom, availableTo} = value
+  tableData.push(
+      new CourseData(name,
+          moment.unix(availableFrom).format('YYYY-MM-DD HH:mm:ss'),
+          moment.unix(availableTo).format('YYYY-MM-DD HH:mm:ss'),
+          moment.unix(due).format('YYYY-MM-DD HH:mm:ss'),
+          "?", "?", false)
+  )
+})
+
 
 let courseShow = ref(true);
 let courseShow2 = ref(true);
 let leftShow = ref(true);
 let rightWidth = ref('78vw')
-let courses = reactive(['course1', "course2", "course3"])
 
 const hidden = () => {
   courseShow.value = !courseShow.value
@@ -206,10 +193,8 @@ const toIndex = () => {
 }
 
 const toAssign = (index: any) => {
-  let assignment = tableData[index];
-  let aid = assignment.name; // TODO: update to aid
   let cid = route.params.cid;
-  routerPush({name: 'teacherAssign', params: {cid: cid, aid: aid}});
+  routerPush({name: 'teacherAssign', params: {cid: cid, aid: index}, query: {assignments: JSON.stringify(AssignmentList.assignments)}});
 }
 
 let leftSize = reactive({
@@ -233,8 +218,7 @@ const flexible = () => {
       height: '18vh'
     })
     rightWidth = ref('94vw')
-  }
-  else if (leftSize.width === '6vw') {
+  } else if (leftSize.width === '6vw') {
     leftSize = reactive({
       left1: '0',
       left2: '16vw',
@@ -247,7 +231,7 @@ const flexible = () => {
   }
 }
 
-const getRowStyle = ({ rowIndex }: { rowIndex: number }) => {
+const getRowStyle = ({rowIndex}: { rowIndex: number }) => {
   let color = '';
   let assignment = tableData[rowIndex];
   if (assignment.isReturn) {

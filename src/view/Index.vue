@@ -20,12 +20,26 @@ import {reactive} from 'vue'
 import OverViewRightCard from "@/components/OverviewRightComponent/OverViewRightCard.vue";
 import OverViewMain from "@/components/OverviewRightComponent/OverViewMain.vue";
 import {Card, ContainCard, ToDo, ToDoIdentity, TodoItem} from '@/store/todo';
+import {Class, getClasses} from "@/composable/serverRequest";
+import _ from "lodash"
 
-/**
- * 传入三个参数
- * CardList: Card类型的列表
- * SaTodo & StudentTodo: ToDo类型数据
- * */
+let CardList = reactive([] as Card[])
+
+const classList = await getClasses()
+const m = new Map<string, number>([
+    ['Spring', 1],
+    ['Summer', 2],
+    ['Fall', 3],
+    ['Winter', 4]
+])
+const gb = _.groupBy(classList.classes, (course: Class) => `${course.semester.year} ${m.get(course.semester.season)}`)
+Object.keys(gb).forEach((key, index) => {
+  CardList.push(new Card(key, [], false))
+  const classes: Class[] = gb[key];
+  classes.forEach((value) => {
+    CardList[index].listContainCard.push(new ContainCard(value.id, value.title, value.name, value.role))
+  })
+});
 
 let SaTodo = reactive(new ToDo(ToDoIdentity.todoSa, [
   new TodoItem("CS111", new Date("2000-1-1 12:00:00")),
@@ -34,16 +48,6 @@ let SaTodo = reactive(new ToDo(ToDoIdentity.todoSa, [
 let StudentTodo = reactive(new ToDo(ToDoIdentity.todoSa, [
   new TodoItem("CS111", new Date("2000-1-1 12:00:00")),
 ]))
-
-let CardList = reactive([
-  new Card("2077 Spring", [
-    new ContainCard("CS101", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Student"),
-    new ContainCard("CS101", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "SA"),
-    new ContainCard("CS101", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "SA"),
-    new ContainCard("CS101", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "SA"),
-    new ContainCard("CS101", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "SA"),
-  ], false),
-])
 
 </script>
 

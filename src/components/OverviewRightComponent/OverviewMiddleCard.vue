@@ -36,12 +36,12 @@
                                 display: flex; justify-content: center; align-items: center;
                                 border-bottom: 2px solid black; font-size: calc(100vw * 25 / 1500)"
                                     data-test="name">
-                                {{ context.name }}
+                                {{ context.code }}
                             </el-col>
                             <el-col style="height: 60%; width: 100%; word-wrap: break-word; padding-left: 5px;
                                 font-size: calc(100vw * 14 / 1500)"
                                     data-test="description">
-                                {{ context.description }}
+                                {{ context.title }}
                             </el-col>
                             <el-col style="height: 10%; width: 100%; text-align: right; padding-right: 10px;">
                             </el-col>
@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-import {Card, ContainCard} from "@/store/todo";
+import {Card, ClassUserRole, ContainCard} from "@/store/todo";
 import {useRouterPush} from "@/composable";
 import {PropType} from "vue";
 
@@ -75,17 +75,16 @@ const rotate = (p: Card) => {
     p.down = !p.down
 }
 const contextColor = (context: ContainCard) => {
-    if (context.identify == "SA") {
+    if (context.identify == ClassUserRole.ASSISTANT) {
         return 'lightblue'
     } else {
         return 'lightgreen'
     }
 }
-const toCourse = (item: any) => {
+const toCourse = (item: ContainCard) => {
     let identify = item.identify;
-    let name = item.name;
-    if (identify == "SA") {
-        routerPush({name: 'teacherCourse', params: {cid: name}})
+    if (identify == ClassUserRole.ASSISTANT) {
+        routerPush({name: 'teacherCourse', params: {cid: item.id}, query: {courses: JSON.stringify(props.CardList)}})
     } else {
         console.log('Student Course')
     }
