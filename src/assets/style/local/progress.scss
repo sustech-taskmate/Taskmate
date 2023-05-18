@@ -36,13 +36,16 @@
     fill: none;
     stroke: #40a9ff;
     stroke-width: 6;
-    stroke-dasharray: 0, 999;
     animation: progress 1s ease forwards;
+    stroke-dasharray: var(--stroke-dasharray);
 }
 
 @keyframes progress {
+    from {
+        stroke-dasharray: 0 999;
+    }
     to {
-        stroke-dasharray: 284, 999;
+        stroke-dasharray: var(--stroke-dasharray);
     }
 }
 
@@ -60,4 +63,3 @@
     font-weight: bold;
     text-align: center;
 }
-

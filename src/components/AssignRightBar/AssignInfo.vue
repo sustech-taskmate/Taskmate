@@ -7,7 +7,8 @@
       </div>
       <svg viewBox="0 0 100 100">
         <circle class="progress-bar-bg" cx="50" cy="50" r="45"/>
-        <circle class="progress-bar" cx="50" cy="50" r="45"/>
+        <circle class="progress-bar" cx="50" cy="50" r="45"
+                :style="{ '--stroke-dasharray': calculateStrokeDasharray(props.finishedStudents, props.allStudents) }"/>
       </svg>
     </div>
   </div>
@@ -22,8 +23,9 @@
 </template>
 
 <script lang="ts" setup>
-import '@/assets/style/local/progress.css'
-import {watch} from "vue";
+import {ref} from "vue";
+import '@/assets/style/local/progress.scss'
+
 const props = defineProps({
   finishedStudents: {
     type: Number,
@@ -43,28 +45,12 @@ const props = defineProps({
   }
 })
 
-const rules = `
-    @keyframes progress {
-      to {
-        stroke-dasharray: ${props.finishedStudents / props.allStudents * 284}, 999;
-      }
-    }
-  `;
-const styleEl = document.createElement('style');
-styleEl.appendChild(document.createTextNode(rules));
-document.head.appendChild(styleEl);
-watch(() => props.finishedStudents, () => {
-  const rules = `
-    @keyframes progress {
-      to {
-        stroke-dasharray: ${props.finishedStudents / props.allStudents * 284}, 999;
-      }
-    }
-  `;
-  const styleEl = document.createElement('style');
-  styleEl.appendChild(document.createTextNode(rules));
-  document.head.appendChild(styleEl);
-})
+const strokeDasharray = ref('1, 999')
+function calculateStrokeDasharray(finishedCount:number, allCount:number) {
+  const dashArrayValue = `${finishedCount / allCount * 284}, 999`
+  strokeDasharray.value = dashArrayValue
+  return dashArrayValue
+}
 
 </script>
 
