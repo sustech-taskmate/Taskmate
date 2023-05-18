@@ -1,8 +1,7 @@
 <template>
   <el-container type="flex" style="height: 100vh; width: 100%">
     <el-col :span="16" type="flex" style="border-bottom: 2px solid black;">
-      <over-view-main :CardList="CardList">
-      </over-view-main>
+      <over-view-main :cardList="cardList"/>
     </el-col>
     <el-col :span="8" style="border: 2px solid black; border-radius: 0 10px 10px 0;">
       <over-view-right-card :Todo="SaTodo"
@@ -23,23 +22,27 @@ import {Card, ContainCard, ToDo, ToDoIdentity, TodoItem} from '@/store/todo';
 import {Class, getClasses} from "@/composable/serverRequest";
 import _ from "lodash"
 
-let CardList = reactive([] as Card[])
+let cardList = reactive([] as Card[])
+const m = new Map<string, number>([
+  ['Spring', 0],
+  ['Summer', 1],
+  ['Fall', 2],
+  ['Winter', 3]
+])
 
 const classList = await getClasses()
-const m = new Map<string, number>([
-    ['Spring', 1],
-    ['Summer', 2],
-    ['Fall', 3],
-    ['Winter', 4]
-])
-const gb = _.groupBy(classList.classes, (course: Class) => `${course.semester.year} ${m.get(course.semester.season)}`)
+const gb = _.groupBy(classList.classes, (course: Class) => `${course.semester.year} ${course.semester.season}`)
 Object.keys(gb).forEach((key, index) => {
-  CardList.push(new Card(key, [], false))
+  const [year, season] = key.split(" ")
+  const yearNum = parseInt(year);
+  const seasonIndex = m.get(season)
+  cardList.push(new Card(key, [], false, yearNum * 4 + (seasonIndex as number)))
   const classes: Class[] = gb[key];
   classes.forEach((value) => {
-    CardList[index].listContainCard.push(new ContainCard(value.id, value.title, value.name, value.role))
+    cardList[index].listContainCard.push(new ContainCard(value.id, value.title, value.name, value.role))
   })
 });
+cardList.sort((a, b) => b.index - a.index);
 
 let SaTodo = reactive(new ToDo(ToDoIdentity.todoSa, [
   new TodoItem("CS111", new Date("2000-1-1 12:00:00")),
