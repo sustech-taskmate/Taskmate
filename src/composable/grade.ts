@@ -3,13 +3,20 @@ import {exists, readTextFile} from "@tauri-apps/api/fs";
 import {AssignFileType, FileTreeNode, ZipFile} from "@/store/assign";
 import {appDataDir} from "@tauri-apps/api/path";
 
-async function downloadAll(urls: string[], submitId: string) {
-    for (let url of urls) {
-        await downloadFile(url, submitId);
+async function downloadAll(urls: string[], submitId: string, names?: string[]) {
+    if (names) {
+        for (let i = 0; i < urls.length; i++) {
+            await downloadFile(urls[i], submitId, names[i]);
+        }
+    }
+    else {
+        for (let i = 0; i < urls.length; i++) {
+            await downloadFile(urls[i], submitId, "");
+        }
     }
 }
 
-async function downloadFile(url: string, submitId: string) {
+export async function downloadFile(url: string, submitId: string, name: string) {
     /*
         test url:
         let url = "https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.pdf"      //pdf
@@ -19,7 +26,7 @@ async function downloadFile(url: string, submitId: string) {
     let path = await getDownloadPath();
     path += "\\taskmate" + "\\" + submitId;
     // console.log(path)
-    invoke('download_file', {url: url, filePath: path}).then(
+    invoke('download_file', {url: url, filePath: path, fileName: name}).then(
         (resolved: any) => {
             // console.log(resolved)
         }
@@ -46,12 +53,11 @@ async function analyzeDir(submitId: string) {
     return buildFileTree("student_file", zipFiles);
 }
 
-
-async function getDownloadPath(): Promise<string> {
+export async function getDownloadPath(): Promise<string> {
     return appDataDir()
 }
 
-function buildFileTree(zipName: string, zipFiles: ZipFile[]): FileTreeNode {
+export function buildFileTree(zipName: string, zipFiles: ZipFile[]): FileTreeNode {
     const root = new FileTreeNode(zipName, true, true, '', AssignFileType.placeholder);
     zipFiles.sort((a: ZipFile, b: ZipFile) => a.name.length - b.name.length);
     const map = new Map<string, FileTreeNode>();
@@ -105,7 +111,7 @@ function findNode(root: FileTreeNode, paths: string[]) {
     return node;
 }
 
-function analyzeType(url: string) {
+export function analyzeType(url: string) {
     const postfix = url.split('.').pop();
     switch (postfix) {
         case 'pdf':

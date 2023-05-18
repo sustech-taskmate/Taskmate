@@ -118,7 +118,10 @@ interface Submission {
 interface Answer {
     uuid: string;
     problemType: string;
-    file: string;
+    files: {
+        name: string;
+        url: string;
+    }[];
     score: number;
     message: string;
     result: any;

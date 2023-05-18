@@ -142,8 +142,15 @@ const flexible = () => {
 
 const submissionInfo = await getSubmissionInfo(gid.value as string);
 // const url = [submissionInfo.submission.answers[0].file]
-let urls = ['https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/a.zip', 'https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.pdf']
-downloadAll(urls, (gid.value as string));
+let urls = submissionInfo.submission.answers[0].files.map((file)=>{
+  return file.url
+})
+let names = submissionInfo.submission.answers[0].files.map((file)=>{
+  return file.name
+})
+
+// urls = ['https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/a.zip', 'https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.pdf']
+downloadAll(urls, (gid.value as string), names);
 let nodes = ref(new Map<string, FileTreeNode>());
 analyzeDir((gid.value as string)).then((res) => {
   for (let i = 0; i < res.children.length; i++) {
