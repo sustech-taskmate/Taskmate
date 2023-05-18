@@ -36,7 +36,7 @@
         </div>
         <div style="left: 0; top: 2vh; position: relative">
           <span class="word"
-                style="line-height: 3vh; position: absolute; left: 2.5vw; top: 2vh;">{{ assignments[aid].name }}</span>
+                style="line-height: 3vh; position: absolute; left: 2.5vw; top: 2vh;">{{ assignments[Number(aid)].name }}</span>
           <div style="width: 27vw; height: 7vh; position: absolute; right: 0; top: 10vh;">
             <svg-icon name="download" style="width: 6vw; height: 6vh; cursor: pointer"></svg-icon>
             <svg-icon name="transmit" style="width: 6vw; height: 6vh; cursor: pointer"></svg-icon>
