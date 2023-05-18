@@ -146,7 +146,8 @@ const toCourse = () => {
 const toStatistics = () => {
   let cid = route.params.cid;
   let aid = route.params.aid;
-  routerPush({name: 'statistics', params: {cid: cid, aid: aid}});
+  routerPush({name: 'statistics', params: {cid: cid, aid: aid},
+    query: {submissions: JSON.stringify(submissionList.submissions)}});
 }
 
 const toGrade = (scope: any) => {
@@ -185,8 +186,6 @@ watch(
     }
 );
 
-
-
 const assignments = reactive(JSON.parse(route.query.assignments as string) as Assignment[])
 const submissionList = await getSubmissions(cid)
 const tableData: StudentContent[] = reactive([])
@@ -202,20 +201,11 @@ submissionList.submissions.forEach((value) => {
 })
 
 let courseShow = ref(true);
-let courseShow2 = ref(true);
 let leftShow = ref(true);
 let rightWidth = ref('78vw')
 
 const hidden = () => {
   courseShow.value = !courseShow.value
-}
-
-const hidden2 = () => {
-  courseShow2.value = !courseShow2.value
-}
-
-const myClick = () => {
-  alert(1)
 }
 
 let leftSize = reactive({

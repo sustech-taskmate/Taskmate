@@ -102,12 +102,12 @@ interface Problem {
     description: string;
 }
 
-interface Submission {
+export interface Submission {
     id: string,
     uuid: string,
     createdAt: 0,
-    score: 0,
-    points: 0,
+    score: number | null,
+    points: number | null,
     assignment: Assignment
     entry: Entry,
     submitter: {id: number, sid: string}

@@ -140,12 +140,14 @@
 import {
   ArrowLeft
 } from '@element-plus/icons-vue'
-import {onMounted, createApp, watch, nextTick, onBeforeMount} from 'vue';
+import {onMounted, createApp, watch, nextTick, onBeforeMount, ref} from 'vue';
 import {ECharts, EChartsOption, init} from 'echarts';
 import * as echarts from 'echarts';
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
 import {Problem, ScoreDistribution} from "@/store/statistics";
+import {getStatisticalInformation, getScoreDistribution, getPrefixData, getSuffixData} from "@/composable/statistics";
+import {Submission} from "@/composable/serverRequest";
 import '@/assets/style/local/statistics.css';
 
 const route = useRoute();
@@ -154,6 +156,18 @@ const {routerPush} = useRouterPush();
 const colorList = [
   '#f7797d', '#fbd786', '#c6ffdd',
 ]
+
+const submissions = ref(JSON.parse(route.query.submissions as string) as Submission[]);
+// ======Test Data======
+submissions.value[0].score = 89
+submissions.value[1].score = null
+submissions.value[2].score = 53
+submissions.value[3].score = 101
+// ======Test Data======
+const [average, median, minimum, maximum] = getStatisticalInformation(submissions.value);
+const scoreDistribution = getScoreDistribution(submissions.value);
+const preData = getPrefixData(submissions.value);
+const sufData = getSuffixData(submissions.value);
 
 // ======Test Data======
 let distribution1 = new ScoreDistribution(0, 11);
@@ -176,51 +190,51 @@ let problem2 = new Problem([distribution4, distribution5, distribution6, distrib
   distribution8, distribution9, distribution10, distribution11, distribution12, distribution13,
   distribution14, distribution15])
 const problemData = [problem1, problem2];
-const table1Data = [
+// ======Test Data======
+const table1Data = ref([
   {
-    type: 'minimum',
-    score: 90,
-  },
-  {
-    type: 'maximal',
-    score: 94,
+    type: 'average',
+    score: average,
   },
   {
     type: 'median',
-    score: 91,
+    score: median,
   },
   {
-    type: 'average',
-    score: 92,
+    type: 'minimum',
+    score: minimum,
   },
-]
+  {
+    type: 'maximum',
+    score: maximum,
+  },
+])
 const table2Data = [
   {
-    interval: '100',
-    count: 5,
+    interval: '≥ 100',
+    count: scoreDistribution.get('≥ 100'),
   },
   {
     interval: '90-99',
-    count: 6,
+    count: scoreDistribution.get('90-99'),
   },
   {
     interval: '80-89',
-    count: 7,
+    count: scoreDistribution.get('80-89'),
   },
   {
     interval: '70-79',
-    count: 8,
+    count: scoreDistribution.get('70-79'),
   },
   {
     interval: '60-69',
-    count: 9,
+    count: scoreDistribution.get('60-69'),
   },
   {
     interval: '< 60',
-    count: 10,
+    count: scoreDistribution.get('< 60'),
   },
 ]
-// ======Test Data======
 
 function getProblemFigure(id: number) {
   const str = 'problem' + id + 'Figure';
@@ -292,9 +306,7 @@ function getProblemFigure(id: number) {
 const addFigure1 = () => {
   const ele = document.getElementById('figure1') as HTMLElement;
   const echart: ECharts = init(ele);
-  const xData = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-  const preData = [1, 2, 3, 4, 10, 20, 30, 40, 80, 90, 100]
-  const sufData = [100, 99, 98, 97, 96, 90, 80, 70, 60, 20, 10]
+  const xData = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, '≥ 100']
   const dataLen = xData.length
   const option: EChartsOption = {
     tooltip: {
@@ -377,8 +389,9 @@ const addFigure1 = () => {
 const addFigure2 = () => {
   const ele = document.getElementById('figure2') as HTMLElement;
   const echart: ECharts = init(ele);
-  const xData = ['Less than 60', '60-69', '70-79', '80-89', '90-99', '100']
-  const yData = [24, 41, 22, 56, 21, 12]
+  const xData = ['< 60', '60-69', '70-79', '80-89', '90-99', '≥ 100']
+  const yData = [scoreDistribution.get('< 60') as number, scoreDistribution.get('60-69') as number, scoreDistribution.get('70-79') as number,
+    scoreDistribution.get('80-89') as number, scoreDistribution.get('90-99') as number, scoreDistribution.get('≥ 100') as number]
   const dataLen = xData.length
   const option: EChartsOption = {
     tooltip: {
