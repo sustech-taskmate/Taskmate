@@ -42,6 +42,7 @@ Object.keys(gb).forEach((key, index) => {
     cardList[index].listContainCard.push(new ContainCard(value.id, value.title, value.name, value.role))
   })
 });
+console.log(gb)
 cardList.sort((a, b) => b.index - a.index);
 
 let SaTodo = reactive(new ToDo(ToDoIdentity.todoSa, [
