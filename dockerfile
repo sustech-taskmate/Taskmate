@@ -9,7 +9,7 @@ RUN apt install -y libwebkit2gtk-4.0-dev \
     libgtk-3-dev \
     libayatana-appindicator3-dev \
     librsvg2-dev
-ENV HTTPS_PROXY="http://192.168.110.131:7890"
+# ENV HTTPS_PROXY="http://192.168.110.131:7890"
 RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.bashrc" SHELL="$(which bash)" bash -
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 RUN cargo install tauri-cli --git https://github.com/tauri-apps/tauri
@@ -21,9 +21,13 @@ SHELL ["/bin/bash", "-ic"]
 WORKDIR /home/node
 
 # pnpm fetch does require only lockfile
-COPY pnpm-lock.yaml ./
-RUN pnpm fetch --registry https://registry.npm.taobao.org
+# COPY pnpm-lock.yaml ./
+# RUN pnpm fetch --registry https://registry.npm.taobao.org
+#
+# COPY --chown=node:node . .
+# RUN pnpm install -r --offline && \
+#     pnpm tauri build
 
 COPY --chown=node:node . .
-RUN pnpm install -r --offline && \
-    pnpm tauri build
+RUN pnpm install
+RUN pnpm tauri build
