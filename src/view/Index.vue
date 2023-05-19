@@ -36,7 +36,8 @@ Object.keys(gb).forEach((key, index) => {
   const [year, season] = key.split(" ")
   const yearNum = parseInt(year);
   const seasonIndex = m.get(season)
-  cardList.push(new Card(key, [], false, yearNum * 4 + (seasonIndex as number)))
+  cardList.push(new Card(key, [], false, false,
+      yearNum * 4 + (seasonIndex as number)))
   const classes: Class[] = gb[key];
   classes.forEach((value) => {
     cardList[index].listContainCard.push(new ContainCard(value.id, value.title, value.name, value.role))

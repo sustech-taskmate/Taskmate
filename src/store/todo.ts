@@ -47,13 +47,15 @@ class ContainCard {
 class Card {
     name: string;
     listContainCard: ContainCard[];
-    down: boolean;
+    indexDown: boolean;
+    courseviewDown: boolean;
     index: number;
 
-    constructor(name: string, listContainCard: ContainCard[], down: boolean, index: number) {
+    constructor(name: string, listContainCard: ContainCard[], indexDown: boolean, courseviewDown: boolean, index: number) {
         this.name = name
         this.listContainCard = listContainCard
-        this.down = down
+        this.indexDown = indexDown
+        this.courseviewDown = courseviewDown
         this.index = index;
     }
 }

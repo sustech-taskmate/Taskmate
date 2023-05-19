@@ -18,7 +18,7 @@
                     style="position: absolute; width: 6vw; height: 8vh; cursor: pointer"
                     v-bind:style="{left: leftSize.left3, top: leftSize.top3}"></svg-icon>
         </div>
-        <div v-if="leftShow" style="height: 90vh">
+        <div v-if="leftShow" style="height: 90vh; overflow-y: auto">
           <template v-for="(item, index) in assignments" :key="index">
             <div style="width: 20vw; left: 1vw; position: relative">
               <div style="position: relative; width: 20vw; height: 7vh">
@@ -46,7 +46,7 @@
 <!--            <svg-icon name="set" style="width: 7vw; height: 7vh" @click="router.push('/Main/Set')"></svg-icon>-->
           </div>
         </div>
-        <div style="position: relative; height: 68vh; top: 18vh" v-bind:style="{ width: rightWidth }">
+        <div style="position: relative; height: 62vh; top: 18vh" v-bind:style="{ width: rightWidth }">
           <div style="background-color: steelblue; height: 10vh">
             <span class="word" style="line-height: 3vh; color: white; position: absolute; left: 2.5vw; top: 4vh;">Student List</span>
             <svg-icon name="play2" color="white"

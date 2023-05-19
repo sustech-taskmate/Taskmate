@@ -1,0 +1,37 @@
+a {
+    color: black;
+}
+
+@media screen and (min-width: 1001px) {
+    .word {
+        font-size: 2.5vw;
+    }
+
+    .table-word {
+        font-size: 2vw;
+        margin-right: 2vw;
+    }
+}
+
+@media screen and (min-width: 601px) and (max-width: 1000px) {
+    .word {
+        font-size: 3vw;
+    }
+
+    .table-word {
+        font-size: 2.5vw;
+        margin-right: 0.5vw;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .word {
+        font-size: 3.5vw;
+    }
+}
+
+#container {
+    display: flex;
+    border: 2px solid black;
+    border-radius: 5px;
+}

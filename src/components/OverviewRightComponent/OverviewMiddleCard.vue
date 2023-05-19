@@ -11,10 +11,10 @@
         </el-col>
         <el-col :span="3" style="display: flex; align-items: center; justify-content: center; border-radius: 0 10px 10px 0;
                                   border-bottom: 2px solid black; border-top: 2px solid black; border-right: 2px solid black">
-          <svg-icon name="down" color="#272636" class="icon rotate" :class="{active: item.down}"/>
+          <svg-icon name="down" color="#272636" class="icon rotate" :class="{active: item.indexDown}"/>
         </el-col>
       </el-row>
-      <el-row class="downList" v-if="item.down"
+      <el-row class="downList" v-if="item.indexDown"
               style="overflow-y: auto; border-radius: 10px; border-bottom: 2px solid black;
                border-left: 2px solid black; border-right: 2px solid black;"
               ref="down">
@@ -93,10 +93,11 @@ watch(props.filters, (newVal, oldVal) => {
     })
     if (tempContainCard.length > 0) {
       tempCards.push({
-        name: card.name,
-        down: false,
-        listContainCard: tempContainCard,
-        index: card.index
+          name: card.name,
+          indexDown: false,
+          courseviewDown: false,
+          listContainCard: tempContainCard,
+          index: card.index
       })
     }
   })
@@ -106,7 +107,7 @@ watch(props.filters, (newVal, oldVal) => {
 const {routerPush} = useRouterPush();
 
 const rotate = (p: Card) => {
-  p.down = !p.down
+  p.indexDown = !p.indexDown
 }
 const contextColor = (context: ContainCard) => {
   switch (context.identify) {
