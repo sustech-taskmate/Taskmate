@@ -2,6 +2,7 @@ use std::fs::{File, create_dir_all, OpenOptions, remove_file};
 use std::io::{Write};
 use std::path::Path;
 use reqwest::blocking::get;
+use reqwest::multipart;
 use anyhow::{Result};
 use flate2::read::GzDecoder;
 use tar::Archive;
@@ -85,6 +86,29 @@ enum ExtractOperationType {
     Zip,
     TarGz,
 }
+
+#[tauri::command]
+pub fn upload_file(url: &str, file_path: std::path::PathBuf, key: &str, token: &str) -> Result<(), String> {
+    let client = reqwest::Client::new();
+
+    let file_name = file_path.file_name().unwrap().to_string_lossy().to_string();
+    let file_content = tokio::fs::read(file).await.map_err(|err| err.to_string())?;
+    
+    let part = multipart::Part::bytes(file_content).file_name(file_name);
+    let form = multipart::Form::new()
+        .part("file", part)
+        .text("key", key)
+        .text("token", token);
+
+    client.post(url)
+        .multipart(form)
+        .send()
+        .await
+        .map_err(|err| err.to_string())?;
+
+    Ok(())
+}
+
 
 #[tauri::command]
 pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), String> {
