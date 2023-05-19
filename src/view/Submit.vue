@@ -1,69 +1,65 @@
 <template>
     <el-container type="flex" style="height: 100vh; width: 100%">
         <el-aside style="width: 15%; height: 100%; border-right: 2px solid black">
-            <div style="width: 100%; height: 10%; background: #00BFFF">
-                <svg-icon name="arrayLeft"
+            <div style="width: 100%; height: 10%; background: steelblue">
+                <svg-icon name="arrayLeft" color="white"
                           style="width: 20%; height: 100%" @click="back()"></svg-icon>
-                <svg-icon name="home" color="black"
+                <svg-icon name="home" color="white"
                           style="width: 20%; height: 100%"></svg-icon>
-                <svg-icon name="menu2" color="black"
+                <svg-icon name="menu2" color="white"
                           style="width: 20%; height: 100%; float: right;"></svg-icon>
             </div>
-            <div style="width: 100%; height: 90%; overflow-y: auto; background: lightgray">
+            <div style="width: 100%; height: 90%; overflow-y: hidden; background: lightgray">
 <!--                <div v-for="item in dataCourse">-->
-                <div style="width: 100%; height: 0.5vh"></div>
                 <submit-right-course-card :CourseData="course"
                                           @child-value="handleChildEvent"
                 >
                 </submit-right-course-card>
-                <div style="width: 100%; height: 0.5vh"></div>
 <!--                </div>-->
             </div>
         </el-aside>
         <el-main style="width: 85%; height: 100%; border: none; padding: 0; margin: 0; font-size: calc(100vh * 28 / 1500);">
-            <div style="width: 100%; height: 10%; background: #00BFFF; display: flex; justify-content: center; align-items: center;">
-                作业信息
+            <div style="width: 100%; height: 10%; background: steelblue; display: flex; justify-content: center; align-items: center; color: white;">
+                Assignment Information
             </div>
             <div style="width: 100%; height: 30%;">
-                <el-row style="height: 40%">
-                    <el-col :span="2" class="format" style="border-bottom: 1px solid black">
-                        作业名称
-                    </el-col>
-                    <el-col :span="2" class="format" style="border-right: 1px solid black; border-bottom: 1px solid black">
-                        {{ showInformation.name }}
-                    </el-col>
-                    <el-col :span="2" class="format" style="border-bottom: 1px solid black">
-                        截止时间
-                    </el-col>
-                    <el-col :span="5" class="format" style="border-right: 1px solid black; border-bottom: 1px solid black">
-                        {{ showInformation.ddl }}
-                    </el-col>
-                    <el-col :span="2" class="format" style="border-bottom: 1px solid black">
-                        迟交时间
-                    </el-col>
-                    <el-col :span="4" class="format" style="border-right: 1px solid black; border-bottom: 1px solid black">
-                        {{ showInformation.lateTime }}
-                    </el-col>
-                    <el-col :span="2" class="format" style="border-bottom: 1px solid black">
-                        提交时间
-                    </el-col>
-                    <el-col :span="5" class="format" style="border-bottom: 1px solid black">
-                        {{ showInformation.submitTime }}
-                    </el-col>
-                </el-row>
+              <el-descriptions :column="2" border size="large">
+                <el-descriptions-item
+                    label="Assignment Name"
+                    label-align="left"
+                    align="left"
+                    class-name="my-content"
+                >{{showInformation.name}}</el-descriptions-item>
+                <el-descriptions-item label="Submit Time" label-align="left" align="left"
+                >{{showInformation.submitTime}}</el-descriptions-item>
+                <el-descriptions-item label="Due" label-align="left" align="left"
+                >{{showInformation.ddl}}</el-descriptions-item>
+                <el-descriptions-item label="Late Due" label-align="left" align="left"
+                >{{showInformation.lateTime}}</el-descriptions-item>
+              </el-descriptions>
+<!--              <el-descriptions :column="1" border direction="vertical" size="large">-->
+<!--                <el-descriptions-item-->
+<!--                    label="Assignment Description"-->
+<!--                    label-align="left"-->
+<!--                    align="left"-->
+<!--                    class-name="my-content"-->
+<!--                >Assignment Description-->
+<!--                  ....-->
+<!--                  ....</el-descriptions-item>-->
+<!--              </el-descriptions>-->
                 <el-row v-if="showInformation.files">
                     <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;" >
-                        <el-row v-for="i in showInformation.files" style="background: lightgreen; width: 50%">
+                        <el-row v-for="i in showInformation.files" style="background: grey; width: 50%">
                             <el-row style="width: 100%; height: 0.5vh; background: white">
                             </el-row>
                             <el-row style="width: 100%">
                                 <div class="format" style="background: white; width: 1.25%">
                                 </div>
                                 <div class="format" style="width: 48.75%;">
-                                    名称: {{i.name}}
+                                    FileName: {{i.name}}
                                 </div>
                                 <div class="format" style="width: 48.75%">
-                                    大小: {{i.size}} Bytes
+                                    Size: {{i.size}} Bytes
                                 </div>
                                 <div class="format" style="background: white; width: 1.25%">
 
@@ -73,66 +69,83 @@
                     </div>
                 </el-row>
             </div>
-            <div style="width: 100%; height: 10%; background: #00BFFF; display: flex; justify-content: center; align-items: center;">
-                提交内容
+
+            <div style="width: 100%; height: 10%; background: steelblue; display: flex; justify-content: center; align-items: center;">
+              <div style="color: white;">Submit Content</div>
             </div>
-            <div style="width: 100%; height: 40%">
+
+            <div style="width: 100%; height: 40%; overflow-y: scroll">
                 <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;"
                      v-for="item in fileList">
-                    <el-row style="height: 0.5vh; width: 100%">
-
-          </el-row>
-          <el-row style="height: 8vh; width: 100%; flex: 1 0 30%; border-bottom:  2px solid black; border-top:  2px solid black;
-                               display: flex; justify-content: center; align-items: center; background: lightgreen">
-                        <el-col :span="2" class="format" style="font-size: calc(100vh * 28 / 1500);">
-                            文件名
-                        </el-col>
-                        <el-col :span="5" class="format" style="font-size: calc(100vh * 20 / 1500);">
-                            {{ item.name }}
-                        </el-col>
-                        <el-col :span="2" class="format" style="font-size: calc(100vh * 28 / 1500);">
-                            文件大小
-                        </el-col>
-                        <el-col :span="5" class="format" style="font-size: calc(100vh * 28 / 1500);">
-                            {{ item.size }} Bytes
-                        </el-col>
-                        <el-col :span="2" class="format" style="font-size: calc(100vh * 28 / 1500);">
-                            提交时间
-                        </el-col>
-                        <el-col :span="5" class="format" style="font-size: calc(100vh * 28 / 1500);">
-                            {{ item.time }}
-                        </el-col>
-                        <el-col :span="3" class="format">
-                            <svg-icon name="cross" color="black"
-                                      style="width: 20%; height: 80%; float: right;"
-                                      @click="dele(item)">
-                            </svg-icon>
-                        </el-col>
-                    </el-row>
-                    <el-row style="height: 0.5vh; width: 100%">
-
-                    </el-row>
-                </div>
-            </div>
-            <div style="width: 100%; height: 10%; background: lightcyan">
-                <el-row style="height: 100%">
-                    <el-col :span="8" style="height: 100%"></el-col>
-                    <el-col :span="4"
-                            style="height: 100%; display: flex; justify-content: center; align-items: center;">
-                        <button class="sel" @click="selectFile"> choose</button>
+                  <el-row style="height: 8vh; width: 100%; flex: 1 0 30%;
+                             display: flex; justify-content: center; align-items: center;">
+                      <el-col :span="12" class="format" style="font-size: calc(100vh * 30 / 1500);">
+                          {{ item.name }}
+                      </el-col>
+                    <el-col :span="3" class="format" style="font-size: calc(100vh * 28 / 1500);">
+                      {{ item.size }} Bytes
                     </el-col>
-                    <el-col :span="4"
-                            style="height: 100%; display: flex; justify-content: center; align-items: center;">
-                        <button class="btn" @click="submit"> submit</button>
+                    <el-col :span="6" class="format" style="font-size: calc(100vh * 28 / 1500);">
+                      {{ item.time}}
                     </el-col>
-                    <el-col :span="8" style="height: 100%"></el-col>
-                </el-row>
+                      <el-col :span="3" class="format">
+                          <svg-icon name="cross" color="black"
+                                    style="width: 20%; height: 80%; float: right;"
+                                    @click="dele(item)">
+                          </svg-icon>
+                      </el-col>
+                  </el-row>
             </div>
+          </div>
+          <div class="btn-box">
+            <button type="button" class="btn submit"  @click="selectFile">upload</button>
+            <button type="button" class="btn next"   @click="submit">submit</button>
+          </div>
+
         </el-main>
     </el-container>
 </template>
 
 <style scoped>
+.btn-box {
+  height: 8%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  border: 1px solid;
+  background-color: transparent;
+  text-transform: uppercase;
+  font-size: calc(100vw * 24 / 1500);
+  font-weight: 300;
+}
+
+.btn:hover {
+  color: white;
+  border: 0;
+  cursor: pointer;
+}
+
+.next {
+  color: #548585;
+  margin-left: calc(100vw * 10 / 1500);
+}
+
+.next:hover {
+  background-color: #548585;
+  -moz-box-shadow: 10px 10px 99px 6px rgba(0, 128, 128, 1);
+}
+.submit {
+  color: #6A7FA0;
+}
+
+.submit:hover {
+  background-color: #6A7FA0;
+}
+
+
 .format {
     display: flex;
     justify-content: center;
@@ -145,13 +158,6 @@
     cursor: pointer;
 }
 
-.btn {
-    border: 1px solid green;
-    background-color: lightblue;
-    text-transform: uppercase;
-    font-size: calc(100vw * 12 / 1500)
-}
-
 .sel {
     border: 1px solid blue;
     background-color: lightblue;
@@ -159,11 +165,6 @@
     font-size: calc(100vw * 12 / 1500)
 }
 
-.btn:hover {
-    color: orangered;
-    border: 0;
-    cursor: pointer;
-}
 
 </style>
 
