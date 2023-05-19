@@ -37,7 +37,7 @@ fn main() {
         })
         .system_tray(tray::menu())
         .on_system_tray_event(tray::handler)
-        .invoke_handler(tauri::generate_handler![file_handler::download_file,file_handler::analyze_dir])
+        .invoke_handler(tauri::generate_handler![file_handler::download_file,file_handler::analyze_dir,file_handler::upload_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

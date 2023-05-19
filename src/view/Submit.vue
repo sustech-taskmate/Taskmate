@@ -218,14 +218,11 @@ const showInformation = ref({name: '', ddl: '', submitTime: '', lateTime: '', fi
 
 const submit = async () => {
     // TODO: 上传至服务器
-    console.log("aaa")
     let li: AttachFile[] = [];
     const files = fileList.value.map((l) => {
         return l.file
     })
-    console.log(files[0])
-    const res = await uploadFile(cid.value, pid.value, eid.value, files);
-    console.log(res)
+    await uploadFile(cid.value, pid.value, eid.value, files);
     for (let i = 0; i < fileList.value.length; i++) {
         li.push(new AttachFile(fileList.value[i].name, fileList.value[i].size, fileList.value[i].time))
     }

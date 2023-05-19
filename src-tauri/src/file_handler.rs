@@ -7,6 +7,7 @@ use anyhow::{Result};
 use flate2::read::GzDecoder;
 use tar::Archive;
 use walkdir::WalkDir;
+use mime;
 
 #[tauri::command]
 pub async fn analyze_dir(target: &str, origin: &str) -> Result<(), String>{
@@ -88,17 +89,18 @@ enum ExtractOperationType {
 }
 
 #[tauri::command]
-pub fn upload_file(url: &str, file_path: std::path::PathBuf, key: &str, token: &str) -> Result<(), String> {
+pub async fn upload_file(url: &str, file_content: &str, key: &str, token: &str) -> Result<(), String> {
     let client = reqwest::Client::new();
 
-    let file_name = file_path.file_name().unwrap().to_string_lossy().to_string();
-    let file_content = tokio::fs::read(file).await.map_err(|err| err.to_string())?;
-    
-    let part = multipart::Part::bytes(file_content).file_name(file_name);
+    let vec = Vec::from(file_content);
+    let part = multipart::Part::stream(vec)
+        .mime_str(mime::APPLICATION_OCTET_STREAM.as_ref())
+        .unwrap();
+
     let form = multipart::Form::new()
         .part("file", part)
-        .text("key", key)
-        .text("token", token);
+        .text("key", key.to_owned())
+        .text("token", token.to_owned());
 
     client.post(url)
         .multipart(form)
