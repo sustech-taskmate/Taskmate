@@ -156,7 +156,7 @@ const courses = reactive(JSON.parse(route.query.courses as string) as Card[])
 const classId = route.params.cid as string
 const tableData: CourseData[] = reactive([])
 const currentClass = await getClassbyId(classId);
-const studentLength = currentClass.studentList.filter((s) => s.role == 'student').length
+const studentLength = currentClass.users.filter((s) => s.role == 'student').length
 const AssignmentList = await getAssignments(classId);
 
 AssignmentList.assignments.forEach((value) => {
