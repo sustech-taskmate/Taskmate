@@ -2,7 +2,11 @@
   <el-header type="flex" style="height: 10vh;
     border-bottom: 2px solid black; border-left: 2px solid black; border-top: 2px solid black; border-radius: 10px 0 0 0">
     <el-row type="flex" style="height: 100%">
-      <el-col :span="10" style="height: 100%" type="flex"/>
+      <el-col :span="2" style="height: 100%" type="flex">
+        <svg-icon name="logout" color="black" @click="logout"
+                  style="text-align: center; vertical-align: center; height: 100%; width: 50%; cursor: pointer;"/>
+      </el-col>
+      <el-col :span="8" style="height: 100%" type="flex"/>
       <el-col :span="4" style="height: 100%" type="flex">
         <el-row style="height: 100%" type="flex">
           <svg
@@ -69,6 +73,9 @@
 <script lang="ts" setup>
 import {Card} from '@/store/todo';
 import {PropType, ref} from "vue";
+import SvgIcon from "@/components/util/SvgIcon.vue";
+import {useRouterPush} from "@/composable";
+
 const props = defineProps({
   cardList: {type: Array as PropType<Card[]>, default: null}
 })
@@ -76,6 +83,12 @@ const props = defineProps({
 const filters = ref([true, true, true]);
 const filter = (index: number) => {
   filters.value[index] = !filters.value[index];
+}
+
+const logout = () => {
+  localStorage.removeItem('token');
+  const {routerPush} = useRouterPush();
+  routerPush({name: 'empty'})
 }
 </script>
 
