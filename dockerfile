@@ -1,6 +1,5 @@
 FROM debian as os
-SHELL ["/bin/bash", "-c"]
-
+SHELL ["/bin/bash", "-ic"]
 RUN apt update
 RUN apt install -y libwebkit2gtk-4.0-dev \
     build-essential \
@@ -10,23 +9,21 @@ RUN apt install -y libwebkit2gtk-4.0-dev \
     libgtk-3-dev \
     libayatana-appindicator3-dev \
     librsvg2-dev
-RUN touch "$HOME/.bashrc"
-RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.bashrc" SHELL="$(which bash)" HTTPS_PROXY="http://192.168.110.131:7890" bash -
-RUN HTTPS_PROXY="http://192.168.110.131:7890" curl https://sh.rustup.rs -sSf | bash -s -- -y
+ENV HTTPS_PROXY="http://192.168.110.131:7890"
+RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.bashrc" SHELL="$(which bash)" bash -
+RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
+RUN cargo install tauri-cli --git https://github.com/tauri-apps/tauri
+RUN pnpm env use --global 18
 
-FROM os as node
-RUN source "$HOME/.bashrc" && pnpm env use --global 18
-
-FROM node as builder
-SHELL ["/bin/bash", "-c"]
+FROM os as builder
+SHELL ["/bin/bash", "-ic"]
 
 WORKDIR /home/node
 
 # pnpm fetch does require only lockfile
 COPY pnpm-lock.yaml ./
-
-RUN source "$HOME/.bashrc" && pnpm fetch --registry https://registry.npm.taobao.org
+RUN pnpm fetch --registry https://registry.npm.taobao.org
 
 COPY --chown=node:node . .
-RUN source "$HOME/.bashrc" && pnpm install -r --offline
-RUN source "$HOME/.bashrc" && pnpm tauri build
+RUN pnpm install -r --offline && \
+    pnpm tauri build
