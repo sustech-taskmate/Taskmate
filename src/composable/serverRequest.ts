@@ -1,6 +1,7 @@
 import {request} from "@/service/request";
 import {Body} from "@tauri-apps/api/http";
 import {useRouterPush} from "@/composable/router";
+import {invoke} from "@tauri-apps/api/tauri";
 
 
 /*    sample value:
@@ -246,7 +247,7 @@ async function getEntries(classId: string) {
 }
 
 async function uploadFile(classId: string, problemId: string, entryId: string, files: File[]) {
-    const uuids: string[]  = await Promise.all(files.map(async file => {
+    const uuids: string[] = await Promise.all(files.map(async file => {
         let url = `/file/`;
         const response = await request.post<FileResponse>(url, {
             body: Body.json({
@@ -256,26 +257,34 @@ async function uploadFile(classId: string, problemId: string, entryId: string, f
         });
 
         const data = response.data
-        const formData = new FormData();
 
-        formData.append('file', file);
-        Object.entries(data.extraFormData).forEach(([key, value]) =>
-            formData.append(key, value as string),
-        );
+        const read = async (file: File): Promise<string> => {
+            return new Promise(((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsArrayBuffer(file);
+                reader.onload = async (event) => {
+                    const arrayBuffer = event.target?.result as ArrayBuffer;
+                    const file_content = new Uint8Array(arrayBuffer);
+                    resolve(String.fromCharCode(...file_content));
+                }
+                reader.onerror = () => {
+                    reject(reader.error);
+                };
+            }))
+        }
 
-        await request.post(data.url, {
-            body: Body.form(formData)
-        });
+        const file_content = await read(file);
+        await invoke('upload_file',
+            {url: data.url, fileContent: file_content, key: data.extraFormData.key, token: data.extraFormData.token});
 
         url = `/problem/${problemId}/answer`;
         const response1 = await request.post<AnswerResponse>(url, {
             body: Body.json({
-                files: data.uuid
+                file: data.uuid
             })
         })
-        console.log(response1)
 
-        return  response1.data.answer.uuid;
+        return response1.data.answer.uuid;
     }));
 
     const url = `/class/${classId}/entry/${entryId}/submission`

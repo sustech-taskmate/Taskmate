@@ -2,10 +2,12 @@ use std::fs::{File, create_dir_all, OpenOptions, remove_file};
 use std::io::{Write};
 use std::path::Path;
 use reqwest::blocking::get;
+use reqwest::multipart;
 use anyhow::{Result};
 use flate2::read::GzDecoder;
 use tar::Archive;
 use walkdir::WalkDir;
+use mime;
 
 #[tauri::command]
 pub async fn analyze_dir(target: &str, origin: &str) -> Result<(), String>{
@@ -85,6 +87,30 @@ enum ExtractOperationType {
     Zip,
     TarGz,
 }
+
+#[tauri::command]
+pub async fn upload_file(url: &str, file_content: &str, key: &str, token: &str) -> Result<(), String> {
+    let client = reqwest::Client::new();
+
+    let vec = Vec::from(file_content);
+    let part = multipart::Part::stream(vec)
+        .mime_str(mime::APPLICATION_OCTET_STREAM.as_ref())
+        .unwrap();
+
+    let form = multipart::Form::new()
+        .part("file", part)
+        .text("key", key.to_owned())
+        .text("token", token.to_owned());
+
+    client.post(url)
+        .multipart(form)
+        .send()
+        .await
+        .map_err(|err| err.to_string())?;
+
+    Ok(())
+}
+
 
 #[tauri::command]
 pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), String> {

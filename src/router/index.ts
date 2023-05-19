@@ -1,4 +1,4 @@
-import {createRouter, createWebHashHistory, NavigationGuardNext, RouteLocationNormalized, createMemoryHistory} from 'vue-router'
+import {createMemoryHistory, createRouter, NavigationGuardNext, RouteLocationNormalized} from 'vue-router'
 import {App} from "vue";
 import {login} from "@/composable/serverRequest";
 
@@ -36,6 +36,11 @@ const routes = [
         component: () => import('../view/Empty.vue')
     },
     {
+        path: '/upload/s/:cid',
+        name: 'upload',
+        component: () => import('../view/Submit.vue')
+    },
+    {
         path: '/grade/t/:cid',
         name: 'teacherCourse',
         component: () => import('../view/CourseView.vue')
@@ -50,10 +55,6 @@ const routes = [
         name: 'statistics',
         component: () => import('../view/AssignStatistics.vue')
     },
-    // {
-    //   path: '/Main/Set',
-    //   component: () => import('../view/AssignSetting.vue')
-    // },
     {
         path: '/grade/t/:cid/:aid/:gid',
         name: 'grade',
@@ -68,10 +69,10 @@ const routes = [
 ]
 const routerHistory = createMemoryHistory();
 export const router = createRouter({
-  // history: createWebHashHistory(),
-  history: routerHistory,
-  routes,
-  scrollBehavior: () => ({left:0, top:0})
+    // history: createWebHashHistory(),
+    history: routerHistory,
+    routes,
+    scrollBehavior: () => ({left: 0, top: 0})
 })
 
 export async function setupRouter(app: App) {

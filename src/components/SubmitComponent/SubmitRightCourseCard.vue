@@ -20,9 +20,9 @@
         </el-row>
         <el-row class="downList" v-if="CourseData.down"
             ref="down">
-            <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;" v-for="context in CourseData.assignmentList">
+            <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;" v-for="(context, index) in CourseData.assignmentList">
                 <el-row style="height: 7vh; width: 100%; flex: 1 0 30%; border-bottom:  2px solid black;
-                               display: flex; justify-content: center; align-items: center;" @click="changeContext(context, CourseData.name)"
+                               display: flex; justify-content: center; align-items: center;" @click="changeContext(index, context, CourseData.name)"
                     data-test="assignment-name">
                         {{context.name}}
                 </el-row>
@@ -41,11 +41,11 @@ export default defineComponent({
             type: Course,
             required: true
         },
+
     },
     methods: {
-        changeContext (context: Assignment, courseName: string){
-            this.$emit('child-event', context);
-            this.$emit('order', courseName, context.name)
+        changeContext (index: number, context: Assignment, courseName: string){
+            this.$emit('child-value', index, context)
         },
       rotate (item: Course) {
         item.down = !item.down
