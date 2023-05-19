@@ -1,9 +1,9 @@
-import {emit, once} from "@tauri-apps/api/event";
+import {emit, listen} from "@tauri-apps/api/event";
 
 export async function loginAuth() {
     await emit('authenticate', {});
 
-    await once<{ token: string }>('authenticate', (event) => {
+    await listen<{ token: string }>('authenticate', (event) => {
         const originalSetItem = localStorage.setItem;
         localStorage.setItem = function (key: string, newValue: any): void {
             const setItemEvent: CustomEvent = new CustomEvent("setToken", {

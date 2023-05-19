@@ -32,7 +32,7 @@ fn main() {
                     handle.emit_all("authenticate", Payload { token }).unwrap();
                 },
             );
-            app.once_global("authenticate", |_event| { browser::open_browser("https://spaces.sustech.cloud/"); });
+            app.listen_global("authenticate", |_event| { browser::open_browser("https://spaces.sustech.cloud/"); });
             Ok(())
         })
         .system_tray(tray::menu())

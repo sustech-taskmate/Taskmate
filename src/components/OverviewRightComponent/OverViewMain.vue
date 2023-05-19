@@ -74,7 +74,7 @@
 import {Card} from '@/store/todo';
 import {PropType, ref} from "vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
-import {useRouterPush} from "@/composable";
+import {logout as Logout} from "@/composable/serverRequest";
 
 const props = defineProps({
   cardList: {type: Array as PropType<Card[]>, default: null}
@@ -86,9 +86,7 @@ const filter = (index: number) => {
 }
 
 const logout = () => {
-  localStorage.removeItem('token');
-  const {routerPush} = useRouterPush();
-  routerPush({name: 'empty'})
+    Logout()
 }
 </script>
 

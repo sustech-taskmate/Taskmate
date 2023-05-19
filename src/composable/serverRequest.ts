@@ -1,5 +1,6 @@
 import {request} from "@/service/request";
 import {Body} from "@tauri-apps/api/http";
+import {useRouterPush} from "@/composable/router";
 
 
 /*    sample value:
@@ -39,7 +40,7 @@ export interface Class {
     role: string;
     course: Course;
     semester: Semester;
-    studentList: Array<User>;
+    users: User[];
 }
 
 interface Course {
@@ -110,7 +111,7 @@ export interface Submission {
     points: number | null,
     assignment: Assignment
     entry: Entry,
-    submitter: {id: number, sid: string}
+    submitter: { id: number, sid: string }
     answers: Answer[],
     time: number
 }
@@ -139,6 +140,41 @@ interface SubmissionInfoResponseData {
     submission: Submission;
 }
 
+interface FileResponse {
+    url: string,
+    extraFormData: {
+        key: string,
+        token: string
+    },
+    uuid: string,
+    "fileFieldName": string
+}
+
+interface AnswerResponse {
+    answer: Answer
+}
+
+export interface Entries {
+    name: string;
+    title: string;
+    assignment: {
+        name: string,
+        title: string
+    },
+    entry: {
+        name: string,
+        title: string
+    },
+    due: number;
+    availableFrom: number;
+    availableTo: number;
+    problem: Problem;
+}
+
+interface EntriesResponse {
+    entries: Entries[]
+}
+
 async function login(token: string) {
     const url = '/auth/login'
     const response = await request.post(url, {
@@ -152,6 +188,13 @@ async function login(token: string) {
         return true
     }
     return false
+}
+
+async function logout() {
+    localStorage.removeItem('token');
+    request.clearCookie()
+    const {routerPush} = useRouterPush();
+    await routerPush({name: 'empty'})
 }
 
 async function getClassbyId(classId: string) {
@@ -178,7 +221,7 @@ async function getAssignmentInfo(classId: string, assignmentName: string) {
     return response.data
 }
 
-async function getProblems(classId: string, entryId: number) {
+async function getProblems(classId: string, entryId: string) {
     const url = `/class/${classId}/entry/${entryId}`;
     const response = await request.get<EntryProblemResponseData>(url)
     return response.data;
@@ -196,8 +239,57 @@ async function getSubmissionInfo(submissionName: string) {
     return response.data;
 }
 
+async function getEntries(classId: string) {
+    const url = `/class/${classId}/entries`;
+    const response = await request.get<EntriesResponse>(url);
+    return response.data;
+}
+
+async function uploadFile(classId: string, problemId: string, entryId: string, files: File[]) {
+    const uuids: string[]  = await Promise.all(files.map(async file => {
+        let url = `/file/`;
+        const response = await request.post<FileResponse>(url, {
+            body: Body.json({
+                size: file.size,
+                name: file.name,
+            })
+        });
+
+        const data = response.data
+        const formData = new FormData();
+
+        formData.append('file', file);
+        Object.entries(data.extraFormData).forEach(([key, value]) =>
+            formData.append(key, value as string),
+        );
+
+        await request.post(data.url, {
+            body: Body.form(formData)
+        });
+
+        url = `/problem/${problemId}/answer`;
+        const response1 = await request.post<AnswerResponse>(url, {
+            body: Body.json({
+                files: data.uuid
+            })
+        })
+        console.log(response1)
+
+        return  response1.data.answer.uuid;
+    }));
+
+    const url = `/class/${classId}/entry/${entryId}/submission`
+    const response2 = await request.post(url, {
+        body: Body.json({
+            answers: uuids
+        })
+    })
+    return response2.ok;
+}
+
 export {
     login,
+    logout,
     getClassbyId,
     getClasses,
     getAssignments,
@@ -205,6 +297,8 @@ export {
     getProblems,
     getSubmissions,
     getSubmissionInfo,
+    getEntries,
+    uploadFile,
 }
 
 

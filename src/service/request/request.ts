@@ -9,6 +9,10 @@ export function createRequest() {
         cookie = val
     }
 
+    function clearCookie(): void {
+        cookie = ''
+    }
+
     /**
      * 异步promise请求
      * @param param - 请求参数
@@ -106,6 +110,7 @@ export function createRequest() {
         put,
         delete: handleDelete,
         patch,
-        setCookie
+        setCookie,
+        clearCookie,
     };
 }
