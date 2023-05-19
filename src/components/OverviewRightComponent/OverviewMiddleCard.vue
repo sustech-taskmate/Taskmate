@@ -126,7 +126,7 @@ const toCourse = (item: ContainCard) => {
     routerPush({name: 'teacherCourse', params: {cid: item.id},
         query: {courses: JSON.stringify(props.cardList)}})
   } else {
-    console.log('Student Course')
+      routerPush({name: 'upload', params: {cid: item.id}, query: {courseName: item.title}})
   }
 }
 

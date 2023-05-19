@@ -33,10 +33,6 @@ class Assignment{
     }
 }
 
-interface Assignment {
-    prototype: any;
-}
-
 /**
  * name: 课程名称
  * assignmentList: 作业列表

@@ -10,15 +10,14 @@
                           style="width: 20%; height: 100%; float: right;"></svg-icon>
             </div>
             <div style="width: 100%; height: 90%; overflow-y: auto; background: lightgray">
-                <div v-for="item in dataCourse">
-                    <div style="width: 100%; height: 0.5vh"></div>
-                    <submit-right-course-card :CourseData="item"
-                                              @child-event="handleChildEvent"
-                                              @order="changeOrder"
-                    >
-                    </submit-right-course-card>
-                    <div style="width: 100%; height: 0.5vh"></div>
-                </div>
+<!--                <div v-for="item in dataCourse">-->
+                <div style="width: 100%; height: 0.5vh"></div>
+                <submit-right-course-card :CourseData="course"
+                                          @child-value="handleChildEvent"
+                >
+                </submit-right-course-card>
+                <div style="width: 100%; height: 0.5vh"></div>
+<!--                </div>-->
             </div>
         </el-aside>
         <el-main style="width: 85%; height: 100%; border: none; padding: 0; margin: 0; font-size: calc(100vh * 28 / 1500);">
@@ -82,8 +81,8 @@
                      v-for="item in fileList">
                     <el-row style="height: 0.5vh; width: 100%">
 
-                    </el-row>
-                    <el-row style="height: 8vh; width: 100%; flex: 1 0 30%; border-bottom:  2px solid black; border-top:  2px solid black;
+          </el-row>
+          <el-row style="height: 8vh; width: 100%; flex: 1 0 30%; border-bottom:  2px solid black; border-top:  2px solid black;
                                display: flex; justify-content: center; align-items: center; background: lightgreen">
                         <el-col :span="2" class="format" style="font-size: calc(100vh * 28 / 1500);">
                             文件名
@@ -169,59 +168,96 @@
 </style>
 
 <script lang="ts" setup>
-import {reactive, ref, defineComponent, onBeforeMount} from 'vue';
-import {router} from '@/router';
-import {Course, Assignment, AttachFile} from "@/store/submit";
+import {reactive, ref} from 'vue';
+import {Assignment, AttachFile, Course} from "@/store/submit";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import SubmitRightCourseCard from "@/components/SubmitComponent/SubmitRightCourseCard.vue";
 import moment from "moment"
+import {Entries, getEntries, getProblems, uploadFile} from "@/composable/serverRequest";
+import {useRoute} from "vue-router";
+import {useRouterPush} from "@/composable";
+
+
+const route = useRoute()
+const {routerPush} = useRouterPush();
 
 const back = () => {
-    // TODO: router跳转，不会写
+    routerPush({name: 'index'});
 }
 
-const dataCourse = reactive([
-    new Course("CS101", [
-        new Assignment("A1", new Date("2000-1-1 12:00:00"), null, new Date("2000-1-1 12:00:00"), null),
-        new Assignment("A2", new Date("2000-1-1 12:00:00"), new Date("2000-1-2 12:00:00"), new Date("2000-1-1 12:00:00"), null),
-    ], true),
-    new Course("CS102", [
-        new Assignment("A3", new Date("2000-1-1 12:00:00"), null, new Date("2000-1-1 12:00:00"), null),
-    ], false),
-]);
+const idx = ref();
+const pid = ref();
+const eid = ref();
+const cid = ref(route.params.cid as string);
+const courseName = ref(route.query.courseName as string)
+let entryList: Entries[] = reactive((await getEntries(cid.value)).entries);
+
+entryList = await Promise.all(entryList.map(async entry => {
+    const problem = (await getProblems(cid.value, entry.name)).entry.problems[0]
+    return {
+      ...entry,
+      problem: problem
+    } as Entries
+}))
+
+const assignmentList = entryList.map((entry) => {
+    return {
+        name: entry.assignment.title,
+        ddl: new Date(entry.availableTo),
+        lateTime: new Date(entry.due),
+        submitTime: null
+    } as Assignment
+})
+
+const course = reactive(new Course(courseName.value, assignmentList, false))
+
 const nowCourse = ref('')
 const nowAssignment = ref('')
-const fileList = ref([] as { name: string, size: number, time: string }[])
+const fileList = ref([] as { name: string, size: number, time: string, file: File }[])
 const showInformation = ref({name: '', ddl: '', submitTime: '', lateTime: '', files: null as null | AttachFile[]})
 
-const submit = () => {
+const submit = async () => {
     // TODO: 上传至服务器
     console.log("aaa")
     let li: AttachFile[] = [];
+    const files = fileList.value.map((l) => {
+        return l.file
+    })
+    console.log(files[0])
+    const res = await uploadFile(cid.value, pid.value, eid.value, files);
+    console.log(res)
     for (let i = 0; i < fileList.value.length; i++) {
         li.push(new AttachFile(fileList.value[i].name, fileList.value[i].size, fileList.value[i].time))
     }
-    for (let i = 0; i < dataCourse.length; i++) {
-        if (dataCourse[i].name == nowCourse.value) {
-            for (let j = 0; j < dataCourse[i].assignmentList.length; j++) {
-                if (dataCourse[i].assignmentList[j].name == nowAssignment.value) {
-                    dataCourse[i].assignmentList[j].attachment = li
-                    let t = new Date()
-                    dataCourse[i].assignmentList[j].submitTime = t
-                    fileList.value = [] as { name: string, size: number, time: string }[]
-                    showInformation.value = {
-                        name: dataCourse[i].assignmentList[j].name,
-                        ddl: moment(dataCourse[i].assignmentList[j].ddl).format("YYYY-MM-DD hh:mm"),
-                        submitTime: moment(t).format("YYYY-MM-DD hh:mm"),
-                        lateTime: moment(dataCourse[i].assignmentList[j].lateTime).format("YYYY-MM-DD hh:mm"),
-                        files: li,
-                    }
-                    break
-                }
-            }
-            break
-        }
+    const i = idx.value
+    showInformation.value = {
+        name: course.assignmentList[i].name,
+        ddl: moment(course.assignmentList[i].ddl).format("YYYY-MM-DD hh:mm"),
+        submitTime: moment(new Date()).format("YYYY-MM-DD hh:mm"),
+        lateTime: moment(course.assignmentList[i].lateTime).format("YYYY-MM-DD hh:mm"),
+        files: li,
     }
+    // for (let i = 0; i < dataCourse.length; i++) {
+    //     if (dataCourse[i].name == nowCourse.value) {
+    //         for (let j = 0; j < dataCourse[i].assignmentList.length; j++) {
+    //             if (dataCourse[i].assignmentList[j].name == nowAssignment.value) {
+    //                 dataCourse[i].assignmentList[j].attachment = li
+    //                 let t = new Date()
+    //                 dataCourse[i].assignmentList[j].submitTime = t
+    //                 fileList.value = [] as { name: string, size: number, time: string, file: File }[]
+    //                 showInformation.value = {
+    //                     name: dataCourse[i].assignmentList[j].name,
+    //                     ddl: moment(dataCourse[i].assignmentList[j].ddl).format("YYYY-MM-DD hh:mm"),
+    //                     submitTime: moment(t).format("YYYY-MM-DD hh:mm"),
+    //                     lateTime: moment(dataCourse[i].assignmentList[j].lateTime).format("YYYY-MM-DD hh:mm"),
+    //                     files: li,
+    //                 }
+    //                 break
+    //             }
+    //         }
+    //         break
+    //     }
+    // }
 
 }
 const selectFile = async () => {
@@ -229,11 +265,14 @@ const selectFile = async () => {
     input.type = 'file';
     input.style.display = 'none';
     document.body.appendChild(input);
-
     const file = await new Promise<File | null>((resolve) => {
         input.addEventListener('change', (event) => {
-            const file = (event.target as HTMLInputElement).files?.[0];
-            resolve(file || null);
+            const files = (event.target as HTMLInputElement).files;
+            if (files && files.length > 0) {
+                const file = files[0]
+                const newFile = new File([file], file.name, { type: file.type });
+                resolve(newFile || null);
+            }
         });
         input.click();
     });
@@ -249,9 +288,8 @@ const selectFile = async () => {
         const fileContent = reader.result as string;
         const now = new Date();
         const dateStr = now.toLocaleString()
-        const fileInfo = {name: file.name, size: file.size, time: dateStr};
+      const fileInfo = {name: file.name, size: file.size, time: dateStr, file: file};
         fileList.value.push(fileInfo);
-        // TODO: 缓存到哪
     };
 
     await new Promise((resolve) => {
@@ -271,7 +309,10 @@ const changeOrder = (courseName: string, assignmentName: string) => {
     nowCourse.value = courseName
     nowAssignment.value = assignmentName
 }
-const handleChildEvent = (data: Assignment) => {
+const handleChildEvent = (index: number, data: Assignment) => {
+    idx.value = index
+    eid.value = entryList[index].entry.name
+    pid.value = entryList[index].problem.uuid
     if (data.submitTime == null) {
         showInformation.value = {
             name: data.name,
