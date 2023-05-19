@@ -140,14 +140,16 @@ const toCourse = () => {
   } else {
     // TODO: for student
   }
-  routerPush({name: name, params: {cid: cid}});
+  routerPush({name: name, params: {cid: cid}, query: {courses: route.query.courses}});
 }
 
 const toStatistics = () => {
   let cid = route.params.cid;
   let aid = route.params.aid;
   routerPush({name: 'statistics', params: {cid: cid, aid: aid},
-    query: {submissions: JSON.stringify(submissionList.submissions)}});
+    query: {submissions: JSON.stringify(submissionList.submissions),
+            assignments: route.query.assignments,
+            courses: route.query.courses}});
 }
 
 const toGrade = (scope: any) => {
@@ -155,7 +157,8 @@ const toGrade = (scope: any) => {
   let cid = route.params.cid;
   let aid = route.params.aid;
   let gid = scope.row.gid;
-  routerPush({name: 'grade', params: {cid: cid, aid: aid, gid: gid}});
+  routerPush({name: 'grade', params: {cid: cid, aid: aid, gid: gid},
+      query: {assignments: route.query.assignments, courses: route.query.courses}});
 }
 
 enum AssignmentState {

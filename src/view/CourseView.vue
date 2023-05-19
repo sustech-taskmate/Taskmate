@@ -194,7 +194,9 @@ const toIndex = () => {
 
 const toAssign = (index: any) => {
   let cid = route.params.cid;
-  routerPush({name: 'teacherAssign', params: {cid: cid, aid: index}, query: {assignments: JSON.stringify(AssignmentList.assignments)}});
+  let courses = route.query.courses;
+  routerPush({name: 'teacherAssign', params: {cid: cid, aid: index},
+      query: {assignments: JSON.stringify(AssignmentList.assignments), courses: courses}});
 }
 
 let leftSize = reactive({

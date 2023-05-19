@@ -123,7 +123,8 @@ const contextColor = (context: ContainCard) => {
 const toCourse = (item: ContainCard) => {
   let identify = item.identify;
   if (identify == ClassUserRole.ASSISTANT || identify == ClassUserRole.TEACHER) {
-    routerPush({name: 'teacherCourse', params: {cid: item.id}, query: {courses: JSON.stringify(props.cardList)}})
+    routerPush({name: 'teacherCourse', params: {cid: item.id},
+        query: {courses: JSON.stringify(props.cardList)}})
   } else {
     console.log('Student Course')
   }

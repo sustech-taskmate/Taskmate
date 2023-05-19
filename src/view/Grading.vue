@@ -45,7 +45,7 @@
       </router-view>
     </el-col>
     <el-col :span="5" style="background-color: #EEF0F1">
-      <assign-right-bar></assign-right-bar>
+      <assign-right-bar/>
     </el-col>
   </el-container>
 </template>
@@ -74,7 +74,8 @@ const aid = ref(route.params.aid);
 const gid = ref(route.params.gid);
 
 const toAssign = () =>
-    routerPush({name: 'teacherAssign', params: {cid: cid.value, aid: aid.value}});
+    routerPush({name: 'teacherAssign', params: {cid: cid.value, aid: aid.value},
+        query: {assignments: route.query.assignments, courses: route.query.courses}});
 
 
 const bsWrapper = ref<HTMLElement>();
