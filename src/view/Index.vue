@@ -4,7 +4,7 @@
       <over-view-main :cardList="cardList"/>
     </el-col>
     <el-col :span="8" style="border: 2px solid black; border-radius: 0 10px 10px 0;">
-      <over-view-right-card :Todo="SaTodo"
+      <over-view-right-card :Todo="SaTodo" :cardList="cardList"
                             style="height: 50%;">
       </over-view-right-card>
       <over-view-right-card :Todo="StudentTodo"
@@ -18,11 +18,16 @@
 import {reactive} from 'vue'
 import OverViewRightCard from "@/components/OverviewRightComponent/OverViewRightCard.vue";
 import OverViewMain from "@/components/OverviewRightComponent/OverViewMain.vue";
-import {Card, ContainCard, ToDo, ToDoIdentity, TodoItem} from '@/store/todo';
-import {Class, getClasses} from "@/composable/serverRequest";
+import {Card, ClassUserRole, ContainCard, ToDo, ToDoIdentity, TodoItem} from '@/store/todo';
+import {Class, getAssignments, getClasses} from "@/composable/serverRequest";
 import _ from "lodash"
+import {CourseData} from "@/store/courseview";
+import moment from "moment/moment";
 
 let cardList = reactive([] as Card[])
+let SaTodo = reactive(new ToDo(ToDoIdentity.todoSa, []))
+let StudentTodo = reactive(new ToDo(ToDoIdentity.todoStudent, []))
+
 const m = new Map<string, number>([
   ['Spring', 0],
   ['Summer', 1],
@@ -45,13 +50,22 @@ Object.keys(gb).forEach((key, index) => {
 });
 cardList.sort((a, b) => b.index - a.index);
 
-let SaTodo = reactive(new ToDo(ToDoIdentity.todoSa, [
-  new TodoItem("CS111", new Date("2000-1-1 12:00:00")),
-]))
+for (const semester of cardList) {
+    for (const item of semester.listContainCard) {
+        let AssignmentList = await getAssignments(item.id + '')
+        AssignmentList.assignments.forEach((value) => {
+            let {name, title, status, due, availableFrom, availableTo} = value
+            if (status != 'Completed'){
+                if(item.identify == ClassUserRole.STUDENT){
+                    SaTodo.todoList.push(new TodoItem(name, new Date(due), item.id, title))
+                }else{
+                    StudentTodo.todoList.push(new TodoItem(name, new Date(due), item.id, title))
+                }
+            }
+        })
 
-let StudentTodo = reactive(new ToDo(ToDoIdentity.todoSa, [
-  new TodoItem("CS111", new Date("2000-1-1 12:00:00")),
-]))
+    }
+}
 
 </script>
 

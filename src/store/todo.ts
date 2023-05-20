@@ -1,15 +1,21 @@
 /**
  * name: 待处理事务名称
  * time: ddl
+ * id: 课程唯一识别标志
+ * courseTitle: 课程title
  * */
 class TodoItem {
 
     name: string;
     time: Date;
+    id: number;
+    courseTitle: string;
 
-    constructor(name: string, time: Date) {
+    constructor(name: string, time: Date, id: number, courseTile: string) {
         this.name = name;
         this.time = time;
+        this.id = id;
+        this.courseTitle = courseTile;
     }
 }
 
@@ -63,6 +69,7 @@ class Card {
 enum ToDoIdentity {
     todoSa = "submit",
     todoStudent = "check",
+    toTeacher = "Check",
 }
 
 /**

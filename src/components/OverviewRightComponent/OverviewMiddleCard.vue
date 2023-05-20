@@ -80,7 +80,7 @@ const identify = (role: ClassUserRole) => {
   }
 }
 
-const cards = ref(props.cardList);
+const cards = ref(props.cardList as Card[]);
 
 watch(props.filters, (newVal, oldVal) => {
   let tempCards: Card[] = []

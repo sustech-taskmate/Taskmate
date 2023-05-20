@@ -5,7 +5,7 @@
                 <div style="height: 20%; width: 100%;
                            display: flex; align-items: center; justify-content: center;
                            border-bottom: 1px solid black;"
-                data-test="title">
+                     data-test="title">
                     TODO LIST
                 </div>
                 <div style="height: 80%; width: 100%; overflow-y: auto;">
@@ -14,20 +14,20 @@
                             <div style="height: 100%; width: 25%; display: flex;
                                         align-items: center; justify-content: center;
                                         font-size: calc(100vw * 20 / 1500)"
-                                data-test="name">
+                                 data-test="name">
                                 {{ item.name }}
                             </div>
                             <div style="height: 100%; width: 45%; display: flex;
                                         align-items: center; justify-content: center;
                                         font-size: calc(100vw * 15 / 1500)"
-                                data-test="time">
+                                 data-test="time">
                                 {{ show(item.time) }}
                             </div>
                             <div style="height: 100%; width: 30%; display: flex;
                                         align-items: center; justify-content: center;">
                                 <button class="btn" :class="Todo.identify"
-                                data-test="identify">
-                                    {{Todo.identify}}
+                                        data-test="identify" @click="go(item)">
+                                    {{ Todo.identify }}
                                 </button>
                             </div>
                         </el-row>
@@ -43,9 +43,13 @@
 
 <script lang="ts" setup>
 import moment from "moment";
-import {ToDo, ToDoIdentity, TodoItem} from "@/store/todo";
+import {Card, ToDo, ToDoIdentity, TodoItem} from "@/store/todo";
+import {useRouterPush} from "@/composable";
+import {PropType} from "vue";
 
-function show(time: Date){
+const {routerPush} = useRouterPush();
+
+function show(time: Date) {
     return moment(time).format("YYYY-MM-DD hh:mm")
 }
 
@@ -54,12 +58,26 @@ const props = defineProps({
         type: ToDo,
         required: true
     },
+    cardList: {type: Array as PropType<Card[]>, default: null},
 })
+
+const go = (item: TodoItem) => {
+    if (props.Todo.identify == ToDoIdentity.todoStudent) {
+        routerPush({name: 'upload', params: {cid: item.id}, query: {courseName: item.courseTitle}})
+    } else {
+        routerPush({
+            name: 'teacherCourse', params: {cid: item.id},
+            query: {courses: JSON.stringify(props.cardList)}
+        })
+    }
+
+
+}
 
 </script>
 
 <style scoped>
-.row:hover{
+.row:hover {
     background-color: lightyellow;
 }
 
