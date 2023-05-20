@@ -55,6 +55,9 @@ dependencies:
   vue3-emoji-picker:
     specifier: ^1.1.7
     version: 1.1.7
+  vue3-video-play:
+    specifier: ^1.3.1-beta.6
+    version: registry.npmmirror.com/vue3-video-play@1.3.1-beta.6
   vuex:
     specifier: ^4.1.0
     version: 4.1.0(vue@3.2.47)
@@ -10343,6 +10346,12 @@ packages:
     version: 10.7.3
     dev: true
 
+  registry.npmmirror.com/hls.js@1.4.3:
+    resolution: {integrity: sha512-EE1MjIYDNO+ynbmCpAWfhUwQpyG8gUcKKuGDGgYgfRmW/g+inQUQ8sVVVY5WZaCxEGxDMGLbXhXGepkmDIMvdw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/hls.js/-/hls.js-1.4.3.tgz}
+    name: hls.js
+    version: 1.4.3
+    dev: false
+
   registry.npmmirror.com/hosted-git-info@2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/hosted-git-info/-/hosted-git-info-2.8.9.tgz}
     name: hosted-git-info
@@ -13296,6 +13305,13 @@ packages:
       webpack: registry.npmmirror.com/webpack@5.82.1
     dev: true
 
+  registry.npmmirror.com/throttle-debounce@3.0.1:
+    resolution: {integrity: sha512-dTEWWNu6JmeVXY0ZYoPuH5cRIwc0MeGbJwah9KUNYSJwommQpCzTySTpEe8Gs1J23aeWEuAobe4Ag7EHVt/LOg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/throttle-debounce/-/throttle-debounce-3.0.1.tgz}
+    name: throttle-debounce
+    version: 3.0.1
+    engines: {node: '>=10'}
+    dev: false
+
   registry.npmmirror.com/thunky@1.1.0:
     resolution: {integrity: sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/thunky/-/thunky-1.1.0.tgz}
     name: thunky
@@ -13611,6 +13627,16 @@ packages:
     name: vue-template-es2015-compiler
     version: 1.9.1
     dev: true
+
+  registry.npmmirror.com/vue3-video-play@1.3.1-beta.6:
+    resolution: {integrity: sha512-Olrx2/LNAds7fuor/yX9ZKT9sOcwcfTt2g2YbbCrEaAmZ5Tb0hwBr5z+/CoLwELzzRzXCHPmWWoT0Wm5W/Nwpw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue3-video-play/-/vue3-video-play-1.3.1-beta.6.tgz}
+    name: vue3-video-play
+    version: 1.3.1-beta.6
+    dependencies:
+      hls.js: registry.npmmirror.com/hls.js@1.4.3
+      throttle-debounce: registry.npmmirror.com/throttle-debounce@3.0.1
+      vue: registry.npmmirror.com/vue@3.2.47
+    dev: false
 
   registry.npmmirror.com/vue@3.2.47:
     resolution: {integrity: sha512-60188y/9Dc9WVrAZeUVSDxRQOZ+z+y5nO2ts9jWXSTkMvayiWxCWOWtBQoYjLeccfXkiiPZWAHcV+WTPhkqJHQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/vue/-/vue-3.2.47.tgz}
