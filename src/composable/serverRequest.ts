@@ -176,6 +176,12 @@ interface EntriesResponse {
     entries: Entries[]
 }
 
+export interface UploadFile {
+    name: string,
+    size: number,
+    path: string,
+}
+
 async function login(token: string) {
     const url = '/auth/login'
     const response = await request.post(url, {
@@ -246,7 +252,7 @@ async function getEntries(classId: string) {
     return response.data;
 }
 
-async function uploadFile(classId: string, problemId: string, entryId: string, files: File[]) {
+async function uploadFile(classId: string, problemId: string, entryId: string, files: UploadFile[]) {
     const uuids: string[] = await Promise.all(files.map(async file => {
         let url = `/file/`;
         const response = await request.post<FileResponse>(url, {
@@ -258,23 +264,8 @@ async function uploadFile(classId: string, problemId: string, entryId: string, f
 
         const data = response.data
 
-        const read = async (file: File): Promise<string> => {
-            return new Promise(((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = async (event) => {
-                    const base64String = event.target?.result as string;
-                    resolve(base64String.split(",")[1])
-                }
-                reader.onerror = () => {
-                    reject(reader.error);
-                };
-            }))
-        }
-
-        const filePath = await read(file);
         await invoke('upload_file',
-            {url: data.url, filePath: filePath, key: data.extraFormData.key, token: data.extraFormData.token});
+            {url: data.url, filePath: file.path, key: data.extraFormData.key, token: data.extraFormData.token});
 
         url = `/problem/${problemId}/answer`;
         const response1 = await request.post<AnswerResponse>(url, {

@@ -91,11 +91,11 @@ enum ExtractOperationType {
 
 #[tauri::command]
 pub async fn upload_file(url: &str, file_path: &str, key: &str, token: &str) -> Result<(), String> {
-    let file = general_purpose::STANDARD.decode(file_path).unwrap();
+    let file_content = tokio::fs::read(file_path).await.map_err(|err| err.to_string())?;
 
     let client = reqwest::Client::new();
 
-    let part = multipart::Part::stream(file)
+    let part = multipart::Part::stream(file_content)
         .mime_str(mime::APPLICATION_OCTET_STREAM.as_ref())
         .unwrap();
 

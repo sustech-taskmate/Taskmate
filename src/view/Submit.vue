@@ -10,126 +10,140 @@
                           style="width: 20%; height: 100%; float: right;"></svg-icon>
             </div>
             <div style="width: 100%; height: 90%; overflow-y: hidden; background: lightgray">
-<!--                <div v-for="item in dataCourse">-->
+                <!--                <div v-for="item in dataCourse">-->
                 <submit-right-course-card :CourseData="course"
                                           @child-value="handleChildEvent"
                 >
                 </submit-right-course-card>
-<!--                </div>-->
+                <!--                </div>-->
             </div>
         </el-aside>
-        <el-main style="width: 85%; height: 100%; border: none; padding: 0; margin: 0; font-size: calc(100vh * 28 / 1500);">
-            <div style="width: 100%; height: 10%; background: steelblue; display: flex; justify-content: center; align-items: center; color: white;">
+        <el-main
+            style="width: 85%; height: 100%; border: none; padding: 0; margin: 0; font-size: calc(100vh * 28 / 1500);">
+            <div
+                style="width: 100%; height: 10%; background: steelblue; display: flex; justify-content: center; align-items: center; color: white;">
                 Assignment Information
             </div>
             <div style="width: 100%; height: 15%;">
-              <el-descriptions :column="2" border size="large">
-                <el-descriptions-item
-                    label="Assignment Name"
-                    label-align="left"
-                    align="left"
-                    class-name="my-content"
-                >{{showInformation.name}}</el-descriptions-item>
-                <el-descriptions-item label="Submit Time" label-align="left" align="left"
-                >{{showInformation.submitTime}}</el-descriptions-item>
-                <el-descriptions-item label="Due" label-align="left" align="left"
-                >{{showInformation.ddl}}</el-descriptions-item>
-                <el-descriptions-item label="Late Due" label-align="left" align="left"
-                >{{showInformation.lateTime}}</el-descriptions-item>
-              </el-descriptions>
+                <el-descriptions :column="2" border size="large">
+                    <el-descriptions-item
+                        label="Assignment Name"
+                        label-align="left"
+                        align="left"
+                        class-name="my-content"
+                    >{{ showInformation.name }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="Submit Time" label-align="left" align="left"
+                    >{{ showInformation.submitTime }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="Due" label-align="left" align="left"
+                    >{{ showInformation.ddl }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="Late Due" label-align="left" align="left"
+                    >{{ showInformation.lateTime }}
+                    </el-descriptions-item>
+                </el-descriptions>
             </div>
-            <div style="width: 100%; height: 7%; background: steelblue; display: flex; justify-content: center; align-items: center; color: white;">
-              Submitted Files
+            <div
+                style="width: 100%; height: 7%; background: steelblue; display: flex; justify-content: center; align-items: center; color: white;">
+                Submitted Files
             </div>
             <div style="width: 100%; height: 28%; overflow-y: auto">
                 <el-row v-for="i in showInformation.files" style="margin-top: 10px">
-                  <el-col :span="3" class="format" style="font-size: calc(100vh * 30 / 1500);background-color: #b7c2ce">
-                    File Name
-                  </el-col>
-                  <el-col :span="12" class="format" style="font-size: calc(100vh * 30 / 1500); text-align: left">
-                    {{ i.name }}
-                  </el-col>
-                  <el-col :span="3" class="format" style="font-size: calc(100vh * 30 / 1500);background-color: #b7c2ce">
-                    File Size
-                  </el-col>
-                  <el-col :span="3" class="format" style="font-size: calc(100vh * 28 / 1500); text-align: left">
-                    {{ i.size }} Bytes
-                  </el-col>
+                    <el-col :span="3" class="format"
+                            style="font-size: calc(100vh * 30 / 1500);background-color: #b7c2ce">
+                        File Name
+                    </el-col>
+                    <el-col :span="12" class="format" style="font-size: calc(100vh * 30 / 1500); text-align: left">
+                        {{ i.name }}
+                    </el-col>
+                    <el-col :span="3" class="format"
+                            style="font-size: calc(100vh * 30 / 1500);background-color: #b7c2ce">
+                        File Size
+                    </el-col>
+                    <el-col :span="3" class="format" style="font-size: calc(100vh * 28 / 1500); text-align: left">
+                        {{ i.size }} Bytes
+                    </el-col>
                 </el-row>
             </div>
 
-            <div style="width: 100%; height: 7%; background: steelblue; display: flex; justify-content: center; align-items: center;">
-              <div style="color: white;">Submit Content</div>
+            <div
+                style="width: 100%; height: 7%; background: steelblue; display: flex; justify-content: center; align-items: center;">
+                <div style="color: white;">Submit Content</div>
             </div>
 
             <div style="width: 100%; height: 23%; overflow-y: auto">
                 <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;"
                      v-for="item in fileList">
-                  <el-row style="height: 8vh; width: 100%; flex: 1 0 30%;
+                    <el-row style="height: 8vh; width: 100%; flex: 1 0 30%;
                              display: flex; justify-content: center; align-items: center;">
-                      <el-col :span="12" class="format" style="font-size: calc(100vh * 30 / 1500);">
-                          {{ item.name }}
-                      </el-col>
-                    <el-col :span="3" class="format" style="font-size: calc(100vh * 28 / 1500);">
-                      {{ item.size }} Bytes
-                    </el-col>
-                    <el-col :span="6" class="format" style="font-size: calc(100vh * 28 / 1500);">
-                      {{ item.time}}
-                    </el-col>
-                      <el-col :span="3" class="format">
-                          <svg-icon name="cross" color="black"
-                                    style="width: 20%; height: 80%; float: right;"
-                                    @click="dele(item)">
-                          </svg-icon>
-                      </el-col>
-                  </el-row>
+                        <el-col :span="12" class="format" style="font-size: calc(100vh * 30 / 1500);">
+                            {{ item.name }}
+                        </el-col>
+                        <el-col :span="3" class="format" style="font-size: calc(100vh * 28 / 1500);">
+                            {{ item.size }} Bytes
+                        </el-col>
+                        <el-col :span="6" class="format" style="font-size: calc(100vh * 28 / 1500);">
+                            {{ item.time }}
+                        </el-col>
+                        <el-col :span="3" class="format">
+                            <svg-icon name="cross" color="black"
+                                      style="width: 20%; height: 80%; float: right;"
+                                      @click="dele(item)">
+                            </svg-icon>
+                        </el-col>
+                    </el-row>
+                </div>
             </div>
-          </div>
-          <div class="btn-box" >
-            <button type="button" class="btn submit" v-bind:disabled="buttonDisabled.upload"  @click="selectFile">upload</button>
-            <button type="button" class="btn next" v-bind:disabled="buttonDisabled.submit" @click="submit">submit</button>
-          </div>
+            <div class="btn-box">
+                <button type="button" class="btn submit" v-bind:disabled="buttonDisabled.upload" @click="selectFile">
+                    upload
+                </button>
+                <button type="button" class="btn next" v-bind:disabled="buttonDisabled.submit" @click="submit">submit
+                </button>
+            </div>
         </el-main>
     </el-container>
 </template>
 
 <style scoped>
 .btn-box {
-  height: 8%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    height: 8%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn {
-  border: 1px solid;
-  background-color: transparent;
-  text-transform: uppercase;
-  font-size: calc(100vw * 24 / 1500);
-  font-weight: 300;
+    border: 1px solid;
+    background-color: transparent;
+    text-transform: uppercase;
+    font-size: calc(100vw * 24 / 1500);
+    font-weight: 300;
 }
 
 .btn:hover {
-  color: white;
-  border: 0;
-  cursor: pointer;
+    color: white;
+    border: 0;
+    cursor: pointer;
 }
 
 .next {
-  color: #548585;
-  margin-left: calc(100vw * 10 / 1500);
+    color: #548585;
+    margin-left: calc(100vw * 10 / 1500);
 }
 
 .next:hover {
-  background-color: #548585;
-  -moz-box-shadow: 10px 10px 99px 6px rgba(0, 128, 128, 1);
+    background-color: #548585;
+    -moz-box-shadow: 10px 10px 99px 6px rgba(0, 128, 128, 1);
 }
+
 .submit {
-  color: #6A7FA0;
+    color: #6A7FA0;
 }
 
 .submit:hover {
-  background-color: #6A7FA0;
+    background-color: #6A7FA0;
 }
 
 
@@ -161,10 +175,11 @@ import {Assignment, AttachFile, Course} from "@/store/submit";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import SubmitRightCourseCard from "@/components/SubmitComponent/SubmitRightCourseCard.vue";
 import moment from "moment"
-import {Entries, getEntries, getProblems, uploadFile} from "@/composable/serverRequest";
+import {Entries, getEntries, getProblems, UploadFile, uploadFile} from "@/composable/serverRequest";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
-
+import {open} from '@tauri-apps/api/dialog';
+import {convertFileSrc} from "@tauri-apps/api/tauri";
 
 const route = useRoute()
 const {routerPush} = useRouterPush();
@@ -183,8 +198,8 @@ let entryList: Entries[] = reactive((await getEntries(cid.value)).entries);
 entryList = await Promise.all(entryList.map(async entry => {
     const problem = (await getProblems(cid.value, entry.name)).entry.problems[0]
     return {
-      ...entry,
-      problem: problem
+        ...entry,
+        problem: problem
     } as Entries
 }))
 
@@ -201,22 +216,22 @@ const course = reactive(new Course(courseName.value, assignmentList, true))
 
 const nowCourse = ref('')
 const nowAssignment = ref('')
-const fileList = ref([] as { name: string, size: number, time: string, file: File }[])
+const fileList = ref([] as { name: string, size: number, time: string, file_path: string }[])
 const showInformation = ref({name: '', ddl: '', submitTime: '', lateTime: '', files: null as null | AttachFile[]})
-const buttonDisabled = ref ({upload: true, submit: true})
+const buttonDisabled = ref({upload: true, submit: false})
 
 const submit = async () => {
-    // TODO: 上传至服务器
     let li: AttachFile[] = [];
     const files = fileList.value.map((l) => {
-        return l.file
+        return {name: l.name, size: l.size, path: l.file_path} as UploadFile
     })
+
     await uploadFile(cid.value, pid.value, eid.value, files);
     for (let i = 0; i < fileList.value.length; i++) {
-      li.push(new AttachFile(fileList.value[i].name, fileList.value[i].size, fileList.value[i].time))
+        li.push(new AttachFile(fileList.value[i].name, fileList.value[i].size, fileList.value[i].time))
     }
     fileList.value.length = 0;
-    buttonDisabled.value.submit=true;
+    buttonDisabled.value.submit = true;
     const i = idx.value
     showInformation.value = {
         name: course.assignmentList[i].name,
@@ -225,76 +240,50 @@ const submit = async () => {
         lateTime: moment(course.assignmentList[i].lateTime).format("YYYY-MM-DD hh:mm"),
         files: li,
     }
-    // for (let i = 0; i < dataCourse.length; i++) {
-    //     if (dataCourse[i].name == nowCourse.value) {
-    //         for (let j = 0; j < dataCourse[i].assignmentList.length; j++) {
-    //             if (dataCourse[i].assignmentList[j].name == nowAssignment.value) {
-    //                 dataCourse[i].assignmentList[j].attachment = li
-    //                 let t = new Date()
-    //                 dataCourse[i].assignmentList[j].submitTime = t
-    //                 fileList.value = [] as { name: string, size: number, time: string, file: File }[]
-    //                 showInformation.value = {
-    //                     name: dataCourse[i].assignmentList[j].name,
-    //                     ddl: moment(dataCourse[i].assignmentList[j].ddl).format("YYYY-MM-DD hh:mm"),
-    //                     submitTime: moment(t).format("YYYY-MM-DD hh:mm"),
-    //                     lateTime: moment(dataCourse[i].assignmentList[j].lateTime).format("YYYY-MM-DD hh:mm"),
-    //                     files: li,
-    //                 }
-    //                 break
-    //             }
-    //         }
-    //         break
-    //     }
-    // }
-
 }
 const selectFile = async () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.style.display = 'none';
-    document.body.appendChild(input);
-    const file = await new Promise<File | null>((resolve) => {
-        input.addEventListener('change', (event) => {
-            const files = (event.target as HTMLInputElement).files;
-            if (files && files.length > 0) {
-                const file = files[0]
-                const newFile = new File([file], file.name, { type: file.type });
-                resolve(newFile || null);
-            }
-        });
-        input.click();
-    });
+    const paths = await open({
+        multiple: true,
+        directory: false,
+    }) as null | string[];
 
-    if (!file) {
-        input.remove();
-        return;
+    if (paths === null) {
+        return
+    } else {
+        await Promise.all(paths.map(async (path): Promise<File> => {
+            const url = convertFileSrc(path)
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", url, true);
+                xhr.responseType = "blob";
+                xhr.onload = () => {
+                    const blob = xhr.response;
+                    const fileName = path.substring(path.lastIndexOf("\\") + 1);
+                    const file = new File([blob], fileName, {type: blob.type});
+                    const fileInfo = {
+                        name: file.name,
+                        size: file.size,
+                        time: new Date().toLocaleString(),
+                        file_path: path
+                    };
+                    fileList.value.push(fileInfo);
+                    resolve(file);
+                };
+                xhr.onerror = reject;
+                xhr.send();
+            });
+        }))
+        buttonDisabled.value.submit = false;
     }
-
-    const reader = new FileReader();
-    reader.readAsText(file);
-    reader.onload = () => {
-        const fileContent = reader.result as string;
-        const now = new Date();
-        const dateStr = now.toLocaleString()
-      const fileInfo = {name: file.name, size: file.size, time: dateStr, file: file};
-        fileList.value.push(fileInfo);
-    };
-
-    await new Promise((resolve) => {
-        reader.onloadend = () => {
-            input.remove();
-            resolve(null);
-        };
-    });
-    buttonDisabled.value.submit=false;
 }
+
 const dele = (item: any) => {
     const targetIndex = fileList.value.findIndex(it => it === item);
     if (targetIndex !== -1) {
         fileList.value.splice(targetIndex, 1);
     }
     if (fileList.value.length == 0)
-      buttonDisabled.value.submit=true;
+        buttonDisabled.value.submit = true;
 }
 const changeOrder = (courseName: string, assignmentName: string) => {
     nowCourse.value = courseName
@@ -321,6 +310,6 @@ const handleChildEvent = (index: number, data: Assignment) => {
             files: data.attachment,
         }
     }
-    buttonDisabled.value.upload=false;
+    buttonDisabled.value.upload = false;
 }
 </script>
