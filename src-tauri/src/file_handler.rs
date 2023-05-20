@@ -8,6 +8,7 @@ use flate2::read::GzDecoder;
 use tar::Archive;
 use walkdir::WalkDir;
 use mime;
+use base64::{Engine, engine::{general_purpose}};
 
 #[tauri::command]
 pub async fn analyze_dir(target: &str, origin: &str) -> Result<(), String>{
@@ -89,11 +90,12 @@ enum ExtractOperationType {
 }
 
 #[tauri::command]
-pub async fn upload_file(url: &str, file_content: &str, key: &str, token: &str) -> Result<(), String> {
+pub async fn upload_file(url: &str, file_path: &str, key: &str, token: &str) -> Result<(), String> {
+    let file = general_purpose::STANDARD.decode(file_path).unwrap();
+
     let client = reqwest::Client::new();
 
-    let vec = Vec::from(file_content);
-    let part = multipart::Part::stream(vec)
+    let part = multipart::Part::stream(file)
         .mime_str(mime::APPLICATION_OCTET_STREAM.as_ref())
         .unwrap();
 

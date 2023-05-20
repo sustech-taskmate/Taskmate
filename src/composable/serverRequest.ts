@@ -261,11 +261,10 @@ async function uploadFile(classId: string, problemId: string, entryId: string, f
         const read = async (file: File): Promise<string> => {
             return new Promise(((resolve, reject) => {
                 const reader = new FileReader();
-                reader.readAsArrayBuffer(file);
+                reader.readAsDataURL(file);
                 reader.onload = async (event) => {
-                    const arrayBuffer = event.target?.result as ArrayBuffer;
-                    const file_content = new Uint8Array(arrayBuffer);
-                    resolve(String.fromCharCode(...file_content));
+                    const base64String = event.target?.result as string;
+                    resolve(base64String.split(",")[1])
                 }
                 reader.onerror = () => {
                     reject(reader.error);
@@ -273,9 +272,9 @@ async function uploadFile(classId: string, problemId: string, entryId: string, f
             }))
         }
 
-        const file_content = await read(file);
+        const filePath = await read(file);
         await invoke('upload_file',
-            {url: data.url, fileContent: file_content, key: data.extraFormData.key, token: data.extraFormData.token});
+            {url: data.url, filePath: filePath, key: data.extraFormData.key, token: data.extraFormData.token});
 
         url = `/problem/${problemId}/answer`;
         const response1 = await request.post<AnswerResponse>(url, {
