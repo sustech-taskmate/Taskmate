@@ -42,19 +42,18 @@
               Submitted Files
             </div>
             <div style="width: 100%; height: 28%; overflow-y: auto">
-                <el-row v-for="i in showInformation.files" >
-                  <el-col>
-                    <el-descriptions :column="2" style="width: 100%" border size="large">
-                      <el-descriptions-item
-                          label="File Name"
-                          align="left"
-                          class-name="my-content"
-                          width="30vw"
-                      >{{i.name}}</el-descriptions-item>
-                      <el-descriptions-item label="File Size" label-align="left" align="left"
-                          width="20vw"
-                      >{{i.size}} Bytes</el-descriptions-item>
-                    </el-descriptions>
+                <el-row v-for="i in showInformation.files" style="margin-top: 10px">
+                  <el-col :span="3" class="format" style="font-size: calc(100vh * 30 / 1500);background-color: #b7c2ce">
+                    File Name
+                  </el-col>
+                  <el-col :span="12" class="format" style="font-size: calc(100vh * 30 / 1500); text-align: left">
+                    {{ i.name }}
+                  </el-col>
+                  <el-col :span="3" class="format" style="font-size: calc(100vh * 30 / 1500);background-color: #b7c2ce">
+                    File Size
+                  </el-col>
+                  <el-col :span="3" class="format" style="font-size: calc(100vh * 28 / 1500); text-align: left">
+                    {{ i.size }} Bytes
                   </el-col>
                 </el-row>
             </div>
