@@ -1,4 +1,4 @@
-name: Build Tauri Application
+name: Build Tauri Application on Windows and MacOS
 
 on:
   push:
@@ -6,7 +6,6 @@ on:
       - main
 
 jobs:
-
   build-tauri:
     name: Build Tauri Application
     runs-on: ${{ matrix.os }}
