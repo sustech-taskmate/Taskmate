@@ -101,20 +101,17 @@ export default defineComponent({
         const route = useRoute();
         const {routerPush} = useRouterPush();
         const courses = reactive(JSON.parse(route.query.courses as string) as Card[])
-
+        let classId = ref()
+        classId.value = route.params.cid as string
+        const tableData: CourseData[] = reactive([])
         for (const i of courses) {
             i.courseviewDown = false
+            for (const j of i.listContainCard){
+                if(j.id + '' == classId.value){
+                    i.courseviewDown = true
+                }
+            }
         }
-
-        let classId = ref()
-        // let classId = route.params.cid as string
-        const tableData: CourseData[] = reactive([])
-
-        if (courses.length > 0) {
-            courses[0].courseviewDown = true
-            classId.value = courses[0].listContainCard[0].id
-        }
-
         let currentClass = await getClassbyId(classId.value);
         let AssignmentList = await getAssignments(classId.value);
         let key = Math.random()
