@@ -1,0 +1,138 @@
+name: Release Tauri Application
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-windows:
+    name: Build Tauri Application on Windows
+    runs-on: "windows-latest"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set Up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+
+      - name: Install Pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7.x.x
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Build Tauri Application
+        run: pnpm tauri build
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-app
+          path: ./src-tauri/target/release/bundle/msi/*.msi
+
+  build-macos:
+    name: Build Tauri Application on MacOS
+    runs-on: "macos-latest"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set Up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+
+      - name: Install Pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7.x.x
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Build Tauri Application
+        run: pnpm tauri build
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos-app
+          path: ./src-tauri/target/release/bundle/dmg/*.dmg
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [build-windows, build-macos]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Get Version
+        id: version
+        uses: ashley-taylor/read-json-property-action@v1.0
+        with:
+          path: ./package.json
+          property: version
+
+      - name: Get Description
+        id: description
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./release.md
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: windows-app
+          path: ./build
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: macos-app
+          path: ./build
+
+      - name: Rename
+        run: |
+          mv ./build/*.msi ./build/Taskmate.msi
+          mv ./build/*.dmg ./build/Taskmate.dmg
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TASKMATE_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.value }}
+          release_name: v${{ steps.version.outputs.value }}
+          body: ${{steps.description.outputs.content}}
+          draft: false
+          prerelease: false
+
+      - name: Upload Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TASKMATE_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/Taskmate.dmg
+          asset_name: Taskmate_${{ steps.version.outputs.value }}_x64_en-US.dmg
+          asset_content_type: application/octet-stream
+
+      - name: Upload Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TASKMATE_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/Taskmate.msi
+          asset_name: Taskmate_${{ steps.version.outputs.value }}_x64_en-US.msi
+          asset_content_type: application/octet-stream
