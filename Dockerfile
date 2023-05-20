@@ -30,4 +30,3 @@ WORKDIR /home/node
 
 COPY --chown=node:node . .
 RUN pnpm install
-RUN pnpm tauri build
