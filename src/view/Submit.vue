@@ -22,7 +22,7 @@
             <div style="width: 100%; height: 10%; background: steelblue; display: flex; justify-content: center; align-items: center; color: white;">
                 Assignment Information
             </div>
-            <div style="width: 100%; height: 30%;">
+            <div style="width: 100%; height: 15%;">
               <el-descriptions :column="2" border size="large">
                 <el-descriptions-item
                     label="Assignment Name"
@@ -37,44 +37,33 @@
                 <el-descriptions-item label="Late Due" label-align="left" align="left"
                 >{{showInformation.lateTime}}</el-descriptions-item>
               </el-descriptions>
-<!--              <el-descriptions :column="1" border direction="vertical" size="large">-->
-<!--                <el-descriptions-item-->
-<!--                    label="Assignment Description"-->
-<!--                    label-align="left"-->
-<!--                    align="left"-->
-<!--                    class-name="my-content"-->
-<!--                >Assignment Description-->
-<!--                  ....-->
-<!--                  ....</el-descriptions-item>-->
-<!--              </el-descriptions>-->
-                <el-row v-if="showInformation.files">
-                    <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;" >
-                        <el-row v-for="i in showInformation.files" style="background: grey; width: 50%">
-                            <el-row style="width: 100%; height: 0.5vh; background: white">
-                            </el-row>
-                            <el-row style="width: 100%">
-                                <div class="format" style="background: white; width: 1.25%">
-                                </div>
-                                <div class="format" style="width: 48.75%;">
-                                    FileName: {{i.name}}
-                                </div>
-                                <div class="format" style="width: 48.75%">
-                                    Size: {{i.size}} Bytes
-                                </div>
-                                <div class="format" style="background: white; width: 1.25%">
-
-                                </div>
-                            </el-row>
-                        </el-row>
-                    </div>
+            </div>
+            <div style="width: 100%; height: 7%; background: steelblue; display: flex; justify-content: center; align-items: center; color: white;">
+              Submitted Files
+            </div>
+            <div style="width: 100%; height: 28%; overflow-y: auto">
+                <el-row v-for="i in showInformation.files" >
+                  <el-col>
+                    <el-descriptions :column="2" style="width: 100%" border size="large">
+                      <el-descriptions-item
+                          label="File Name"
+                          align="left"
+                          class-name="my-content"
+                          width="30vw"
+                      >{{i.name}}</el-descriptions-item>
+                      <el-descriptions-item label="File Size" label-align="left" align="left"
+                          width="20vw"
+                      >{{i.size}} Bytes</el-descriptions-item>
+                    </el-descriptions>
+                  </el-col>
                 </el-row>
             </div>
 
-            <div style="width: 100%; height: 10%; background: steelblue; display: flex; justify-content: center; align-items: center;">
+            <div style="width: 100%; height: 7%; background: steelblue; display: flex; justify-content: center; align-items: center;">
               <div style="color: white;">Submit Content</div>
             </div>
 
-            <div style="width: 100%; height: 40%; overflow-y: scroll">
+            <div style="width: 100%; height: 23%; overflow-y: auto">
                 <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;"
                      v-for="item in fileList">
                   <el-row style="height: 8vh; width: 100%; flex: 1 0 30%;
@@ -97,11 +86,10 @@
                   </el-row>
             </div>
           </div>
-          <div class="btn-box">
-            <button type="button" class="btn submit"  @click="selectFile">upload</button>
-            <button type="button" class="btn next"   @click="submit">submit</button>
+          <div class="btn-box" >
+            <button type="button" class="btn submit" v-bind:disabled="buttonDisabled.upload"  @click="selectFile">upload</button>
+            <button type="button" class="btn next" v-bind:disabled="buttonDisabled.submit" @click="submit">submit</button>
           </div>
-
         </el-main>
     </el-container>
 </template>
@@ -210,12 +198,13 @@ const assignmentList = entryList.map((entry) => {
     } as Assignment
 })
 
-const course = reactive(new Course(courseName.value, assignmentList, false))
+const course = reactive(new Course(courseName.value, assignmentList, true))
 
 const nowCourse = ref('')
 const nowAssignment = ref('')
 const fileList = ref([] as { name: string, size: number, time: string, file: File }[])
 const showInformation = ref({name: '', ddl: '', submitTime: '', lateTime: '', files: null as null | AttachFile[]})
+const buttonDisabled = ref ({upload: true, submit: true})
 
 const submit = async () => {
     // TODO: 上传至服务器
@@ -225,8 +214,10 @@ const submit = async () => {
     })
     await uploadFile(cid.value, pid.value, eid.value, files);
     for (let i = 0; i < fileList.value.length; i++) {
-        li.push(new AttachFile(fileList.value[i].name, fileList.value[i].size, fileList.value[i].time))
+      li.push(new AttachFile(fileList.value[i].name, fileList.value[i].size, fileList.value[i].time))
     }
+    fileList.value.length = 0;
+    buttonDisabled.value.submit=true;
     const i = idx.value
     showInformation.value = {
         name: course.assignmentList[i].name,
@@ -296,12 +287,15 @@ const selectFile = async () => {
             resolve(null);
         };
     });
+    buttonDisabled.value.submit=false;
 }
 const dele = (item: any) => {
     const targetIndex = fileList.value.findIndex(it => it === item);
     if (targetIndex !== -1) {
         fileList.value.splice(targetIndex, 1);
     }
+    if (fileList.value.length == 0)
+      buttonDisabled.value.submit=true;
 }
 const changeOrder = (courseName: string, assignmentName: string) => {
     nowCourse.value = courseName
@@ -328,5 +322,6 @@ const handleChildEvent = (index: number, data: Assignment) => {
             files: data.attachment,
         }
     }
+    buttonDisabled.value.upload=false;
 }
 </script>
