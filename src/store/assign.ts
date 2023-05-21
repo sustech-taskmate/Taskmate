@@ -81,4 +81,10 @@ class FileTo {
     }
 }
 
+export interface GradeInfo {
+    totalPoints: number;
+    givenPoints: number;
+    comment: string;
+}
+
 export {AssignFileType, AssignFile, ZipFile, FileTreeNode, FileTo}
