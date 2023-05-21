@@ -1,20 +1,20 @@
 <template>
   <div class="title-box">
-    <div style="color: white">CS307 Assignment1</div>
+    <div style="color: white">{{ courseCode }} {{ assignmentName }}</div>
   </div>
   <div class="top-box">
     <assign-info
-        :finished-students="100"
-        :all-students="200"
-        :given-points="98.20"
-        :total-points="100.00"
+        :finished-students="finishedStudents"
+        :all-students="allStudents"
+        :given-points="givenPoints"
+        :total-points="totalPoints"
     />
   </div>
   <div class="card-box-max">
-    <card></card>
+    <card :metrics="metrics" @updatePoints="updatePoints"/>
   </div>
   <div class="btn-box">
-    <assign-button></assign-button>
+    <assign-button/>
   </div>
 </template>
 
@@ -22,6 +22,36 @@
 import AssignInfo from "@/components/AssignRightBar/AssignInfo.vue";
 import Card from "@/components/AssignRightBar/Card.vue";
 import AssignButton from "@/components/AssignRightBar/AssignButton.vue";
+import {PropType, ref} from "vue";
+import {Metrics} from "@/composable/serverRequest";
+import {GradeInfo} from "@/store/assign";
+
+const props = defineProps({
+    courseCode: {type: String, required: true},
+    assignmentName: {type: String, required: true},
+    finishedStudents: {type: Number, required: true},
+    allStudents: {type: Number, required: true},
+    totalPoints: {type: Number, required: true},
+    metrics: {type: Array as PropType<Metrics[]>, required: true}
+})
+
+let totalPoints = ref(0);
+let givenPoints = ref(0);
+let comments = ref([] as string[]);
+props.metrics.forEach(metric => {
+    totalPoints.value += metric.max;
+})
+
+const updatePoints = (grades: GradeInfo[]) => {
+    totalPoints.value = 0;
+    givenPoints.value = 0;
+    grades.forEach(grade => {
+        totalPoints.value += grade.totalPoints;
+        givenPoints.value += grade.givenPoints;
+        comments.value.push(grade.comment);
+    })
+}
+
 </script>
 
 <script lang="ts">

@@ -3,7 +3,7 @@
     <h2 class="text-prog">PROGRESS</h2>
     <div class="cont-prog">
       <div class="student-cnt">
-        {{finishedStudents.toFixed(0)}} / {{allStudents.toFixed(0)}}
+        {{finishedStudents}} / {{allStudents}}
       </div>
       <svg viewBox="0 0 100 100">
         <circle class="progress-bar-bg" cx="50" cy="50" r="45"/>

@@ -82,7 +82,7 @@ interface Entry {
     penaltyAfter: number;
 }
 
-interface Metrics {
+export interface Metrics {
     uuid: string,
     title: string,
     description: string,

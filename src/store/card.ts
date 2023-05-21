@@ -1,37 +1,5 @@
-interface UniqueKey {
-    readonly key: string | number | symbol;
-}
-
-class UniqueList<T extends UniqueKey> {
-    private readonly _list: T[] = [];
-
-    add(item: T): void {
-        if (this._list.some(x => x.key === item.key)) {
-            throw new Error(`Duplicate key: ${item.key.toString()}`);
-        }
-        this._list.push(item);
-    }
-
-    remove(item: T): void {
-        const index = this._list.findIndex(x => x.key === item.key);
-        if (index < 0) {
-            throw new Error(`Key not found: ${item.key.toString()}`);
-        }
-        this._list.splice(index, 1);
-    }
-
-    index(idx: number): T {
-        return this._list[idx];
-    }
-
-    get list(): T[] {
-        return this._list;
-    }
-}
-
-
-class BigCard implements UniqueKey {
-    questionIdx: number = 0;
+class BigCard  {
+    questionTitle: string = '';
     totalPoints: number = 0;
     givenPoints: number = 0;
     comment: string = '';
@@ -39,8 +7,8 @@ class BigCard implements UniqueKey {
     subCards: SmallCard[] = [];
 
 
-    constructor(questionIdx: number, totalPoints: number, givenPoints: number, comment: string) {
-        this.questionIdx = questionIdx;
+    constructor(questionTitle: string, totalPoints: number, givenPoints: number, comment: string) {
+        this.questionTitle = questionTitle;
         this.totalPoints = totalPoints;
         this.controller.totalPointInput = this.totalPoints.toString();
         this.givenPoints = givenPoints;
@@ -48,9 +16,6 @@ class BigCard implements UniqueKey {
         this.comment = comment;
     }
 
-    get key(): number {
-        return this.questionIdx;
-    }
 }
 
 class BigCardController {
@@ -85,4 +50,4 @@ class SmallCardController {
     pointInput: string = '';
 }
 
-export {UniqueList, BigCard, SmallCard}
+export {BigCard, SmallCard}
