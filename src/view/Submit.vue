@@ -54,15 +54,8 @@
                             style="font-size: calc(100vh * 30 / 1500);background-color: #b7c2ce">
                         File Name
                     </el-col>
-                    <el-col :span="12" class="format" style="font-size: calc(100vh * 30 / 1500); text-align: left">
+                    <el-col :span="21" class="format" style="font-size: calc(100vh * 30 / 1500); text-align: left">
                         {{ i.name }}
-                    </el-col>
-                    <el-col :span="3" class="format"
-                            style="font-size: calc(100vh * 30 / 1500);background-color: #b7c2ce">
-                        File Size
-                    </el-col>
-                    <el-col :span="3" class="format" style="font-size: calc(100vh * 28 / 1500); text-align: left">
-                        {{ i.size }} Bytes
                     </el-col>
                 </el-row>
             </div>
@@ -175,7 +168,7 @@ import {Assignment, AttachFile, Course} from "@/store/submit";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import SubmitRightCourseCard from "@/components/SubmitComponent/SubmitRightCourseCard.vue";
 import moment from "moment"
-import {Entries, getEntries, getEntry, UploadFile, uploadFile} from "@/composable/serverRequest";
+import {Entries, getEntries, getEntry, getSubmissions, UploadFile, uploadFile, Submission, getSubmissionInfo} from "@/composable/serverRequest";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
 import {open} from '@tauri-apps/api/dialog';
@@ -289,30 +282,72 @@ const changeOrder = (courseName: string, assignmentName: string) => {
     nowCourse.value = courseName
     nowAssignment.value = assignmentName
 }
-const handleChildEvent = (index: number, data: Assignment) => {
-    idx.value = index
-    eid.value = entryList[index].entry.name
-    pid.value = entryList[index].problem.uuid
-    if (data.submitTime == null) {
-        showInformation.value = {
-            name: data.name,
-            ddl: moment(data.ddl).format("YYYY-MM-DD hh:mm"),
-            submitTime: '',
-            lateTime: moment(data.lateTime).format("YYYY-MM-DD hh:mm"),
-            files: [],
-        }
-    } else {
-        showInformation.value = {
-            name: data.name,
-            ddl: moment(data.ddl).format("YYYY-MM-DD hh:mm"),
-            submitTime: moment(data.submitTime).format("YYYY-MM-DD hh:mm"),
-            lateTime: moment(data.lateTime).format("YYYY-MM-DD hh:mm"),
-            files: data.attachment,
-        }
-    }
-    buttonDisabled.value.upload = false;
-    fileList.value.length = 0;
-    buttonDisabled.value.submit = true;
+const handleChildEvent = async (index: number, data: Assignment) => {
+  idx.value = index
+  eid.value = entryList[index].entry.name
+  pid.value = entryList[index].problem.uuid
+  let submissions: Submission[] = ((await getSubmissions(cid.value)).submissions)
 
+  submissions = submissions.map((submission) => {
+    return {
+      uuid:submission.uuid,
+      id:submission.id,
+      createdAt:submission.createdAt,
+      answers:submission.answers,
+      entry:submission.entry
+    } as Submission
+  })
+
+  let submitTime = null;
+  let attachment = null;
+  let submitId = null;
+
+  for (let i = 0 ; i < submissions.length;i++){
+    if (submissions[i].entry.uuid==undefined)continue;
+    if (submissions[i].createdAt!=0&&submissions[i].entry.uuid==eid.value){
+      if (submitTime==null){
+          submitTime=submissions[i].createdAt;
+          submitId = submissions[i].uuid;
+      }
+      else if (submitTime<submissions[i].createdAt){
+        submitTime=submissions[i].createdAt;
+        submitId=submissions[i].uuid;
+      }
+    }
+  }
+  if (submitId!=null){
+    attachment = (await getSubmissionInfo(submitId)).submission;
+    let files = [];
+    for (let i = 0 ; i<attachment.answers.length; i++)
+      for (let j = 0 ; j<attachment.answers[i].files.length; j++)
+        files.push(attachment.answers[i].files[j])
+    attachment = files.map((file) => {
+      return {
+        name : file.name
+      } as AttachFile
+    })
+  }
+
+
+  if (submitTime == null) {
+    showInformation.value = {
+      name: data.name,
+      ddl: moment.unix(data.ddl.getTime()).format("YYYY-MM-DD hh:mm"),
+      submitTime: '',
+      lateTime: moment.unix(data.lateTime.getTime()).format("YYYY-MM-DD hh:mm"),
+      files: [],
+    }
+  } else {
+    showInformation.value = {
+      name: data.name,
+      ddl: moment.unix(data.ddl.getTime()).format("YYYY-MM-DD hh:mm"),
+      submitTime: moment.unix(submitTime).format("YYYY-MM-DD hh:mm"),
+      lateTime: moment.unix(data.lateTime.getTime()).format("YYYY-MM-DD hh:mm"),
+      files: attachment,
+    }
+  }
+  buttonDisabled.value.upload = false;
+  fileList.value.length = 0;
+  buttonDisabled.value.submit = true;
 }
 </script>
