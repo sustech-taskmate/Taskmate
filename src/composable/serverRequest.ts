@@ -74,11 +74,19 @@ export interface Assignment {
 }
 
 interface Entry {
+    uuid: string
     name: string;
     title: string;
     status: string;
     penalty: number;
     penaltyAfter: number;
+}
+
+interface Metrics {
+    uuid: string,
+    title: string,
+    description: string,
+    max: number
 }
 
 interface AssignmentsResponseData {
@@ -95,6 +103,7 @@ interface EntryProblems {
     uuid: string;
     title: string;
     problems: Problem[];
+    metrics: Metrics[]
 }
 
 interface Problem {
@@ -109,6 +118,12 @@ export interface Submission {
     uuid: string,
     createdAt: 0,
     score: number | null,
+    scoring: {
+        lastModifiedBy: {
+            id: string,
+            sid: string
+        }, lastModifiedAt: number
+    }
     points: number | null,
     assignment: Assignment
     entry: Entry,
@@ -172,6 +187,10 @@ export interface Entries {
     problem: Problem;
 }
 
+interface EntryResponse {
+    entry: Entry[]
+}
+
 interface EntriesResponse {
     entries: Entries[]
 }
@@ -228,7 +247,7 @@ async function getAssignmentInfo(classId: string, assignmentName: string) {
     return response.data
 }
 
-async function getProblems(classId: string, entryId: string) {
+async function getEntry(classId: string, entryId: string) {
     const url = `/class/${classId}/entry/${entryId}`;
     const response = await request.get<EntryProblemResponseData>(url)
     return response.data;
@@ -286,6 +305,18 @@ async function uploadFile(classId: string, problemId: string, entryId: string, f
     return response2.ok;
 }
 
+async function returnSubmission(submissionName: string, score: number, comment?: string, metrics?: { [key: string]: number; }) {
+    const url = `/submission/${submissionName}/score`;
+    const response = await request.post(url, {
+        body: Body.json({
+            score: score,
+            comment: comment,
+            metrics: metrics
+        })
+    })
+    return response.ok;
+}
+
 export {
     login,
     logout,
@@ -293,11 +324,12 @@ export {
     getClasses,
     getAssignments,
     getAssignmentInfo,
-    getProblems,
+    getEntry,
     getSubmissions,
     getSubmissionInfo,
     getEntries,
     uploadFile,
+    returnSubmission,
 }
 
 

@@ -5,6 +5,24 @@
   </el-row>
 </template>
 
+<script lang="ts" setup>
+import {returnSubmission} from "@/composable/serverRequest";
+
+const props = defineProps({
+    submissionId: {type: String, required: true},
+    score: {type: Number, required: true},
+    comment: {type: String, default: ""},
+    metrics: {default: {}}
+})
+let metric = {1234684135146: 10}
+const {submissionId, score, comment, metrics} = props
+const res = await returnSubmission(submissionId, score, comment, metrics);
+if (res) {
+    console.log("success")
+}
+
+</script>
+
 <script lang="ts">
 export default {
   name: "AssignButton"

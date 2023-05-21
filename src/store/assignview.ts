@@ -5,6 +5,7 @@ export enum AssignmentState {
 }
 
 export interface StudentContent {
+    eid: string,
     gid: string,
     sid: string,
     submitTime: string | null,

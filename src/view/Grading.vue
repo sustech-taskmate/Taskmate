@@ -63,15 +63,16 @@ import ChatInner from "@/components/ChatInner/ChatInner.vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
-import {getSubmissionInfo} from "@/composable/serverRequest";
+import {getEntry, getSubmissionInfo} from "@/composable/serverRequest";
 
 const route = useRoute();
 const {routerPush} = useRouterPush();
 const tab = useTabStore();
 
-const cid = ref(route.params.cid);
-const aid = ref(route.params.aid);
-const gid = ref(route.params.gid);
+const cid = ref(route.params.cid as string);
+const aid = ref(route.params.aid as string);
+const eid = ref(route.query.eid as string);
+const gid = ref(route.params.gid as string);
 
 const toAssign = () =>
     routerPush({name: 'teacherAssign', params: {cid: cid.value, aid: aid.value},
@@ -141,7 +142,10 @@ const flexible = () => {
   topbarMenu.value = leftCollapse.value ? 24 : 4;
 }
 
-const submissionInfo = await getSubmissionInfo(gid.value as string);
+const entry = await getEntry(cid.value, eid.value)
+const metrics = entry.entry.metrics;
+
+const submissionInfo = await getSubmissionInfo(gid.value);
 // const url = [submissionInfo.submission.answers[0].file]
 let urls = submissionInfo.submission.answers[0].files.map((file)=>{
   return file.url

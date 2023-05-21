@@ -82,7 +82,7 @@ import {reactive, ref, watch} from "vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
-import {Assignment, getProblems, getSubmissions} from "@/composable/serverRequest";
+import {Assignment, getSubmissions} from "@/composable/serverRequest";
 import moment from "moment";
 import {StudentContent, AssignmentState} from "@/store/assignview";
 import '@/assets/style/local/assignview.css'
@@ -118,12 +118,12 @@ const toStatistics = () => {
 }
 
 const toGrade = (scope: any) => {
-  //TODO: get grading id
   let cid = route.params.cid;
   let aid = route.params.aid;
+  let eid = scope.row.eid;
   let gid = scope.row.gid;
-  routerPush({name: 'grade', params: {cid: cid, aid: aid, gid: gid},
-      query: {assignments: route.query.assignments, courses: route.query.courses}});
+    routerPush({name: 'grade', params: {cid: cid, aid: aid, gid: gid},
+      query: {assignments: route.query.assignments, courses: route.query.courses, eid: eid}});
 }
 
 let aid = ref(route.params.aid as string)
@@ -136,10 +136,14 @@ watch(
 );
 
 const assignments = reactive(JSON.parse(route.query.assignments as string) as Assignment[])
+
 const submissionList = await getSubmissions(cid)
+// TODO: submissionList 拿到修改时间和修改者。 需要根据assignment.name assignments[Number(aid.value)].name filter
+console.log(submissionList)
 const tableData: StudentContent[] = reactive([])
 submissionList.submissions.forEach((value) => {
   tableData.push({
+    eid: value.entry.uuid,
     gid: value.uuid,
     sid: value.submitter.sid + '',
     lastModifiedBy: '',

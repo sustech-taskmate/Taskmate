@@ -175,7 +175,7 @@ import {Assignment, AttachFile, Course} from "@/store/submit";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import SubmitRightCourseCard from "@/components/SubmitComponent/SubmitRightCourseCard.vue";
 import moment from "moment"
-import {Entries, getEntries, getProblems, UploadFile, uploadFile} from "@/composable/serverRequest";
+import {Entries, getEntries, getEntry, UploadFile, uploadFile} from "@/composable/serverRequest";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
 import {open} from '@tauri-apps/api/dialog';
@@ -196,7 +196,7 @@ const courseName = ref(route.query.courseName as string)
 let entryList: Entries[] = reactive((await getEntries(cid.value)).entries);
 
 entryList = await Promise.all(entryList.map(async entry => {
-    const problem = (await getProblems(cid.value, entry.name)).entry.problems[0]
+    const problem = (await getEntry(cid.value, entry.name)).entry.problems[0]
     return {
         ...entry,
         problem: problem
