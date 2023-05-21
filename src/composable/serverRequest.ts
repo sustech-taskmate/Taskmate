@@ -122,7 +122,10 @@ export interface Submission {
         lastModifiedBy: {
             id: string,
             sid: string
-        }, lastModifiedAt: number
+        },
+        lastModifiedAt: number,
+        comment: string,
+        metrics: {}
     }
     points: number | null,
     assignment: Assignment
@@ -273,7 +276,7 @@ async function getEntries(classId: string) {
 
 async function uploadFile(classId: string, problemId: string, entryId: string, files: UploadFile[]) {
     const uuids: string[] = await Promise.all(files.map(async file => {
-        let url = `/file/`;
+        const url = `/file/`;
         const response = await request.post<FileResponse>(url, {
             body: Body.json({
                 size: file.size,
@@ -286,22 +289,23 @@ async function uploadFile(classId: string, problemId: string, entryId: string, f
         await invoke('upload_file',
             {url: data.url, filePath: file.path, key: data.extraFormData.key, token: data.extraFormData.token});
 
-        url = `/problem/${problemId}/answer`;
-        const response1 = await request.post<AnswerResponse>(url, {
-            body: Body.json({
-                file: data.uuid
-            })
-        })
-
-        return response1.data.answer.uuid;
+        return data.uuid
     }));
 
-    const url = `/class/${classId}/entry/${entryId}/submission`
-    const response2 = await request.post(url, {
+    let url = `/problem/${problemId}/answer`;
+    const response = await request.post<AnswerResponse>(url, {
         body: Body.json({
-            answers: uuids
+            files: uuids
         })
     })
+
+    url = `/class/${classId}/entry/${entryId}/submission`
+    const response2 = await request.post(url, {
+        body: Body.json({
+            answers: [response.data.answer.uuid]
+        })
+    })
+
     return response2.ok;
 }
 

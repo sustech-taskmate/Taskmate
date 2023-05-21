@@ -219,7 +219,9 @@ const submit = async () => {
         return {name: l.name, size: l.size, path: l.file_path} as UploadFile
     })
 
-    await uploadFile(cid.value, pid.value, eid.value, files);
+    const res = await uploadFile(cid.value, pid.value, eid.value, files);
+    if (!res)
+        return
     for (let i = 0; i < fileList.value.length; i++) {
         li.push(new AttachFile(fileList.value[i].name, fileList.value[i].size, fileList.value[i].time))
     }
