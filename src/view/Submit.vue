@@ -168,7 +168,16 @@ import {Assignment, AttachFile, Course} from "@/store/submit";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import SubmitRightCourseCard from "@/components/SubmitComponent/SubmitRightCourseCard.vue";
 import moment from "moment"
-import {Entries, getEntries, getEntry, getSubmissions, UploadFile, uploadFile, Submission, getSubmissionInfo} from "@/composable/serverRequest";
+import {
+  Entries,
+  getEntries,
+  getEntry,
+  UploadFile,
+  uploadFile,
+  Submission,
+  getSubmissionInfo,
+  getCurrentUserSubmissions
+} from "@/composable/serverRequest";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
 import {open} from '@tauri-apps/api/dialog';
@@ -268,8 +277,9 @@ const selectFile = async () => {
                 xhr.send();
             });
         }))
-        buttonDisabled.value.submit = false;
     }
+    if (fileList.value.length>0)
+      buttonDisabled.value.submit = false;
 }
 
 const dele = (item: any) => {
@@ -288,48 +298,27 @@ const handleChildEvent = async (index: number, data: Assignment) => {
   idx.value = index
   eid.value = entryList[index].entry.name
   pid.value = entryList[index].problem.uuid
-  let submissions: Submission[] = ((await getSubmissions(cid.value)).submissions)
-
-  submissions = submissions.map((submission) => {
-    return {
-      uuid:submission.uuid,
-      id:submission.id,
-      createdAt:submission.createdAt,
-      answers:submission.answers,
-      entry:submission.entry
-    } as Submission
-  })
-
-  let submitTime = null;
-  let attachment = null;
-  let submitId = null;
-
-  for (let i = 0 ; i < submissions.length;i++){
-    if (submissions[i].entry.uuid==undefined)continue;
-    if (submissions[i].createdAt!=0&&submissions[i].entry.uuid==eid.value){
-      if (submitTime==null){
-          submitTime=submissions[i].createdAt;
-          submitId = submissions[i].uuid;
-      }
-      else if (submitTime<submissions[i].createdAt){
-        submitTime=submissions[i].createdAt;
-        submitId=submissions[i].uuid;
-      }
+  let submissions: Submission[] = ((await getCurrentUserSubmissions(cid.value,eid.value)).submissions)
+  let submitTime=null
+  let submitId=null
+  let attachment=null
+  if (submissions.length>0) {
+    submissions.sort((a, b) => -a.createdAt + b.createdAt);
+    submitTime = submissions[0].createdAt;
+    submitId = submissions[0].uuid;
+    if (submitId!=null){
+      attachment = (await getSubmissionInfo(submitId)).submission;
+      let files = [];
+      for (let i = 0 ; i<attachment.answers.length; i++)
+        for (let j = 0 ; j<attachment.answers[i].files.length; j++)
+          files.push(attachment.answers[i].files[j])
+      attachment = files.map((file) => {
+        return {
+          name : file.name
+        } as AttachFile
+      })
     }
   }
-  if (submitId!=null){
-    attachment = (await getSubmissionInfo(submitId)).submission;
-    let files = [];
-    for (let i = 0 ; i<attachment.answers.length; i++)
-      for (let j = 0 ; j<attachment.answers[i].files.length; j++)
-        files.push(attachment.answers[i].files[j])
-    attachment = files.map((file) => {
-      return {
-        name : file.name
-      } as AttachFile
-    })
-  }
-
 
   if (submitTime == null) {
     showInformation.value = {
