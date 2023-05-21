@@ -128,11 +128,18 @@ export interface Submission {
         metrics: {}
     }
     points: number | null,
+    originScore: number,
+    penaltyScore: number,
+    finalScore: number,
     assignment: Assignment
     entry: Entry,
     submitter: { id: number, sid: string }
     answers: Answer[],
-    time: number
+    time: number,
+    scorer: string | null,
+    scoredAt: number | null
+    comment: string,
+    metrics: string
 }
 
 interface Answer {
@@ -256,6 +263,12 @@ async function getEntry(classId: string, entryId: string) {
     return response.data;
 }
 
+async function getCurrentUserSubmissions(classId: string, entryId: string){
+    const url = `/class/${classId}/entry/${entryId}/submission`;
+    const response = await request.get<SubmissionListResponseData>(url)
+    return response.data;
+}
+
 async function getSubmissions(classId: string) {
     const url = `/class/${classId}/submission`;
     const response = await request.get<SubmissionListResponseData>(url)
@@ -329,6 +342,7 @@ export {
     getAssignments,
     getAssignmentInfo,
     getEntry,
+    getCurrentUserSubmissions,
     getSubmissions,
     getSubmissionInfo,
     getEntries,
