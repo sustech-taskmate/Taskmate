@@ -212,7 +212,7 @@ const assignmentList = entryList.map((entry) => {
     } as Assignment
 })
 
-const course = reactive(new Course(courseName.value, assignmentList, true))
+const course = reactive(new Course(courseName.value, assignmentList, true));
 
 const nowCourse = ref('')
 const nowAssignment = ref('')
@@ -258,7 +258,7 @@ const selectFile = async () => {
                 xhr.responseType = "blob";
                 xhr.onload = () => {
                     const blob = xhr.response;
-                    const fileName = path.substring(path.lastIndexOf("\\") + 1);
+                    const fileName = path.includes("\\")?path.substring(path.lastIndexOf("\\") + 1):path.substring(path.lastIndexOf("/") + 1);
                     const file = new File([blob], fileName, {type: blob.type});
                     const fileInfo = {
                         name: file.name,
@@ -311,5 +311,8 @@ const handleChildEvent = (index: number, data: Assignment) => {
         }
     }
     buttonDisabled.value.upload = false;
+    fileList.value.length = 0;
+    buttonDisabled.value.submit = true;
+
 }
 </script>
