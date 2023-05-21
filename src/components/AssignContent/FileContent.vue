@@ -45,7 +45,7 @@ async function updateData(){
     format.value = selectedFile.value.format;
     url.value = convertFileSrc(selectedFile.value.url);
     const file = await readBinaryFile(selectedFile.value.url);
-    data.value = new TextDecoder().decode(file);
+    data.value = new TextDecoder('utf-8').decode(file);
     videoSrc.value = url.value
 }
 
