@@ -68,7 +68,7 @@ import ChatInner from "@/components/ChatInner/ChatInner.vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
-import {Assignment, getEntry, getSubmissionInfo} from "@/composable/serverRequest";
+import {Assignment, getEntry, getSubmissionInfo, sendNote} from "@/composable/serverRequest";
 import {Card} from "@/store/todo";
 
 const route = useRoute();

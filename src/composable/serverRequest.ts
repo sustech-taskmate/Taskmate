@@ -99,11 +99,12 @@ interface AssignmentInfoResponseData {
     entries: Entry[];
 }
 
-interface EntryProblems {
+interface EntryResponse {
     uuid: string;
     title: string;
     problems: Problem[];
-    metrics: Metrics[]
+    metrics: Metrics[];
+    notes: Note[];
 }
 
 interface Problem {
@@ -155,7 +156,7 @@ interface Answer {
 }
 
 interface EntryProblemResponseData {
-    entry: EntryProblems;
+    entry: EntryResponse;
 }
 
 interface SubmissionListResponseData {
@@ -164,6 +165,18 @@ interface SubmissionListResponseData {
 
 interface SubmissionInfoResponseData {
     submission: Submission;
+}
+
+interface Note {
+    uuid: string,
+    submitter: {
+        name: string,
+        sid: string,
+        image: string,
+    },
+    entry: Entry,
+    submittedAt: number,
+    text: string,
 }
 
 interface FileResponse {
@@ -195,10 +208,6 @@ export interface Entries {
     availableFrom: number;
     availableTo: number;
     problem: Problem;
-}
-
-interface EntryResponse {
-    entry: Entry[]
 }
 
 interface EntriesResponse {
@@ -334,6 +343,16 @@ async function returnSubmission(submissionName: string, score: number, comment?:
     return response.ok;
 }
 
+async function sendNote(classId: string, entryId: string, note: string) {
+    const url = `/class/${classId}/entry/${entryId}/note`;
+    const response = await request.post(url, {
+        body: Body.json({
+            text: note,
+        })
+    })
+    return response.ok;
+}
+
 export {
     login,
     logout,
@@ -348,6 +367,7 @@ export {
     getEntries,
     uploadFile,
     returnSubmission,
+    sendNote,
 }
 
 
