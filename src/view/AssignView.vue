@@ -169,7 +169,7 @@ submissions.forEach((value) => {
         eid: value.entry.uuid,
         gid: value.uuid,
         sid: value.submitter.sid,
-        lastModifiedBy: value.scoring === null? '': value.scoring.lastModifiedBy,
+        lastModifiedBy: value.scoring === null? '': value.scoring.lastModifiedBy.sid,
         lastTime: value.scoring === null? '': moment.unix(value.scoring.lastModifiedAt).format('YYYY-MM-DD HH:mm:ss'),
         score: value.score,
         submitTime: moment.unix(value.createdAt).format('YYYY-MM-DD HH:mm:ss')

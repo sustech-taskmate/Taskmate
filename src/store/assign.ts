@@ -82,6 +82,7 @@ class FileTo {
 }
 
 export interface GradeInfo {
+    uuid: string;
     totalPoints: number;
     givenPoints: number;
     comment: string;

@@ -50,7 +50,11 @@
                 :assignment-name="aname"
                 :course-code="cname"
                 :metrics="metrics"
-                :total-points="totalPoints"/>
+                :total-points="totalPoints"
+                :gid="gid"
+                @toAssign="toAssign"
+                @next="next"
+            />
         </el-col>
     </el-container>
 </template>
@@ -100,6 +104,9 @@ const toAssign = () =>
         name: 'teacherAssign', params: {cid: cid.value, aid: aid.value},
         query: {assignments: route.query.assignments, courses: route.query.courses}
     });
+const next = () => {
+    //TODO: next assignment
+}
 
 
 const bsWrapper = ref<HTMLElement>();

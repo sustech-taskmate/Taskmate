@@ -1,21 +1,22 @@
 <template>
-  <div class="title-box">
-    <div style="color: white">{{ courseCode }} {{ assignmentName }}</div>
-  </div>
-  <div class="top-box">
-    <assign-info
-        :finished-students="finishedStudents"
-        :all-students="allStudents"
-        :given-points="givenPoints"
-        :total-points="totalPoints"
-    />
-  </div>
-  <div class="card-box-max">
-    <card :metrics="metrics" @updatePoints="updatePoints"/>
-  </div>
-  <div class="btn-box">
-    <assign-button/>
-  </div>
+    <div class="title-box">
+        <div style="color: white">{{ courseCode }} {{ assignmentName }}</div>
+    </div>
+    <div class="top-box">
+        <assign-info
+            :finished-students="finishedStudents"
+            :all-students="allStudents"
+            :given-points="givenPoints"
+            :total-points="totalPoints"
+        />
+    </div>
+    <div class="card-box-max">
+        <card :metrics="metrics" @update="update"/>
+    </div>
+    <div class="btn-box">
+        <assign-button :submission-id="gid" :score="givenPoints" :comment="comments" :metrics="mm"
+                       @toAssign="toAssign" @next="next"/>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -32,23 +33,39 @@ const props = defineProps({
     finishedStudents: {type: Number, required: true},
     allStudents: {type: Number, required: true},
     totalPoints: {type: Number, required: true},
-    metrics: {type: Array as PropType<Metrics[]>, required: true}
+    metrics: {type: Array as PropType<Metrics[]>, required: true},
+    gid: {type: String, required: true}
 })
+
+const emits = defineEmits(["toAssign", "next"]);
+const toAssign = () => {
+    emits("toAssign");
+}
+const next = () => {
+    emits("next");
+}
 
 let totalPoints = ref(0);
 let givenPoints = ref(0);
-let comments = ref([] as string[]);
+let comments = ref('');
 props.metrics.forEach(metric => {
     totalPoints.value += metric.max;
 })
 
-const updatePoints = (grades: GradeInfo[]) => {
+let mm = ref({} as { [key: string]: number; });
+const update = (grades: GradeInfo[]) => {
     totalPoints.value = 0;
     givenPoints.value = 0;
-    grades.forEach(grade => {
+    comments.value = '';
+    grades.forEach((grade, idx) => {
         totalPoints.value += grade.totalPoints;
         givenPoints.value += grade.givenPoints;
-        comments.value.push(grade.comment);
+        const comment = grade.comment;
+        if (comment) {
+            comments.value += ((idx + 1).toString() + '.\n');
+            comments.value += comment;
+        }
+        mm.value[grade.uuid] = grade.givenPoints;
     })
 }
 
@@ -56,7 +73,7 @@ const updatePoints = (grades: GradeInfo[]) => {
 
 <script lang="ts">
 export default {
-  name: "AssignRightBar"
+    name: "AssignRightBar"
 }
 
 </script>
@@ -64,33 +81,33 @@ export default {
 <style scoped>
 
 .title-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  width: 100%;
-  height: 8%;
-  font-size: calc(100vw * 20 / 1500);
-  background-color: steelblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 8%;
+    font-size: calc(100vw * 20 / 1500);
+    background-color: steelblue;
 }
 
 .top-box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 20%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 20%;
 }
 
 .card-box-max {
-  height: 60%;
-  overflow-x: hidden;
-  overflow-y: auto;
+    height: 60%;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .btn-box {
-  height: 12%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    height: 12%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>

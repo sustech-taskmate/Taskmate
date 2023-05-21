@@ -22,16 +22,16 @@
                     </div>
                     &ensp;/&ensp;
                     <div class="point-set">
-<!--                        <div @click="setTotalPointEditable(item)" v-show="!item.controller.totalPointEditable"-->
-<!--                             class="point-display">-->
+                        <!--                        <div @click="setTotalPointEditable(item)" v-show="!item.controller.totalPointEditable"-->
+                        <!--                             class="point-display">-->
                         <div v-show="!item.controller.totalPointEditable"
                              class="point-display">
                             {{ item.totalPoints }}
                         </div>
-<!--                        <input v-if="item.controller.totalPointEditable" type="text"-->
-<!--                               @input="updateTotalPoints(item)" v-model="item.controller.totalPointInput"-->
-<!--                               @blur="setTotalPointUneditable(item)" class="point-input"-->
-<!--                               :id="'total'+item.questionTitle">-->
+                        <!--                        <input v-if="item.controller.totalPointEditable" type="text"-->
+                        <!--                               @input="updateTotalPoints(item)" v-model="item.controller.totalPointInput"-->
+                        <!--                               @blur="setTotalPointUneditable(item)" class="point-input"-->
+                        <!--                               :id="'total'+item.questionTitle">-->
                     </div>
                 </div>
                 <div class="descript-box-big">
@@ -134,17 +134,18 @@ const props = defineProps({
     }
 })
 
-const emits = defineEmits(['updatePoints'])
-const updatePoints = () => {
+const emits = defineEmits(['update'])
+const update = () => {
     let grades = [] as GradeInfo[]
     cards.value.forEach((value) => {
         grades.push({
+            uuid: value.uuid,
             totalPoints: value.totalPoints,
             givenPoints: value.givenPoints,
             comment: value.comment
         })
     })
-    emits('updatePoints', grades)
+    emits('update', grades)
 }
 
 let eleInput = ref('');
@@ -157,6 +158,7 @@ const showInput = (item: BigCard) => {
 }
 const hideInput = (item: BigCard) => {
     item.controller.isShowInput = false;
+    update();
 }
 const addSub = (item: BigCard) => {
     item.subCards.push(new SmallCard(item, '+', 0, ''));
@@ -178,7 +180,7 @@ const setGivenPointUneditable = (item: BigCard) => {
     item.controller.givenPointEditable = false;
     eleInput.value = '';
     checkValid(item);
-    updatePoints();
+    update();
 }
 // const updateTotalPoints = (item: BigCard) => {
 //     item.controller.totalPointInput = item.controller.totalPointInput.match(/^(?!0\d|$)(?:\d{1,4}(?:\.\d{0,2})?|\.\d{1,2})$/)?.[0] || '';
@@ -202,7 +204,7 @@ const activeIndex = (sub: SmallCard) => {
         sub.controller.isSmallActive = true;
         enableSub(sub);
     }
-    updatePoints();
+    update();
 }
 const showInputSub = (sub: SmallCard) => {
     sub.controller.isShowInput = true;
@@ -265,7 +267,7 @@ const updateBigInput = (bc: BigCard) => {
 const metrics = ref(props.metrics);
 let cards = ref([] as BigCard[]);
 metrics.value.forEach((item, idx) => {
-    cards.value.push(new BigCard((idx + 1).toString(), item.max, 0, ''));
+    cards.value.push(new BigCard(item.uuid, (idx + 1).toString(), item.max, 0, ''));
 })
 
 let cnt = ref(0);
