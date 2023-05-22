@@ -1,7 +1,6 @@
 export enum AssignmentState {
-    notModified,
-    modifying,
-    finished
+    NOT_GRADED,
+    GRADED,
 }
 
 export interface StudentContent {

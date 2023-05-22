@@ -3,18 +3,18 @@ export class CourseData {
     releaseTime: string;
     deadline: string;
     delayTime: string;
-    submitRatio: string;
     gradeRatio: string;
-    isReturn: boolean;
+    notGraded: number;
+    all: number;
 
     constructor(name: string, releaseTime: string, deadline: string, delayTime: string,
-                submitRatio: string, gradeRatio: string, isReturn: boolean) {
+                gradeRatio: string, notGraded: number, all: number) {
         this.name = name;
         this.releaseTime = releaseTime;
         this.deadline = deadline;
         this.delayTime = delayTime;
-        this.submitRatio = submitRatio;
         this.gradeRatio = gradeRatio;
-        this.isReturn = isReturn;
+        this.notGraded = notGraded;
+        this.all = all;
     }
 }
