@@ -1,16 +1,44 @@
-# Tauri + Vue 3 + TypeScript
+# Taskmate - Tauri + Vue 3 + TypeScript
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+[![Build](https://img.shields.io/github/actions/workflow/status/sustech-taskmate/Taskmate/build.yml?logo=github)](https://github.com/sustech-taskmate/Taskmate/actions/workflows/build.yml "1")
+[![Release](https://img.shields.io/github/v/release/sustech-taskmate/Taskmate?logo=github)](https://github.com/sustech-taskmate/Taskmate/releases/latest)
+[![Activity](https://img.shields.io/github/last-commit/sustech-taskmate/Taskmate)](https://github.com/sustech-taskmate/Taskmate/commits)
+[![Size](https://img.shields.io/github/repo-size/sustech-taskmate/Taskmate)]()
+[![Size](https://img.shields.io/github/languages/code-size/sustech-taskmate/Taskmate)]()
 
-## Recommended IDE Setup
+## Installation
+[Latest Release](https://github.com/sustech-taskmate/Taskmate/releases/latest)
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
 
-## Type Support For `.vue` Imports in TS
+## Development
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
+### Prerequisite
+- [Rust](https://www.rust-lang.org/tools/install)
+- [Node.js](https://nodejs.org/en/download)
 
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
+```shell
+# skip if you already have pnpm installed
+$ npm i -g pnpm
 
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+# install dependencies
+$ pnpm install
+
+# development
+$ pnpm tauri dev
+```
+
+## Test
+
+```shell
+# run unit test
+$ pnpm test:unit
+
+# run ts test
+$ pnpm test
+```
+
+## Build
+```shell
+# build application on current os
+$ pnpm tauri build
+```
