@@ -1,62 +1,72 @@
 <template>
-  <el-row>
-    <button type="button" class="btn submit">Submit</button>
-    <button type="button" class="btn next">Next</button>
-  </el-row>
+    <el-row>
+        <button type="button" class="btn submit" @click="submit">
+            Submit
+        </button>
+        <button type="button" class="btn next" @click="next">Next</button>
+    </el-row>
 </template>
 
 <script lang="ts" setup>
-
 import {returnSubmission} from "@/composable/serverRequest";
 
-// const props = defineProps({
-//     submissionId: {type: String, required: true},
-//     score: {type: Number, required: true},
-//     comment: {type: String, default: ""},
-//     metrics: {default: {}}
-// })
+const props = defineProps({
+    submissionId: {type: String, required: true},
+    score: {type: Number, required: true},
+    comment: {type: String, default: ""},
+    metrics: {default: {}}
+})
 
-// const {submissionId, score, comment, metrics} = props
-// const res = await returnSubmission(submissionId, score, comment, metrics);
+const emits = defineEmits(["toAssign", "next"]);
+
+const submit = async () => {
+    await returnSubmission(props.submissionId, props.score, props.comment, props.metrics);
+    emits("toAssign");
+}
+
+const next = async () => {
+    await returnSubmission(props.submissionId, props.score, props.comment, props.metrics);
+    emits("next");
+}
 
 </script>
 
 <script lang="ts">
 export default {
-  name: "AssignButton"
+    name: "AssignButton"
 }
 </script>
 
 <style scoped>
 .btn {
-  border: 1px solid;
-  background-color: transparent;
-  text-transform: uppercase;
-  font-size: calc(100vw * 24 / 1500);
-  font-weight: 300;
+    border: 1px solid;
+    background-color: transparent;
+    text-transform: uppercase;
+    font-size: calc(100vw * 24 / 1500);
+    font-weight: 300;
 }
 
 .btn:hover {
-  color: white;
-  border: 0;
-  cursor: pointer;
+    color: white;
+    border: 0;
+    cursor: pointer;
 }
 
 .submit {
-  color: #6A7FA0;
+    color: #6A7FA0;
 }
 
 .submit:hover {
-  background-color: #6A7FA0;
+    background-color: #6A7FA0;
 }
 
 .next {
-  color: #548585;
-  margin-left: calc(100vw * 10 / 1500);
+    color: #548585;
+    margin-left: calc(100vw * 10 / 1500);
 }
 
 .next:hover {
-  background-color: #548585;
-  -moz-box-shadow: 10px 10px 99px 6px rgba(0, 128, 128, 1);
+    background-color: #548585;
+    -moz-box-shadow: 10px 10px 99px 6px rgba(0, 128, 128, 1);
 }
 </style>

@@ -1,4 +1,5 @@
-class BigCard  {
+class BigCard {
+    uuid: string = '';
     questionTitle: string = '';
     totalPoints: number = 0;
     givenPoints: number = 0;
@@ -7,7 +8,8 @@ class BigCard  {
     subCards: SmallCard[] = [];
 
 
-    constructor(questionTitle: string, totalPoints: number, givenPoints: number, comment: string) {
+    constructor(uuid: string, questionTitle: string, totalPoints: number, givenPoints: number, comment: string) {
+        this.uuid = uuid;
         this.questionTitle = questionTitle;
         this.totalPoints = totalPoints;
         this.controller.totalPointInput = this.totalPoints.toString();
