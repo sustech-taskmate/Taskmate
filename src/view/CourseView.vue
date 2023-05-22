@@ -134,7 +134,6 @@ export default defineComponent({
 
         const showInformation = async () => {
             currentClass.value = await getClassbyId(classId.value);
-            console.log(currentClass.value.course.name)
             AssignmentList = await getAssignments(classId.value);
             tableData.splice(0, tableData.length)
             AssignmentList.assignments.forEach((value) => {

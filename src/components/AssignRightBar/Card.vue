@@ -135,8 +135,12 @@ const props = defineProps({
     }
 })
 
-const emits = defineEmits(['update'])
-const update = () => {
+const metrics = ref(props.metrics);
+let cards = ref([] as BigCard[]);
+metrics.value.forEach((item, idx) => {
+    cards.value.push(new BigCard(item.uuid, (idx + 1).toString(), item.max, 0, ''));
+})
+
 const emits = defineEmits(['update'])
 const update = () => {
     let grades = [] as GradeInfo[]
@@ -267,11 +271,6 @@ const updateBigInput = (bc: BigCard) => {
     bc.controller.givenPointInput = bc.givenPoints.toString();
 }
 
-const metrics = ref(props.metrics);
-let cards = ref([] as BigCard[]);
-metrics.value.forEach((item, idx) => {
-    cards.value.push(new BigCard(item.uuid, (idx + 1).toString(), item.max, 0, ''));
-})
 
 let cnt = ref(0);
 

@@ -20,11 +20,11 @@
                 </div>
                 <div v-if="leftShow" style="height: 90vh; overflow-y: auto">
                     <template v-for="(item, index) in assignments" :key="index">
-                        <div style="width: 20vw; left: 1vw; position: relative">
+                        <div style="width: 20vw; left: 1vw; position: relative" @click="changeAid(index)">
                             <div style="position: relative; width: 20vw; height: 7vh">
-                <span style="margin-left: 1vw; line-height: 5vh; font-size: 2vw; position: absolute; left: 0; top: 1vh">{{
-                        item.name
-                    }}</span>
+                <span style="margin-left: 1vw; line-height: 5vh; font-size: 2vw; position: absolute; left: 0; top: 1vh">
+                    {{item.name }}
+                </span>
                             </div>
                         </div>
                     </template>
@@ -44,7 +44,6 @@
                         <svg-icon name="transmit" style="width: 6vw; height: 6vh; cursor: pointer"></svg-icon>
                         <svg-icon name="signal" style="width: 6vw; height: 6vh; cursor: pointer"
                                   @click="toStatistics"></svg-icon>
-                        <!--            <svg-icon name="set" style="width: 7vw; height: 7vh" @click="router.push('/Main/Set')"></svg-icon>-->
                     </div>
                 </div>
                 <div style="position: relative; height: 62vh; top: 18vh" v-bind:style="{ width: rightWidth }">
@@ -152,6 +151,10 @@ watch(
 );
 
 const assignments = reactive(JSON.parse(route.query.assignments as string) as Assignment[])
+
+const changeAid = (index: number)=>{
+    route.params.aid = index + ''
+}
 
 const submissionList = await getSubmissions(cid)
 const submissions = [] as Submission[];
