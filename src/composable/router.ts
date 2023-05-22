@@ -8,7 +8,6 @@ export default {
 }
 export function useRouterPush(inSetup = false) {
     const router = inSetup ? useRouter() : globalRouter;
-    const route = globalRouter.currentRoute;
 
     function routerPush(to: RouteLocationRaw) {
         return router.push(to);

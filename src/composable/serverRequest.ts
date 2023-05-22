@@ -127,7 +127,7 @@ export interface Submission {
         lastModifiedAt: number,
         comment: string,
         metrics: {}
-    }
+    } | null;
     points: number | null,
     originScore: number,
     penaltyScore: number,

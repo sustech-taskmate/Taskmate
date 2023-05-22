@@ -72,7 +72,14 @@ import ChatInner from "@/components/ChatInner/ChatInner.vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
-import {Assignment, getEntry, getSubmissionInfo, sendNote} from "@/composable/serverRequest";
+import {
+    Assignment,
+    getEntry,
+    getSubmissionInfo,
+    getSubmissions,
+    sendNote,
+    Submission
+} from "@/composable/serverRequest";
 import {Card} from "@/store/todo";
 
 const route = useRoute();
@@ -104,8 +111,44 @@ const toAssign = () =>
         name: 'teacherAssign', params: {cid: cid.value, aid: aid.value},
         query: {assignments: route.query.assignments, courses: route.query.courses}
     });
-const next = () => {
-    //TODO: next assignment
+const next = async () => {
+    const submissionList = await getSubmissions(cid.value);
+    const submissions = [] as Submission[];
+    const temp = submissionList.submissions;
+    temp.forEach((value) => {
+        if (value.assignment.name == assignments[parseInt(aid.value)].name) {
+            submissions.push(value);
+        }
+    })
+    let tempEid = ref('');
+    let tempGid = ref('');
+    let tempSid = ref('');
+    let cnt = 0;
+    submissions.forEach((value) => {
+        if (value.scoring === null) {
+            tempEid.value = value.entry.uuid;
+            tempGid.value = value.uuid;
+            tempSid.value = value.submitter.sid;
+        } else {
+            cnt++;
+        }
+    })
+    if (tempEid.value === '') {
+        await toAssign();
+    } else {
+        await routerPush({
+            name: 'grade', params: {cid: cid.value, aid: aid.value, gid: tempGid.value},
+            query: {
+                assignments: route.query.assignments,
+                courses: route.query.courses,
+                eid: tempEid.value,
+                sid: tempSid.value,
+                allStudents: allStudents.value,
+                finishedStudents: cnt
+            }
+        });
+        //TODO: rendering page again
+    }
 }
 
 

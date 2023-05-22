@@ -24,7 +24,8 @@ const submit = async () => {
     emits("toAssign");
 }
 
-const next = () => {
+const next = async () => {
+    await returnSubmission(props.submissionId, props.score, props.comment, props.metrics);
     emits("next");
 }
 

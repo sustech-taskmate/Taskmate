@@ -48,11 +48,11 @@ const next = () => {
 let totalPoints = ref(0);
 let givenPoints = ref(0);
 let comments = ref('');
+let mm = ref({} as { [key: string]: number; });
 props.metrics.forEach(metric => {
     totalPoints.value += metric.max;
+    mm.value[metric.uuid] = 0;
 })
-
-let mm = ref({} as { [key: string]: number; });
 const update = (grades: GradeInfo[]) => {
     totalPoints.value = 0;
     givenPoints.value = 0;
