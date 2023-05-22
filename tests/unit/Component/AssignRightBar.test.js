@@ -73,5 +73,6 @@ test('Card', async ()=>{
     const Button = wrapper.find('[class="ElPopconfirm"]')
     await Button.trigger('confirm')
 
+    const assignButton = wrapper.find('[class="con"]')
 
 })

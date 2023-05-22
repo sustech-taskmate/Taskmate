@@ -15,7 +15,7 @@
     </div>
     <div class="btn-box">
         <assign-button :submission-id="gid" :score="givenPoints" :comment="comments" :metrics="mm"
-                       @toAssign="toAssign" @next="next"/>
+                       @toAssign="toAssign" @next="next" class="con"/>
     </div>
 </template>
 
