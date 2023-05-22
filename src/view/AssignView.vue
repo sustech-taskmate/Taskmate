@@ -19,15 +19,13 @@
                               v-bind:style="{left: leftSize.left3, top: leftSize.top3}"></svg-icon>
                 </div>
                 <div v-if="leftShow" style="height: 90vh; overflow-y: auto">
-                    <template v-for="(item, index) in assignments" :key="index">
-                        <div style="width: 20vw; left: 1vw; position: relative" @click="changeAid(index)">
-                            <div style="position: relative; width: 20vw; height: 7vh">
-                <span style="margin-left: 1vw; line-height: 5vh; font-size: 2vw; position: absolute; left: 0; top: 1vh">
+                    <div v-for="(item, index) in assignments" :key="index" @click="changeAid(index)">
+                            <div style="position: relative; left: 1vw; width: 20vw; height: 7vh">
+                <div style="margin-left: 1vw; line-height: 5vh; font-size: 2vw; position: absolute; left: 0; top: 1vh">
                     {{item.name }}
-                </span>
-                            </div>
+                </div>
                         </div>
-                    </template>
+                    </div>
                 </div>
             </div>
             <div style="height: 100vh; position: relative">
@@ -163,54 +161,58 @@ const toFirstNoGrade = () => {
 
 let aid = ref(route.params.aid as string)
 const cid = route.params.cid as string
-watch(
-    () => route.params.aid,
-    (newValue) => {
-        aid.value = newValue as string
-    }
-);
 
-const assignments = reactive(JSON.parse(route.query.assignments as string) as Assignment[])
+const assignments = ref(JSON.parse(route.query.assignments as string) as Assignment[])
 
 const changeAid = (index: number)=>{
     route.params.aid = index + ''
+    aid.value = index + ''
+    flash()
 }
 
 const submissionList = await getSubmissions(cid)
-const submissions = [] as Submission[];
+const submissions = ref([] as Submission[]);
 const temp = submissionList.submissions;
-temp.forEach((value) => {
-    if (value.assignment.name == assignments[parseInt(aid.value)].name) {
-        submissions.push(value);
-    }
-})
-const tableData: StudentContent[] = reactive([])
-const allStudents = ref(submissions.length)
+const tableData = ref([] as StudentContent[])
+const allStudents = ref(submissions.value.length)
 const finishedStudents = ref(0)
 let isFirst = true;
 const firstEid = ref('')
 const firstGid = ref('')
 const firstSid = ref('')
-submissions.forEach((value) => {
-    tableData.push({
-        eid: value.entry.uuid,
-        gid: value.uuid,
-        sid: value.submitter.sid,
-        lastModifiedBy: value.scoring === null? '': value.scoring.lastModifiedBy.sid,
-        lastTime: value.scoring === null? '': moment.unix(value.scoring.lastModifiedAt).format('YYYY-MM-DD HH:mm:ss'),
-        score: value.score,
-        submitTime: moment.unix(value.createdAt).format('YYYY-MM-DD HH:mm:ss'),
-        modifyState: value.scoring === null? AssignmentState.NOT_GRADED: AssignmentState.GRADED
-    } as StudentContent)
-    if (value.scoring !== null) {
-        finishedStudents.value += 1;
-    } else if (isFirst) {
-        isFirst = false;
-        firstEid.value = value.entry.uuid;
-        firstGid.value = value.uuid;
-        firstSid.value = value.submitter.sid;
-    }
-    tableData.sort((a, b) => {
+const flash = ()=>{
+    submissions.value.slice(0, 0)
+    tableData.value.slice(0, 0)
+    let tempSubmit = [] as Submission[]
+    let tempTableData = [] as StudentContent[]
+    temp.forEach((value) => {
+        if (value.assignment.name == assignments.value[parseInt(aid.value)].name) {
+            tempSubmit.push(value)
+        }
+    })
+    submissions.value = tempSubmit
+    submissions.value.forEach((value) => {
+        tempTableData.push({
+            eid: value.entry.uuid,
+            gid: value.uuid,
+            sid: value.submitter.sid,
+            lastModifiedBy: value.scoring === null? '': value.scoring.lastModifiedBy.sid,
+            lastTime: value.scoring === null? '': moment.unix(value.scoring.lastModifiedAt).format('YYYY-MM-DD HH:mm:ss'),
+            score: value.score,
+            submitTime: moment.unix(value.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+            modifyState: value.scoring === null? AssignmentState.NOT_GRADED: AssignmentState.GRADED
+        } as StudentContent)
+        if (value.scoring !== null) {
+            finishedStudents.value += 1;
+        } else if (isFirst) {
+            isFirst = false;
+            firstEid.value = value.entry.uuid;
+            firstGid.value = value.uuid;
+            firstSid.value = value.submitter.sid;
+        }
+    })
+    tableData.value = tempTableData
+    tableData.value = tableData.value.sort((a, b) => {
         if (a.modifyState === AssignmentState.NOT_GRADED && b.modifyState === AssignmentState.NOT_GRADED) {
             return moment(b.submitTime).isBefore(a.submitTime) ? -1 : 1;
         } else if (a.modifyState === AssignmentState.GRADED && b.modifyState === AssignmentState.GRADED) {
@@ -223,7 +225,10 @@ submissions.forEach((value) => {
             return 0;
         }
     })
-})
+}
+
+
+flash()
 
 
 let courseShow = ref(true);
@@ -275,7 +280,7 @@ const flexible = () => {
 }
 
 const getRowStyle = ({rowIndex}: { rowIndex: number }) => {
-    let data = tableData[rowIndex];
+    let data = tableData.value[rowIndex];
     let color: string;
     if (data.modifyState === AssignmentState.NOT_GRADED) {
         color = 'rgb(255, 228, 227)'
