@@ -8,34 +8,26 @@ module.exports = {
     'vue',
     'js',
   ],
-  transform: { // 预处理器配置，匹配的文件要经过转译才能被识别，否则会报错
+  transform: {
     '^.+\\.vue$': '@vue/vue3-jest',
-    // "^.+\\.[tj]s$": "ts-jest",
     '^.+\\.ts$': 'ts-jest',
     '^.+\\.js$': require.resolve('babel-jest'),
   },
-  transformIgnorePatterns: [ // 转译时忽略 node_modules
+  transformIgnorePatterns: [
     '<rootdir>/node_modules/',
-    // 'node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)',
     '<rootdir>/src/main.ts',
     '<rootdir>/src/router/index.ts',
     '<rootdir>/src/composable/*.ts',
   ],
-  // moduleNameMapper: { // 从正则表达式到模块名称的映射，和webpack的alisa类似
-  //   '^@/(.*)$': '<rootDir>/src/$1'
-  // },
-  // snapshotSerializers: [ // Jest在快照测试中使用的快照序列化程序模块的路径列表
-  //   'jest-serializer-vue'
-  // ],
   testMatch: [
-    '<rootDir>/tests/unit/*.test.js',
+      '<rootDir>/tests/unit/**/*.test.js',
+      '!<rootDir>/tests/unit/Vue/*.test.js',
   ],
-  collectCoverage: true, // 覆盖率报告，运行测试命令后终端会展示报告结果
-  collectCoverageFrom: [ // 需要进行收集覆盖率的文件，会依次进行执行符合的文件
-    'src/**/*.vue',
-    'src/**/**/*.vue',
-    'src/**/**/**/*.vue',
-      '!src/components/util/*.vue'
+  collectCoverage: true,
+  collectCoverageFrom: [
+    'src/components/**/*.vue',
+    '!src/components/util/*.vue',
+    '!src/components/AssignContent/*.vue',
   ],
   coverageReporters: ['html', 'lcov', 'text-summary'], // Jest在编写覆盖率报告的配置，添加"text"或"text-summary"在控制台输出中查看覆盖率摘要
   coveragePathIgnorePatterns: ['/node_modules/'], // 需要跳过覆盖率信息收集的文件目录
