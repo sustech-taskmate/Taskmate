@@ -158,39 +158,42 @@ const colorList = [
 ]
 
 const submissions = ref(JSON.parse(route.query.submissions as string) as Submission[]);
-// ======Test Data======
-submissions.value[0].score = 89
-submissions.value[1].score = null
-submissions.value[2].score = 53
-submissions.value[3].score = 101
-// ======Test Data======
 const [average, median, minimum, maximum] = getStatisticalInformation(submissions.value);
 const scoreDistribution = getScoreDistribution(submissions.value);
 const preData = getPrefixData(submissions.value);
 const sufData = getSuffixData(submissions.value);
 
-// ======Test Data======
-let distribution1 = new ScoreDistribution(0, 11);
-let distribution2 = new ScoreDistribution(1, 13);
-let distribution3 = new ScoreDistribution(2, 15);
-let distribution4 = new ScoreDistribution(3, 12);
-let distribution5 = new ScoreDistribution(4, 10);
-let distribution6 = new ScoreDistribution(5, 19);
-let distribution7 = new ScoreDistribution(6, 14);
-let distribution8 = new ScoreDistribution(7, 16);
-let distribution9 = new ScoreDistribution(8, 18);
-let distribution10 = new ScoreDistribution(9, 17);
-let distribution11 = new ScoreDistribution(10, 20);
-let distribution12 = new ScoreDistribution(11, 21);
-let distribution13 = new ScoreDistribution(12, 22);
-let distribution14 = new ScoreDistribution(13, 23);
-let distribution15 = new ScoreDistribution(14, 24);
-let problem1 = new Problem([distribution1, distribution2, distribution3]);
-let problem2 = new Problem([distribution4, distribution5, distribution6, distribution7,
-  distribution8, distribution9, distribution10, distribution11, distribution12, distribution13,
-  distribution14, distribution15])
-const problemData = [problem1, problem2];
-// ======Test Data======
+const problemData = ref([] as Problem[]);
+let scoreMap = undefined as Map<number, number>[] | undefined;
+submissions.value.forEach((value) => {
+    const scoring = value.scoring;
+    if (scoring !== null) {
+        if (scoreMap === undefined) {
+            scoreMap = [];
+        }
+        const metrics = scoring.metrics;
+        let idx = 0;
+        for (let mk in metrics) {
+            scoreMap[idx] = scoreMap[idx] || new Map<number, number>();
+            const metric = (metrics as any)[mk];
+            if (scoreMap[idx].has(metric)) {
+                scoreMap[idx].set(metric, scoreMap[idx].get(metric)! + 1);
+            } else {
+                scoreMap[idx].set(metric, 1);
+            }
+            idx++;
+        }
+    }
+})
+scoreMap?.forEach((value, idx) => {
+    const distributions = [] as ScoreDistribution[];
+    value.forEach((count, score) => {
+        distributions.push(new ScoreDistribution(score, count));
+    })
+    problemData.value.push(new Problem(distributions));
+})
+
+
 const table1Data = ref([
   {
     type: 'average',
@@ -241,7 +244,7 @@ function getProblemFigure(id: number) {
   const ele = document.getElementById(str) as HTMLElement;
   const myChart = echarts.init(ele);
   const data = [];
-  let problem = problemData[id];
+  let problem = problemData.value[id];
   for (const x in problem.distributions) {
     data.push({
       name: problem.distributions[x].score,
@@ -446,7 +449,7 @@ onMounted(async () => {
   await nextTick();
   addFigure1();
   addFigure2();
-  for (let i = 0; i < problemData.length; i++) {
+  for (let i = 0; i < problemData.value.length; i++) {
     getProblemFigure(i);
   }
 });
