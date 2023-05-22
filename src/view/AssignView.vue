@@ -51,7 +51,8 @@
                         <span class="word"
                               style="line-height: 3vh; color: white; position: absolute; left: 2.5vw; top: 4vh;">Student List</span>
                         <svg-icon name="play2" color="white"
-                                  style="position: absolute; right: 0; top: 1vh; width: 8vw; height: 8vh"></svg-icon>
+                                  style="position: absolute; right: 0; top: 1vh; width: 8vw; height: 8vh;cursor: pointer"
+                        @click="toFirstNoGrade"/>
                     </div>
                     <el-table
                         :data="tableData"
@@ -60,9 +61,9 @@
                         height="100%"
                     >
                         <el-table-column type="selection"></el-table-column>
-                        <el-table-column prop="sid" sortable label="Student ID" width="auto" align="center"/>
-                        <el-table-column prop="score" sortable label="Score" width="auto" align="center"/>
-                        <el-table-column prop="submitTime" sortable label="Submission Time" width="auto"
+                        <el-table-column prop="sid" label="Student ID" width="auto" align="center"/>
+                        <el-table-column prop="score" label="Score" width="auto" align="center"/>
+                        <el-table-column prop="submitTime" label="Submission Time" width="auto"
                                          align="center"/>
                         <el-table-column prop="lastModifiedBy" label="Last Modifier" width="auto" align="center"/>
                         <el-table-column prop="lastTime" label="Last Modification Time" width="auto" align="center"/>
@@ -86,7 +87,7 @@ import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
 import {Assignment, getSubmissions, Submission} from "@/composable/serverRequest";
 import moment from "moment";
-import {StudentContent, AssignmentState} from "@/store/assignview";
+import {AssignmentState, StudentContent} from "@/store/assignview";
 import '@/assets/style/local/assignview.css'
 
 const route = useRoute();
@@ -141,6 +142,25 @@ const toGrade = (scope: any) => {
     });
 }
 
+const toFirstNoGrade = () => {
+    let cid = route.params.cid;
+    let aid = route.params.aid;
+    if (firstEid.value !== '' && firstGid.value !== '' && firstSid.value !== '') {
+        routerPush({
+            name: 'grade',
+            params: {cid: cid, aid: aid, gid: firstGid.value},
+            query: {
+                assignments: route.query.assignments,
+                courses: route.query.courses,
+                eid: firstEid.value,
+                sid: firstSid.value,
+                allStudents: allStudents.value,
+                finishedStudents: finishedStudents.value,
+            }
+        })
+    }
+}
+
 let aid = ref(route.params.aid as string)
 const cid = route.params.cid as string
 watch(
@@ -167,6 +187,10 @@ temp.forEach((value) => {
 const tableData: StudentContent[] = reactive([])
 const allStudents = ref(submissions.length)
 const finishedStudents = ref(0)
+let isFirst = true;
+const firstEid = ref('')
+const firstGid = ref('')
+const firstSid = ref('')
 submissions.forEach((value) => {
     tableData.push({
         eid: value.entry.uuid,
@@ -175,11 +199,30 @@ submissions.forEach((value) => {
         lastModifiedBy: value.scoring === null? '': value.scoring.lastModifiedBy.sid,
         lastTime: value.scoring === null? '': moment.unix(value.scoring.lastModifiedAt).format('YYYY-MM-DD HH:mm:ss'),
         score: value.score,
-        submitTime: moment.unix(value.createdAt).format('YYYY-MM-DD HH:mm:ss')
+        submitTime: moment.unix(value.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+        modifyState: value.scoring === null? AssignmentState.NOT_GRADED: AssignmentState.GRADED
     } as StudentContent)
     if (value.scoring !== null) {
         finishedStudents.value += 1;
+    } else if (isFirst) {
+        isFirst = false;
+        firstEid.value = value.entry.uuid;
+        firstGid.value = value.uuid;
+        firstSid.value = value.submitter.sid;
     }
+    tableData.sort((a, b) => {
+        if (a.modifyState === AssignmentState.NOT_GRADED && b.modifyState === AssignmentState.NOT_GRADED) {
+            return moment(b.submitTime).isBefore(a.submitTime) ? -1 : 1;
+        } else if (a.modifyState === AssignmentState.GRADED && b.modifyState === AssignmentState.GRADED) {
+            return moment(b.submitTime).isBefore(a.submitTime) ? -1 : 1;
+        } else if (a.modifyState === AssignmentState.NOT_GRADED) {
+            return -1;
+        } else if (b.modifyState === AssignmentState.NOT_GRADED) {
+            return 1;
+        } else {
+            return 0;
+        }
+    })
 })
 
 
@@ -232,9 +275,10 @@ const flexible = () => {
 }
 
 const getRowStyle = ({rowIndex}: { rowIndex: number }) => {
-    let color = '';
-    if (rowIndex % 2 == 1) {
-        color = 'rgb(255, 255, 224)'
+    let data = tableData[rowIndex];
+    let color: string;
+    if (data.modifyState === AssignmentState.NOT_GRADED) {
+        color = 'rgb(255, 228, 227)'
     } else {
         color = 'rgb(229, 255, 234)'
     }

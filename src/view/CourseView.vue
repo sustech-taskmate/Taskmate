@@ -18,11 +18,13 @@
                         <div style="width: 20vw; left: 1vw; position: relative">
                             <div style="position: relative; width: 20vw; height: 7vh">
                                 <span
-                                    style="margin-left: 1vw; line-height: 5vh; font-size: 2vw; position: absolute; left: 0; top: 1vh">{{ item.name }}</span>
+                                    style="margin-left: 1vw; line-height: 5vh; font-size: 2vw; position: absolute; left: 0; top: 1vh">{{
+                                        item.name
+                                    }}</span>
                                 <svg-icon name="arrayLeft" @click="hidden(item)" v-if="!item.courseviewDown"
-                                          style="position: absolute; right: 0; top: 0; width: 20%; height: 100%; cursor: pointer;"></svg-icon>
+                                          style="position: absolute; right: 0; top: 0; width: 20%; height: 100%; cursor: pointer;"/>
                                 <svg-icon name="arrayDown" @click="hidden(item)" v-show="item.courseviewDown"
-                                          style="position: absolute; right: 0; top: 0; width: 20%; height: 100%; cursor: pointer;"></svg-icon>
+                                          style="position: absolute; right: 0; top: 0; width: 20%; height: 100%; cursor: pointer;"/>
                             </div>
                             <div v-if="item.courseviewDown"
                                  style="width: 20vw; min-height: 4vh; position:relative; border-top: 2px solid black">
@@ -66,10 +68,9 @@
                         v-if="turn"
                     >
                         <el-table-column prop="name" label="Assignment Name" width="auto" align="center"/>
-                        <el-table-column prop="releaseTime" sortable label="Release Time" width="auto" align="center"/>
-                        <el-table-column prop="deadline" sortable label="Deadline" width="auto" align="center"/>
-                        <el-table-column prop="delayTime" sortable label="Delay Time" width="auto" align="center"/>
-                        <el-table-column prop="submitRatio" label="Submission Ratio" width="auto" align="center"/>
+                        <el-table-column prop="releaseTime" label="Release Time" width="auto" align="center"/>
+                        <el-table-column prop="deadline" label="Deadline" width="auto" align="center"/>
+                        <el-table-column prop="delayTime" label="Delay Time" width="auto" align="center"/>
                         <el-table-column prop="gradeRatio" label="Grading Ratio" width="auto" align="center"/>
                         <el-table-column width="auto" align="center">
                             <template #default="scope">
@@ -89,8 +90,8 @@ import moment from "moment";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
-import {getAssignments, getClassbyId} from "@/composable/serverRequest";
 import {Card, ClassUserRole} from "@/store/todo";
+import {getAssignments, getClassbyId, getSubmissions} from "@/composable/serverRequest";
 import {CourseData} from "@/store/courseview";
 
 export default defineComponent({
@@ -109,11 +110,13 @@ export default defineComponent({
         }
         let classId = ref()
         classId.value = route.params.cid as string
+        const submissionList = await getSubmissions(classId.value)
+        const submissions = submissionList.submissions
         const tableData: CourseData[] = reactive([])
         for (const i of courses) {
             i.courseviewDown = false
-            for (const j of i.listContainCard){
-                if(j.id + '' == classId.value){
+            for (const j of i.listContainCard) {
+                if (j.id + '' == classId.value) {
                     i.courseviewDown = true
                 }
             }
@@ -137,13 +140,23 @@ export default defineComponent({
             AssignmentList = await getAssignments(classId.value);
             tableData.splice(0, tableData.length)
             AssignmentList.assignments.forEach((value) => {
+                let notGraded = 0
+                let all = 0
+                submissions.forEach((value2) => {
+                    if (value.name === value2.assignment.name) {
+                        all++;
+                        if (value2.scoring === null) {
+                            notGraded++;
+                        }
+                    }
+                })
                 let {name, title, status, due, availableFrom, availableTo} = value
                 tableData.push(
                     new CourseData(name,
                         moment.unix(availableFrom).format('YYYY-MM-DD HH:mm:ss'),
                         moment.unix(availableTo).format('YYYY-MM-DD HH:mm:ss'),
                         moment.unix(due).format('YYYY-MM-DD HH:mm:ss'),
-                        "?", "?", false)
+                        notGraded + " / " + all, notGraded, all)
                 )
             })
             key = Math.random()
@@ -170,7 +183,10 @@ export default defineComponent({
             let courses = route.query.courses;
             routerPush({
                 name: 'teacherAssign', params: {cid: cid, aid: index},
-                query: {assignments: JSON.stringify(AssignmentList.assignments), courses: courses}
+                query: {
+                    assignments: JSON.stringify(AssignmentList.assignments),
+                    courses: courses,
+                }
             });
         }
 
@@ -208,9 +224,9 @@ export default defineComponent({
             }
         }
         const getRowStyle = ({rowIndex}: { rowIndex: number }) => {
-            let color = '';
+            let color: string;
             let assignment = tableData[rowIndex];
-            if (assignment.isReturn) {
+            if (assignment.notGraded == assignment.all) {
                 color = 'rgb(229, 255, 234)'
             } else {
                 color = 'rgb(255, 228, 227)'
