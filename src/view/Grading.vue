@@ -30,7 +30,7 @@
                     Chat Bar &ensp;
                     <svg-icon name="subtract" color="white"/>
                 </div>
-                <chat-inner/>
+                <chat-inner :cid="cid" :eid="eid"/>
             </el-row>
         </el-col>
         <el-col :span="myWidthCenter" style="background-color: white;display: flex; flex-direction: column;

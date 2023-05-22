@@ -6,6 +6,7 @@
 </template>
 
 <script lang="ts" setup>
+
 import {returnSubmission} from "@/composable/serverRequest";
 
 // const props = defineProps({
@@ -17,7 +18,6 @@ import {returnSubmission} from "@/composable/serverRequest";
 
 // const {submissionId, score, comment, metrics} = props
 // const res = await returnSubmission(submissionId, score, comment, metrics);
-
 
 </script>
 

@@ -205,14 +205,14 @@ entryList = await Promise.all(entryList.map(async entry => {
     } as Entries
 }))
 
-const assignmentList = entryList.map((entry) => {
-    return {
-        name: entry.assignment.title,
-        ddl: new Date(entry.availableTo),
-        lateTime: new Date(entry.due),
-        submitTime: null
-    } as Assignment
-})
+        const assignmentList = entryList.map((entry) => {
+            return {
+                name: entry.assignment.title,
+                ddl: new Date(entry.availableTo),
+                lateTime: new Date(entry.due),
+                submitTime: null
+            } as Assignment
+        })
 
 const course = reactive(new Course(courseName.value, assignmentList, true));
 

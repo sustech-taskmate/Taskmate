@@ -1,6 +1,6 @@
 <template>
   <el-header type="flex" style="height: 10vh;
-    border-bottom: 2px solid black; border-left: 2px solid black; border-top: 2px solid black; border-radius: 10px 0 0 0">
+    border-bottom: 2px solid black; border-left: 2px solid black; border-top: 2px solid black; border-radius: 0 0 0 0">
     <el-row type="flex" style="height: 100%">
       <el-col :span="2" style="height: 100%" type="flex">
         <svg-icon name="logout" color="black" @click="logout"
@@ -65,7 +65,7 @@
       </el-col>
     </el-row>
   </el-header>
-  <el-main type="flex" style="height: 90vh; overflow-y: auto; border-left: 2px solid black; border-radius: 0 0 0 10px">
+  <el-main type="flex" style="height: 90vh; overflow-y: auto; border-left: 2px solid black; border-radius: 0 0 0 0">
     <overview-middle-card :cardList="cardList" :filters="filters"/>
   </el-main>
 </template>

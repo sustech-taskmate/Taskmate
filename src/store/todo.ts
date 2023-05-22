@@ -7,11 +7,11 @@
 class TodoItem {
 
     name: string;
-    time: Date;
+    time: number;
     id: number;
     courseTitle: string;
 
-    constructor(name: string, time: Date, id: number, courseTile: string) {
+    constructor(name: string, time: number, id: number, courseTile: string) {
         this.name = name;
         this.time = time;
         this.id = id;

@@ -49,8 +49,8 @@ import {PropType} from "vue";
 
 const {routerPush} = useRouterPush();
 
-function show(time: Date) {
-    return moment(time).format("YYYY-MM-DD hh:mm")
+function show(time: number) {
+    return moment.unix(time).format('YYYY-MM-DD HH:mm:ss')
 }
 
 const props = defineProps({

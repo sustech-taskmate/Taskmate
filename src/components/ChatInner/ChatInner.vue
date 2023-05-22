@@ -1,62 +1,104 @@
 <template>
-  <div class="chat vac-app-box-shadow">
-    <el-row style="width: 100%;" :style="{ height: topHeight }">
-      <chat-inner-messages :messages="messages"/>
-    </el-row>
-    <el-row class="footer" :style="{ height: downHeight }">
-      <chat-inner-footer @change-size="updateHeight" @send-message="sendMessage"/>
-    </el-row>
-  </div>
+    <div class="chat vac-app-box-shadow">
+        <el-row style="width: 100%;" :style="{ height: topHeight }">
+            <chat-inner-messages :messages="messages"/>
+        </el-row>
+        <el-row class="footer" :style="{ height: downHeight }">
+            <chat-inner-footer @change-size="updateHeight" @send-message="sendMessage"/>
+        </el-row>
+    </div>
 </template>
 
-<script lang="ts" setup>
-import {ref} from "vue";
-import ChatInnerFooter from "./ChatInnerFooter.vue";
-import ChatInnerMessages from "./ChatInnerMessages.vue";
-import {ChatMessage} from "@/store/chat";
-
-let topHeight = ref('89%');
-let downHeight = ref('10%');
-
-let messages = ref<ChatMessage[]>([]);
-
-const sendMessage = (msg: ChatMessage) => {
-  messages.value.push(msg);
-}
-
-const updateHeight = (flag: boolean) => {
-  if (flag) {
-    topHeight.value = '60%';
-    downHeight.value = '39%';
-  } else {
-    topHeight.value = '89%';
-    downHeight.value = '10%';
-  }
-}
-
-</script>
-
 <script lang="ts">
-export default {
-  name: "ChatInner"
-}
+import {defineComponent, watch} from 'vue';
+import {ref} from "vue";
+import {ChatMessage} from "@/store/chat";
+import ChatInnerFooter from "@/components/ChatInner/ChatInnerFooter.vue";
+import ChatInnerMessages from "@/components/ChatInner/ChatInnerMessages.vue";
+import {EntryResponse, EntryProblemResponseData, sendNote, Note} from "@/composable/serverRequest";
+import {getEntry} from "@/composable/serverRequest";
+import {assert} from '@vueuse/core';
+
+export default defineComponent({
+    name: "ChatInner",
+    components: {ChatInnerMessages, ChatInnerFooter},
+    props: {
+        cid: {
+            type: String,
+            require: true,
+            default: '',
+        },
+        eid: {
+            type: String,
+            require: true,
+            default: '',
+        }
+    },
+    setup(props) {
+        let topHeight = ref('89%')
+        let downHeight = ref('10%')
+
+        let messages = ref<ChatMessage[]>([])
+        const {cid, eid} = props;
+
+        const period = () => {
+            messages.value.slice(0, 0)
+            let allNotes = [] as ChatMessage[]
+            getEntry(cid, eid).then((item) => {
+                let temp = item.entry
+                for (const no of temp.notes) {
+                    const mes = new ChatMessage(no.text, new Date(no.submittedAt * 1000), no.submitter.name,
+                        no.submitter.sid, '', [])
+                    allNotes.push(mes)
+                }
+            }).then(() =>{
+                messages.value = allNotes.sort((a, b)=>{
+                    return a.time.getTime() - b.time.getTime()
+                })
+            })
+        }
+
+        setInterval(period, 1000)
+
+        const sendMessage = (msg: ChatMessage) => {
+            messages.value.push(msg)
+            sendNote(cid, eid, msg.text)
+        }
+
+        const updateHeight = (flag: boolean) => {
+            if (flag) {
+                topHeight.value = '60%'
+                downHeight.value = '39%'
+            } else {
+                topHeight.value = '89%'
+                downHeight.value = '10%'
+            }
+        }
+
+        return {
+            topHeight, downHeight, messages, updateHeight, sendMessage
+        }
+
+    },
+
+})
 </script>
 
 <style>
 .chat {
-  display: flex;
-  width: 100%;
-  height: 90%;
-  background-color: #F5F5F5;
-  box-sizing: border-box;
-  flex-direction: column;
+    display: flex;
+    width: 100%;
+    height: 90%;
+    background-color: #F5F5F5;
+    box-sizing: border-box;
+    flex-direction: column;
 }
 
 .footer {
-  width: 100%;
-  border-top: #E6E6FA;
-  border-top-style: solid;
-  border-top-width: thin
+    width: 100%;
+    border-top: #E6E6FA;
+    border-top-style: solid;
+    border-top-width: thin
 }
 
 </style>

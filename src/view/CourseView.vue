@@ -47,9 +47,9 @@
                 </div>
                 <div style="left: 0; top: 1vh; position: relative">
           <span class="word"
-                style="line-height: 3vh; position: absolute; left: 2.5vw; top: 4vh;">{{
-                  currentClass.course.name + ' ' + currentClass.course.number
-              }}</span>
+                style="line-height: 3vh; position: absolute; left: 2.5vw; top: 4vh;">
+                  {{currentClass.course.name + ' ' + currentClass.course.number }}
+          </span>
                 </div>
                 <div style="position: relative; height: 77vh; top: 13vh" v-bind:style="{ width: rightWidth }">
                     <div style="background-color: steelblue; height: 10vh">
@@ -84,15 +84,14 @@
 </template>
 
 <script lang="ts">
-import {reactive, ref} from 'vue';
+import {defineComponent, reactive, ref} from 'vue';
 import moment from "moment";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
 import {getAssignments, getClassbyId} from "@/composable/serverRequest";
-import {Card} from "@/store/todo";
+import {Card, ClassUserRole} from "@/store/todo";
 import {CourseData} from "@/store/courseview";
-import {defineComponent} from 'vue';
 
 export default defineComponent({
     name: "CourseView",
@@ -101,6 +100,13 @@ export default defineComponent({
         const route = useRoute();
         const {routerPush} = useRouterPush();
         const courses = reactive(JSON.parse(route.query.courses as string) as Card[])
+        for(const i of courses){
+            for(const j of i.listContainCard){
+                if(j.identify == ClassUserRole.STUDENT){
+                    i.listContainCard = i.listContainCard.filter((item) => item != j)
+                }
+            }
+        }
         let classId = ref()
         classId.value = route.params.cid as string
         const tableData: CourseData[] = reactive([])
@@ -112,7 +118,7 @@ export default defineComponent({
                 }
             }
         }
-        let currentClass = await getClassbyId(classId.value);
+        let currentClass = ref(await getClassbyId(classId.value))
         let AssignmentList = await getAssignments(classId.value);
         let key = Math.random()
         let turn = ref(true)
@@ -127,8 +133,8 @@ export default defineComponent({
         }
 
         const showInformation = async () => {
-            // turn.value = false
-            currentClass = await getClassbyId(classId.value);
+            currentClass.value = await getClassbyId(classId.value);
+            console.log(currentClass.value.course.name)
             AssignmentList = await getAssignments(classId.value);
             tableData.splice(0, tableData.length)
             AssignmentList.assignments.forEach((value) => {

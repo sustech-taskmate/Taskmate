@@ -6,7 +6,7 @@
                 style="display: flex; align-items: center; padding-left: 10px; border-radius: 10px 0 0 10px;
                         border-bottom: 2px solid black; border-top: 2px solid black; border-left: 2px solid black;
                         font-size: calc(100vw * 28 / 1500)"
-                data-test="class">
+                ref="class">
           {{ item.name }}
         </el-col>
         <el-col :span="3" style="display: flex; align-items: center; justify-content: center; border-radius: 0 10px 10px 0;
@@ -50,88 +50,180 @@
 
 </template>
 
-<script lang="ts" setup>
+<script lang="ts">
 import {Card, ClassUserRole, ContainCard} from "@/store/todo";
 import {useRouterPush} from "@/composable";
-import {PropType, ref, watch} from "vue";
+import {defineComponent, PropType, ref, watch} from "vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 
-const props = defineProps({
-  cardList: {
-    type: Array as PropType<Card[]>,
-    required: true
-  },
-  filters: {
-    type: Array as PropType<boolean[]>,
-    required: true
-  }
+export default defineComponent({
+    name: "OverviewMiddleCard",
+    components: {SvgIcon},
+    props:{
+        cardList: {
+            type: Array as PropType<Card[]>,
+            required: true
+        },
+        filters: {
+            type: Array as PropType<boolean[]>,
+            required: true
+        }
+    },
+    setup(props){
+        const {routerPush} = useRouterPush();
+        const cards = ref(props.cardList as Card[]);
+        const rotate = (p: Card) => {
+            p.indexDown = !p.indexDown
+        }
+
+        const identify = (role: ClassUserRole) => {
+            switch (role) {
+                case ClassUserRole.ASSISTANT:
+                    return 0
+                case ClassUserRole.TEACHER:
+                    return 1
+                case ClassUserRole.STUDENT:
+                    return 2
+                default:
+                    return 0
+            }
+        }
+        const contextColor = (context: ContainCard) => {
+            switch (context.identify) {
+                case ClassUserRole.ASSISTANT:
+                    return 'lightblue'
+                case ClassUserRole.STUDENT:
+                    return 'lightgreen'
+                case ClassUserRole.TEACHER:
+                    return 'lightpink'
+                default:
+                    return 'lightgray'
+            }
+        }
+        const toCourse = (item: ContainCard) => {
+            let identify = item.identify;
+            if (identify == ClassUserRole.ASSISTANT || identify == ClassUserRole.TEACHER) {
+                routerPush({name: 'teacherCourse', params: {cid: item.id},
+                    query: {courses: JSON.stringify(props.cardList)}})
+            } else {
+                routerPush({name: 'upload', params: {cid: item.id}, query: {courseName: item.title}})
+            }
+        }
+
+        watch(props.filters, (newVal, oldVal) => {
+            let tempCards: Card[] = []
+            props.cardList.forEach(card => {
+                let tempContainCard: ContainCard[] = []
+                card.listContainCard.forEach(item => {
+                    if (newVal[identify(item.identify)]) {
+                        tempContainCard.push(item)
+                    }
+                })
+                if (tempContainCard.length > 0) {
+                    tempCards.push({
+                        name: card.name,
+                        indexDown: false,
+                        courseviewDown: false,
+                        listContainCard: tempContainCard,
+                        index: card.index
+                    })
+                }
+            })
+            cards.value = tempCards;
+        })
+        return{
+            cards,
+            rotate,
+            contextColor,
+            toCourse,
+        }
+    },
 })
-
-const identify = (role: ClassUserRole) => {
-  switch (role) {
-    case ClassUserRole.ASSISTANT:
-      return 0
-    case ClassUserRole.TEACHER:
-      return 1
-    case ClassUserRole.STUDENT:
-      return 2
-    default:
-      return 0
-  }
-}
-
-const cards = ref(props.cardList as Card[]);
-
-watch(props.filters, (newVal, oldVal) => {
-  let tempCards: Card[] = []
-  props.cardList.forEach(card => {
-    let tempContainCard: ContainCard[] = []
-    card.listContainCard.forEach(item => {
-      if (newVal[identify(item.identify)]) {
-        tempContainCard.push(item)
-      }
-    })
-    if (tempContainCard.length > 0) {
-      tempCards.push({
-          name: card.name,
-          indexDown: false,
-          courseviewDown: false,
-          listContainCard: tempContainCard,
-          index: card.index
-      })
-    }
-  })
-  cards.value = tempCards;
-})
-
-const {routerPush} = useRouterPush();
-
-const rotate = (p: Card) => {
-  p.indexDown = !p.indexDown
-}
-const contextColor = (context: ContainCard) => {
-  switch (context.identify) {
-    case ClassUserRole.ASSISTANT:
-      return 'lightblue'
-    case ClassUserRole.STUDENT:
-      return 'lightgreen'
-    case ClassUserRole.TEACHER:
-      return 'lightpink'
-    default:
-      return 'lightgray'
-  }
-}
-const toCourse = (item: ContainCard) => {
-  let identify = item.identify;
-  if (identify == ClassUserRole.ASSISTANT || identify == ClassUserRole.TEACHER) {
-    routerPush({name: 'teacherCourse', params: {cid: item.id},
-        query: {courses: JSON.stringify(props.cardList)}})
-  } else {
-      routerPush({name: 'upload', params: {cid: item.id}, query: {courseName: item.title}})
-  }
-}
 
 </script>
+
+<!--<script lang="ts" setup>-->
+<!--import {Card, ClassUserRole, ContainCard} from "@/store/todo";-->
+<!--import {useRouterPush} from "@/composable";-->
+<!--import {PropType, ref, watch} from "vue";-->
+<!--import SvgIcon from "@/components/util/SvgIcon.vue";-->
+
+<!--const props = defineProps({-->
+<!--  cardList: {-->
+<!--    type: Array as PropType<Card[]>,-->
+<!--    required: true-->
+<!--  },-->
+<!--  filters: {-->
+<!--    type: Array as PropType<boolean[]>,-->
+<!--    required: true-->
+<!--  }-->
+<!--})-->
+
+<!--const identify = (role: ClassUserRole) => {-->
+<!--  switch (role) {-->
+<!--    case ClassUserRole.ASSISTANT:-->
+<!--      return 0-->
+<!--    case ClassUserRole.TEACHER:-->
+<!--      return 1-->
+<!--    case ClassUserRole.STUDENT:-->
+<!--      return 2-->
+<!--    default:-->
+<!--      return 0-->
+<!--  }-->
+<!--}-->
+
+<!--const cards = ref(props.cardList as Card[]);-->
+
+<!--watch(props.filters, (newVal, oldVal) => {-->
+<!--  let tempCards: Card[] = []-->
+<!--  props.cardList.forEach(card => {-->
+<!--    let tempContainCard: ContainCard[] = []-->
+<!--    card.listContainCard.forEach(item => {-->
+<!--      if (newVal[identify(item.identify)]) {-->
+<!--        tempContainCard.push(item)-->
+<!--      }-->
+<!--    })-->
+<!--    if (tempContainCard.length > 0) {-->
+<!--      tempCards.push({-->
+<!--          name: card.name,-->
+<!--          indexDown: false,-->
+<!--          courseviewDown: false,-->
+<!--          listContainCard: tempContainCard,-->
+<!--          index: card.index-->
+<!--      })-->
+<!--    }-->
+<!--  })-->
+<!--  cards.value = tempCards;-->
+<!--})-->
+
+<!--const {routerPush} = useRouterPush();-->
+
+<!--const rotate = (p: Card) => {-->
+<!--  p.indexDown = !p.indexDown-->
+<!--}-->
+<!--const contextColor = (context: ContainCard) => {-->
+<!--  switch (context.identify) {-->
+<!--    case ClassUserRole.ASSISTANT:-->
+<!--      return 'lightblue'-->
+<!--    case ClassUserRole.STUDENT:-->
+<!--      return 'lightgreen'-->
+<!--    case ClassUserRole.TEACHER:-->
+<!--      return 'lightpink'-->
+<!--    default:-->
+<!--      return 'lightgray'-->
+<!--  }-->
+<!--}-->
+<!--const toCourse = (item: ContainCard) => {-->
+<!--  let identify = item.identify;-->
+<!--  if (identify == ClassUserRole.ASSISTANT || identify == ClassUserRole.TEACHER) {-->
+<!--    routerPush({name: 'teacherCourse', params: {cid: item.id},-->
+<!--        query: {courses: JSON.stringify(props.cardList)}})-->
+<!--  } else {-->
+<!--      routerPush({name: 'upload', params: {cid: item.id}, query: {courseName: item.title}})-->
+<!--  }-->
+<!--}-->
+
+<!--</script>-->
 
 <style scoped>
 .icon {

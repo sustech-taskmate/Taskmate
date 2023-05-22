@@ -18,7 +18,7 @@
                         <input v-if="item.controller.givenPointEditable" type="text"
                                @input="updateGivenPoints(item)" v-model="item.controller.givenPointInput"
                                @blur="setGivenPointUneditable(item)" class="point-input"
-                               :id="'given'+item.questionTitle">
+                               :id="'given'+item.questionTitle" ref="fix">
                     </div>
                     &ensp;/&ensp;
                     <div class="point-set">
@@ -43,12 +43,13 @@
                         :content="item.comment"
                         hide-after="200"
                         @after-leave="hideInput(item)"
+                        class="popover"
                     >
-            <span v-show="!item.controller.isShowInput" @click="showInput(item)">
+            <span v-show="!item.controller.isShowInput" @click="showInput(item)" class="beforepopinput">
               {{ item.comment === '' ? 'Please add your comments here' : item.comment }}</span>
                         <el-input v-model="item.comment" slot="content" type="textarea" :rows="4" ref="input"
                                   v-show="item.controller.isShowInput" @change="hideInput(item)" @blur="hideInput(item)"
-                                  placeholder="Please add comments here" maxlength="1000" show-word-limit
+                                  placeholder="Please add comments here" maxlength="1000" show-word-limit class="popinput"
                         ></el-input>
                         <template #reference>
                             <div class="description-big">
@@ -59,7 +60,7 @@
                 </div>
             </el-col>
             <el-col :span="3" style="display: flex;flex-direction: column;">
-                <el-icon style="font-size: 20px;margin-left: -5%;margin-top: 30%;cursor: pointer" @click="addSub(item)">
+                <el-icon style="font-size: 20px;margin-left: -5%;margin-top: 30%;cursor: pointer" @click="addSub(item)" class="add">
                     <CirclePlusFilled/>
                 </el-icon>
             </el-col>
@@ -77,7 +78,7 @@
                 </el-col>
                 <el-col :span="17" style="height: 100%">
                     <el-row class="adjust-point">
-                        <div style="cursor: pointer;" @click="updateSign(sub)">
+                        <div style="cursor: pointer;" @click="updateSign(sub)" class="sign">
                             {{ sub.sign }}
                         </div>
                         <div style="width: 40%">
@@ -106,7 +107,7 @@
                 </el-col>
                 <el-col :span="2">
                     <el-popconfirm title="Are you sure to delete this?"
-                                   @confirm="removeSub(item, idx)">
+                                   @confirm="removeSub(item, idx)" class="ElPopconfirm">
                         <template #reference>
                             <el-icon style="font-size: 20px;transform: translate(0, -100%);cursor: pointer;">
                                 <Close/>
@@ -132,6 +133,12 @@ const props = defineProps({
         type: Array as PropType<Metrics[]>,
         required: true
     }
+})
+
+const metrics = ref(props.metrics);
+let cards = ref([] as BigCard[]);
+metrics.value.forEach((item, idx) => {
+    cards.value.push(new BigCard((idx + 1).toString(), item.max, 0, ''));
 })
 
 const emits = defineEmits(['updatePoints'])
@@ -262,11 +269,6 @@ const updateBigInput = (bc: BigCard) => {
     bc.controller.givenPointInput = bc.givenPoints.toString();
 }
 
-const metrics = ref(props.metrics);
-let cards = ref([] as BigCard[]);
-metrics.value.forEach((item, idx) => {
-    cards.value.push(new BigCard((idx + 1).toString(), item.max, 0, ''));
-})
 
 let cnt = ref(0);
 

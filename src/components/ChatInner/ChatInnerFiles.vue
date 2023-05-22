@@ -9,7 +9,7 @@
           <chat-inner-file
               :file="file"
               :index="i"
-              @remove-file="emits('remove-file', $event)"
+              @remove-file="$emit('remove-file', $event)"
           >
             <template v-for="(idx, name) in $slots" #[name]="data">
               <slot :name="name" v-bind="data"/>
@@ -19,7 +19,7 @@
       </div>
 
       <div class="vac-icon-close">
-        <div class="vac-svg-button" @click="emits('reset-files')">
+        <div class="vac-svg-button" @click="$emit('reset-files')">
           <slot name="files-close-icon">
             <svg-icon name="closeoutline"/>
           </slot>
@@ -29,22 +29,40 @@
   </transition>
 </template>
 
-<script lang="ts" setup>
-import ChatInnerFile from "./ChatInnerFile.vue";
-import SvgIcon from '@/components/util/SvgIcon.vue'
-import {PropType} from "vue";
-import {ChatFile} from "@/store/chat";
-
-const props = defineProps({
-  files: {type: Array as PropType<ChatFile[]>, required: true}
-})
-const emits = defineEmits(['remove-file', 'reset-files'])
-</script>
-
 <script lang="ts">
+import {defineComponent, PropType} from 'vue';
+import {ChatFile} from "@/store/chat";
+import ChatInnerFile from "@/components/ChatInner/ChatInnerFile.vue";
+import SvgIcon from "@/components/util/SvgIcon.vue";
+export default defineComponent({
+    name: "ChatInnerFiles",
+    components: {SvgIcon, ChatInnerFile},
+    props:{
+        files: {type: Array as PropType<ChatFile[]>, required: true}
+    },
+    emits: ['remove-file', 'reset-files'],
+    setup(){
 
-export default {
-  name: "ChatInnerFiles",
-}
-
+    }
+})
 </script>
+
+<!--<script lang="ts" setup>-->
+<!--import ChatInnerFile from "./ChatInnerFile.vue";-->
+<!--import SvgIcon from '@/components/util/SvgIcon.vue'-->
+<!--import {PropType} from "vue";-->
+<!--import {ChatFile} from "@/store/chat";-->
+
+<!--const props = defineProps({-->
+<!--  files: {type: Array as PropType<ChatFile[]>, required: true}-->
+<!--})-->
+<!--const emits = defineEmits(['remove-file', 'reset-files'])-->
+<!--</script>-->
+
+<!--<script lang="ts">-->
+
+<!--export default {-->
+<!--  name: "ChatInnerFiles",-->
+<!--}-->
+
+<!--</script>-->

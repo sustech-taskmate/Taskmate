@@ -22,24 +22,41 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import {PropType} from "vue";
-import SvgIcon from "@/components/util/SvgIcon.vue";
-import {ChatMessage} from "@/store/chat";
 
-const props = defineProps({
-  messages: {
-    type: Array as PropType<ChatMessage[]>,
-    required: true
-  }
+<script lang="ts">
+import {defineComponent, PropType, ref} from "vue";
+import {ChatMessage} from "@/store/chat";
+import SvgIcon from "@/components/util/SvgIcon.vue";
+export default defineComponent({
+    name: "ChatInnerMessages",
+    components: {SvgIcon},
+    props:{
+        messages: {
+            type: Array as PropType<ChatMessage[]>,
+            required: true
+        }
+    },
 })
 </script>
 
-<script lang="ts">
-export default {
-  name: "ChatInnerMessages"
-}
-</script>
+<!--<script lang="ts" setup>-->
+<!--import {PropType} from "vue";-->
+<!--import SvgIcon from "@/components/util/SvgIcon.vue";-->
+<!--import {ChatMessage} from "@/store/chat";-->
+
+<!--const props = defineProps({-->
+<!--  messages: {-->
+<!--    type: Array as PropType<ChatMessage[]>,-->
+<!--    required: true-->
+<!--  }-->
+<!--})-->
+<!--</script>-->
+
+<!--<script lang="ts">-->
+<!--export default {-->
+<!--  name: "ChatInnerMessages"-->
+<!--}-->
+<!--</script>-->
 
 <style>
 

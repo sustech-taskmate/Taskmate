@@ -21,7 +21,6 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import {AssignFileType, FileTo} from '@/store/assign';
 import {ref, watch} from "vue";

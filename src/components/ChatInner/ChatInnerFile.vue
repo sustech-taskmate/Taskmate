@@ -7,7 +7,7 @@
     </loader>
     <div
         class="vac-svg-button vac-icon-remove"
-        @click="emits('remove-file', index)"
+        @click="$emit('remove-file', index)"
     >
       <slot name="image-close-icon">
         <svg-icon name="close" color="white"/>
@@ -24,23 +24,39 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import Loader from '@/components/util/Loader.vue'
-import SvgIcon from '@/components/util/SvgIcon.vue'
-import '@/assets/style/local/chatfile.scss'
-import {ChatFile} from "@/store/chat";
-
-const props = defineProps({
-  file: {type: ChatFile, required: true},
-  index: {type: Number, required: true}
-})
-
-const emits = defineEmits(['remove-file'])
-
-</script>
-
 <script lang="ts">
-export default {
-  name: 'ChatInnerFile',
-}
+import {defineComponent} from 'vue';
+import {ChatFile} from "@/store/chat";
+import SvgIcon from "@/components/util/SvgIcon.vue";
+import Loader from "@/components/util/Loader.vue";
+export default defineComponent({
+    name: 'ChatInnerFile',
+    components: {Loader, SvgIcon},
+    props:{
+        file: {type: ChatFile, required: true},
+        index: {type: Number, required: true}
+    },
+    emits: ['remove-file'],
+})
 </script>
+
+<!--<script lang="ts" setup>-->
+<!--import Loader from '@/components/util/Loader.vue'-->
+<!--import SvgIcon from '@/components/util/SvgIcon.vue'-->
+<!--import '@/assets/style/local/chatfile.scss'-->
+<!--import {ChatFile} from "@/store/chat";-->
+
+<!--const props = defineProps({-->
+<!--  file: {type: ChatFile, required: true},-->
+<!--  index: {type: Number, required: true}-->
+<!--})-->
+
+<!--const emits = defineEmits(['remove-file'])-->
+
+<!--</script>-->
+
+<!--<script lang="ts">-->
+<!--export default {-->
+<!--  name: 'ChatInnerFile',-->
+<!--}-->
+<!--</script>-->

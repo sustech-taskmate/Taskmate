@@ -98,8 +98,7 @@ interface AssignmentInfoResponseData {
     title: string;
     entries: Entry[];
 }
-
-interface EntryResponse {
+export interface EntryResponse {
     uuid: string;
     title: string;
     problems: Problem[];
@@ -155,7 +154,7 @@ interface Answer {
     result: any;
 }
 
-interface EntryProblemResponseData {
+export interface EntryProblemResponseData {
     entry: EntryResponse;
 }
 
@@ -167,7 +166,7 @@ interface SubmissionInfoResponseData {
     submission: Submission;
 }
 
-interface Note {
+export interface Note {
     uuid: string,
     submitter: {
         name: string,
@@ -369,6 +368,7 @@ export {
     returnSubmission,
     sendNote,
 }
+export type {ClassesResponseData}
 
 
 
