@@ -20,7 +20,13 @@ SHELL ["/bin/bash", "-ic"]
 
 WORKDIR /home/node
 
+# pnpm fetch does require only lockfile
+# COPY pnpm-lock.yaml ./
+# RUN pnpm fetch --registry https://registry.npm.taobao.org
+#
+# COPY --chown=node:node . .
+# RUN pnpm install -r --offline && \
+#     pnpm tauri build
+
 COPY --chown=node:node . .
 RUN pnpm install
-
-CMD [ "/bin/bash" ]
