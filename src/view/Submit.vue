@@ -276,7 +276,7 @@ const handleChildEvent = async (index: number, data: Assignment) => {
   let submitTime=null
   let submitId=null
   let attachment=null
-  if (submissions.length>0) {
+  if (submissions!=undefined && submissions.length>0) {
     submissions.sort((a, b) => -a.createdAt + b.createdAt);
     submitTime = submissions[0].createdAt;
     submitId = submissions[0].uuid;
