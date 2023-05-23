@@ -39,7 +39,7 @@
           </span>
                     <div style="width: 20vw; height: 7vh; position: absolute; right: 0; top: 8vh;">
                         <svg-icon name="download" style="width: 6vw; height: 6vh; cursor: pointer" @click="downloadFile"></svg-icon>
-                        <svg-icon name="transmit" style="width: 6vw; height: 6vh; cursor: pointer"></svg-icon>
+                        <svg-icon name="transmit" style="width: 6vw; height: 6vh; cursor: pointer" @click="transmit"></svg-icon>
                         <svg-icon name="signal" style="width: 6vw; height: 6vh; cursor: pointer"
                                   @click="toStatistics"></svg-icon>
                     </div>
@@ -89,8 +89,9 @@ import moment from "moment";
 import {AssignmentState, StudentContent} from "@/store/assignview";
 import '@/assets/style/local/assignview.css'
 import {FileTreeNode} from "@/store/assign";
-import {open} from "@tauri-apps/api/dialog";
+import {open, save} from "@tauri-apps/api/dialog";
 import {downloadAll} from "@/composable/assign";
+import {fs} from "@tauri-apps/api";
 
 const route = useRoute();
 const {routerPush} = useRouterPush();
@@ -197,6 +198,29 @@ const downloadFile = async () => {
     })
     await downloadAll(path,urls, (downloadListRaw.value[item].gid as string), names)
   }
+}
+
+function convertArrayToCSV(arr: any[]) {
+  const header = Object.keys(arr[0]).join(',') + '\n';
+  const rows = arr.map(obj => Object.values(obj).join(',')).join('\n');
+  return header + rows;
+}
+const transmit = async () => {
+  const path = await save(
+      {
+        defaultPath:'score.csv'
+      }
+  ) as string | null;
+  if (path == null) {
+    return
+  }
+  let csvData=[]
+  for (const item in submissionList.submissions){
+    csvData.push({sid: submissionList.submissions[item].submitter.sid,score:submissionList.submissions[item].score})
+  }
+  const csvContent = convertArrayToCSV(csvData);
+  await fs.writeFile(path, csvContent);
+
 }
 
 const submissionList = await getSubmissions(cid)
