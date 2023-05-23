@@ -44,6 +44,8 @@ pub async fn analyze_dir(target: &str, origin: &str) -> Result<(), String>{
         };
         #[cfg(target_os = "macos")]
             let path = path.to_str().ok_or("to str error")?;
+        #[cfg(target_os = "linux")]
+            let path = path.to_str().unwrap();
         let simple_path = simple_path.replace("\\","/");
         let path = path.replace("\\","/");
         if comma {
