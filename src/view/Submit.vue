@@ -60,110 +60,81 @@
                 </el-row>
             </div>
 
-            <div
-                style="width: 100%; height: 7%; background: steelblue; display: flex; justify-content: center; align-items: center;">
-                <div style="color: white;">Submit Content</div>
-            </div>
+            <div v-if="showContent" style="width: 100%; height: 40%">
+                <div
+                    style="width: 100%; height: 18%; background: steelblue; display: flex; justify-content: center; align-items: center;">
+                    <div style="color: white;">Submit Content</div>
+                </div>
 
-            <div style="width: 100%; height: 23%; overflow-y: auto">
-                <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;"
-                     v-for="item in fileList">
-                    <el-row style="height: 8vh; width: 100%; flex: 1 0 30%;
+                <div style="width: 100%; height: 70%; overflow-y: auto">
+                    <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;"
+                         v-for="item in fileList">
+                        <el-row style="height: 8vh; width: 100%; flex: 1 0 30%;
                              display: flex; justify-content: center; align-items: center;">
-                        <el-col :span="12" class="format" style="font-size: calc(100vh * 30 / 1500);">
-                            {{ item.name }}
-                        </el-col>
-                        <el-col :span="3" class="format" style="font-size: calc(100vh * 28 / 1500);">
-                            {{ item.size }} Bytes
-                        </el-col>
-                        <el-col :span="6" class="format" style="font-size: calc(100vh * 28 / 1500);">
-                            {{ item.time }}
-                        </el-col>
-                        <el-col :span="3" class="format">
-                            <svg-icon name="cross" color="black"
-                                      style="width: 20%; height: 80%; float: right;"
-                                      @click="dele(item)">
-                            </svg-icon>
-                        </el-col>
-                    </el-row>
+                            <el-col :span="12" class="format" style="font-size: calc(100vh * 30 / 1500);">
+                                {{ item.name }}
+                            </el-col>
+                            <el-col :span="3" class="format" style="font-size: calc(100vh * 28 / 1500);">
+                                {{ item.size }} Bytes
+                            </el-col>
+                            <el-col :span="6" class="format" style="font-size: calc(100vh * 28 / 1500);">
+                                {{ item.time }}
+                            </el-col>
+                            <el-col :span="3" class="format">
+                                <svg-icon name="cross" color="black"
+                                          style="width: 20%; height: 80%; float: right;"
+                                          @click="dele(item)">
+                                </svg-icon>
+                            </el-col>
+                        </el-row>
+                    </div>
+                </div>
+                <div class="btn-box">
+                    <button type="button" class="btn submit" v-bind:disabled="buttonDisabled.upload" @click="selectFile">
+                        upload
+                    </button>
+                    <button type="button" class="btn next" v-bind:disabled="buttonDisabled.submit" @click="submit">submit
+                    </button>
                 </div>
             </div>
-            <div class="btn-box">
-                <button type="button" class="btn submit" v-bind:disabled="buttonDisabled.upload" @click="selectFile">
-                    upload
-                </button>
-                <button type="button" class="btn next" v-bind:disabled="buttonDisabled.submit" @click="submit">submit
-                </button>
+            <div v-else style="width: 100%; height: 40%">
+                <div
+                    style="width: 100%; height: 18%; background: steelblue; display: flex; justify-content: center; align-items: center;">
+                    <div style="color: white;">Grading Results</div>
+                </div>
+               <el-row style="height: 27%; width: 100%; flex: 1 0 30%;
+                             display: flex; justify-content: center; align-items: center;">
+                   <el-col :span="12" style="display: flex; justify-content: center; align-items: center; height: 100%;
+                                border-bottom: 1px solid black; border-right: 1px solid black">
+                        Your score is :
+                   </el-col>
+                   <el-col :span="12" style="display: flex; justify-content: center; align-items: center; height: 100%;
+                                border-bottom: 1px solid black">
+                        {{score}}
+                   </el-col>
+               </el-row>
+
+                <el-row style="height: 55%; width: 100%; flex: 1 0 30%;
+                             display: flex; justify-content: center; align-items: center;">
+                    <el-col :span="12" style="display: flex; justify-content: center; align-items: center; height: 100%;
+                                border-right: 1px solid black">
+                        Your comment is :
+                    </el-col>
+                    <el-col :span="12" style="display: flex; justify-content: center; align-items: center; height: 100%">
+                        {{comment}}
+                    </el-col>
+                </el-row>
+
             </div>
+
+
+
         </el-main>
     </el-container>
 </template>
 
-<style scoped>
-.btn-box {
-    height: 8%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn {
-    border: 1px solid;
-    background-color: transparent;
-    text-transform: uppercase;
-    font-size: calc(100vw * 24 / 1500);
-    font-weight: 300;
-}
-
-.btn:hover {
-    color: white;
-    border: 0;
-    cursor: pointer;
-}
-
-.next {
-    color: #548585;
-    margin-left: calc(100vw * 10 / 1500);
-}
-
-.next:hover {
-    background-color: #548585;
-    -moz-box-shadow: 10px 10px 99px 6px rgba(0, 128, 128, 1);
-}
-
-.submit {
-    color: #6A7FA0;
-}
-
-.submit:hover {
-    background-color: #6A7FA0;
-}
-
-
-.format {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.sel:hover {
-    color: orangered;
-    border: 0;
-    cursor: pointer;
-}
-
-.sel {
-    border: 1px solid blue;
-    background-color: lightblue;
-    text-transform: uppercase;
-    font-size: calc(100vw * 12 / 1500)
-}
-
-
-</style>
-
 <script lang="ts" setup>
-import {reactive, ref} from 'vue';
+import {reactive, ref, watch} from 'vue';
 import {Assignment, AttachFile, Course} from "@/store/submit";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import SubmitRightCourseCard from "@/components/SubmitComponent/SubmitRightCourseCard.vue";
@@ -221,6 +192,9 @@ const nowAssignment = ref('')
 const fileList = ref([] as { name: string, size: number, time: string, file_path: string }[])
 const showInformation = ref({name: '', ddl: '', submitTime: '', lateTime: '', files: null as null | AttachFile[]})
 const buttonDisabled = ref({upload: true, submit: false})
+const score: any = ref('No score')
+const comment = ref('No comments')
+const showContent = ref(false)
 
 const submit = async () => {
     let li: AttachFile[] = [];
@@ -306,6 +280,14 @@ const handleChildEvent = async (index: number, data: Assignment) => {
     submissions.sort((a, b) => -a.createdAt + b.createdAt);
     submitTime = submissions[0].createdAt;
     submitId = submissions[0].uuid;
+      if(submissions[0].points!= null){
+          score.value = submissions[0].points
+          comment.value = submissions[0].comment
+      }else{
+          score.value = 'No score'
+          comment.value = 'No comments'
+      }
+
     if (submitId!=null){
       attachment = (await getSubmissionInfo(submitId)).submission;
       let files = [];
@@ -337,8 +319,74 @@ const handleChildEvent = async (index: number, data: Assignment) => {
       files: attachment,
     }
   }
+  const temp = new Date()
+  showContent.value = data.lateTime.getTime() >= (temp.getTime() / 1000);
   buttonDisabled.value.upload = false;
   fileList.value.length = 0;
   buttonDisabled.value.submit = true;
 }
+
 </script>
+
+<style scoped>
+.btn-box {
+    height: 8%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn {
+    border: 1px solid;
+    background-color: transparent;
+    text-transform: uppercase;
+    font-size: calc(100vw * 24 / 1500);
+    font-weight: 300;
+}
+
+.btn:hover {
+    color: white;
+    border: 0;
+    cursor: pointer;
+}
+
+.next {
+    color: #548585;
+    margin-left: calc(100vw * 10 / 1500);
+}
+
+.next:hover {
+    background-color: #548585;
+    -moz-box-shadow: 10px 10px 99px 6px rgba(0, 128, 128, 1);
+}
+
+.submit {
+    color: #6A7FA0;
+}
+
+.submit:hover {
+    background-color: #6A7FA0;
+}
+
+
+.format {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sel:hover {
+    color: orangered;
+    border: 0;
+    cursor: pointer;
+}
+
+.sel {
+    border: 1px solid blue;
+    background-color: lightblue;
+    text-transform: uppercase;
+    font-size: calc(100vw * 12 / 1500)
+}
+
+
+</style>

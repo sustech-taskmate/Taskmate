@@ -1,23 +1,29 @@
 <template>
   <div class="message-container">
     <div class="message-info" v-for="msg in messages">
-      <div class="message-card" :class="{'me-card':msg.senderName==='me'}">
-        {{ msg.text }}
-        <el-image v-for="img in msg.images"
-                  :src="img.localUrl"
-                  :preview-src-list="[img.localUrl]"
-                  :preview-teleported="true"/>
-      </div>
-      <div style="font-size: calc(100vw * 14 / 1500);width: fit-content;" v-if="msg.senderName!=='me'">
-        <svg-icon name="teacher" v-if="msg.senderType==='Teacher'"/>
-        <svg-icon name="student" v-if="msg.senderType==='SA'"/>
-        <span>{{ msg.senderName }}</span>&ensp;<span>{{ msg.dateToString() }}</span>
-      </div>
-      <div style="font-size: calc(100vw * 14 / 1500);width: fit-content;margin-left: auto;" v-if="msg.senderName==='me'">
-        <span>{{ msg.dateToString() }}</span>&ensp;<span>{{ msg.senderName }}</span>
-        <svg-icon name="teacher" v-if="msg.senderType==='Teacher'"/>
-        <svg-icon name="student" v-if="msg.senderType==='SA'"/>
-      </div>
+        <div style="font-size: calc(100vw * 10 / 1500); width: fit-content; margin-right: auto;">
+            <div>{{ msg.senderName }}</div>
+            <div>{{ msg.dateToString() }}</div>
+            <svg-icon name="teacher" v-if="msg.senderType==='Teacher'"/>
+            <svg-icon name="student" v-if="msg.senderType==='SA'"/>
+        </div>
+        <div class="message-card me-card" v-if="msg.senderName===myId" style="margin-left: auto;">
+            {{ msg.text }}
+            <el-image v-for="img in msg.images"
+                      :src="img.localUrl"
+                      :preview-src-list="[img.localUrl]"
+                      :preview-teleported="true"/>
+        </div>
+        <div class="message-card you-card" v-else style="margin-left: auto;">
+            {{ msg.text }}
+            <el-image v-for="img in msg.images"
+                      :src="img.localUrl"
+                      :preview-src-list="[img.localUrl]"
+                      :preview-teleported="true"/>
+        </div>
+        <div style="height: 1vh">
+
+        </div>
     </div>
   </div>
 </template>
@@ -34,29 +40,15 @@ export default defineComponent({
         messages: {
             type: Array as PropType<ChatMessage[]>,
             required: true
+        },
+        myId:{
+            type: String,
+            require: true
         }
     },
 })
 </script>
 
-<!--<script lang="ts" setup>-->
-<!--import {PropType} from "vue";-->
-<!--import SvgIcon from "@/components/util/SvgIcon.vue";-->
-<!--import {ChatMessage} from "@/store/chat";-->
-
-<!--const props = defineProps({-->
-<!--  messages: {-->
-<!--    type: Array as PropType<ChatMessage[]>,-->
-<!--    required: true-->
-<!--  }-->
-<!--})-->
-<!--</script>-->
-
-<!--<script lang="ts">-->
-<!--export default {-->
-<!--  name: "ChatInnerMessages"-->
-<!--}-->
-<!--</script>-->
 
 <style>
 
@@ -88,7 +80,14 @@ export default defineComponent({
   border-radius: 20px 20px 1px 20px;
   margin-left: auto;
   margin-right: 1%;
-  background-color: #00BFFF;
+    background-color: lightskyblue;
+}
+
+.you-card {
+    border-radius: 20px 20px 1px 20px;
+    margin-left: auto;
+    margin-right: 1%;
+    background-color: lightgreen;
 }
 
 </style>

@@ -240,15 +240,6 @@ analyzeDir((gid.value as string)).then((res) => {
         nodes.value.set(res.children[i].url, res.children[i]);
     }
 })
-//     .then(() => {
-//     const store = JSON.stringify(nodes.value.values().next().value)
-//     console.log(store)
-// })
-
-// console.log(JSON.stringify(nodes.value.values().next().value))
-
-// const store = JSON.stringify(nodes.value.values().next().value)
-// fs.writeFileSync('tests/unit/store.json', store)
 
 </script>
 

@@ -66,8 +66,6 @@ export default defineComponent({
 
         cardList.sort((a, b) => b.index - a.index);
 
-        console.log(cardList)
-
         for (const semester of cardList) {
             for (const item of semester.listContainCard) {
                 let AssignmentList = await getAssignments(item.id + '')
@@ -83,10 +81,6 @@ export default defineComponent({
                 })
             }
         }
-
-        console.log(SaTodo)
-        console.log(StudentTodo)
-
         return{
             cardList,
             SaTodo,

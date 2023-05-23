@@ -1,7 +1,7 @@
 <template>
     <div class="chat vac-app-box-shadow">
         <el-row style="width: 100%;" :style="{ height: topHeight }">
-            <chat-inner-messages :messages="messages"/>
+            <chat-inner-messages :messages="messages" :myId="id"/>
         </el-row>
         <el-row class="footer" :style="{ height: downHeight }">
             <chat-inner-footer @change-size="updateHeight" @send-message="sendMessage"/>
@@ -18,6 +18,7 @@ import ChatInnerMessages from "@/components/ChatInner/ChatInnerMessages.vue";
 import {EntryResponse, EntryProblemResponseData, sendNote, Note} from "@/composable/serverRequest";
 import {getEntry} from "@/composable/serverRequest";
 import {assert} from '@vueuse/core';
+import {useRoute} from "vue-router";
 
 export default defineComponent({
     name: "ChatInner",
@@ -35,6 +36,7 @@ export default defineComponent({
         }
     },
     setup(props) {
+        const route = useRoute();
         let topHeight = ref('89%')
         let downHeight = ref('10%')
 
@@ -61,9 +63,11 @@ export default defineComponent({
         setInterval(period, 1000)
 
         const sendMessage = (msg: ChatMessage) => {
-            messages.value.push(msg)
+            console.log(msg)
             sendNote(cid, eid, msg.text)
         }
+
+        const id = ref(route.query.sid as string)
 
         const updateHeight = (flag: boolean) => {
             if (flag) {
@@ -76,7 +80,7 @@ export default defineComponent({
         }
 
         return {
-            topHeight, downHeight, messages, updateHeight, sendMessage
+            topHeight, downHeight, messages, updateHeight, sendMessage, id
         }
 
     },
