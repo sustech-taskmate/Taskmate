@@ -38,7 +38,7 @@
               {{ assignments[Number(aid)].name }}
           </span>
                     <div style="width: 20vw; height: 7vh; position: absolute; right: 0; top: 8vh;">
-                        <svg-icon name="download" style="width: 6vw; height: 6vh; cursor: pointer"></svg-icon>
+                        <svg-icon name="download" style="width: 6vw; height: 6vh; cursor: pointer" @click="downloadFile"></svg-icon>
                         <svg-icon name="transmit" style="width: 6vw; height: 6vh; cursor: pointer"></svg-icon>
                         <svg-icon name="signal" style="width: 6vw; height: 6vh; cursor: pointer"
                                   @click="toStatistics"></svg-icon>
@@ -57,6 +57,7 @@
                         :row-style="getRowStyle"
                         :header-row-style="{height: '8vh', fontSize: '14px'}"
                         height="100%"
+                        @selection-change="handleSelectionChange"
                     >
                         <el-table-column type="selection"></el-table-column>
                         <el-table-column prop="sid" label="Student ID" width="auto" align="center"/>
@@ -83,10 +84,13 @@ import {reactive, ref} from "vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
-import {Assignment, getSubmissions, Submission} from "@/composable/serverRequest";
+import {Assignment, getSubmissionInfo, getSubmissions, Submission} from "@/composable/serverRequest";
 import moment from "moment";
 import {AssignmentState, StudentContent} from "@/store/assignview";
 import '@/assets/style/local/assignview.css'
+import {FileTreeNode} from "@/store/assign";
+import {open} from "@tauri-apps/api/dialog";
+import {downloadAll} from "@/composable/assign";
 
 const route = useRoute();
 const {routerPush} = useRouterPush();
@@ -161,6 +165,7 @@ const toFirstNoGrade = () => {
 
 let aid = ref(route.params.aid as string)
 const cid = route.params.cid as string
+let downloadListRaw = ref<StudentContent[]>([])
 
 const assignments = ref(JSON.parse(route.query.assignments as string) as Assignment[])
 
@@ -168,6 +173,30 @@ const changeAid = (index: number)=>{
     route.params.aid = index + ''
     aid.value = index + ''
     flash()
+}
+const handleSelectionChange = (input:StudentContent[])=>{
+  downloadListRaw.value=input
+}
+const downloadFile = async () => {
+  if (downloadListRaw.value.length == 0) {
+    return
+  }
+  const path = await open({
+    directory: true
+  }) as string | null;
+  if (path == null) {
+    return
+  }
+  for (const item in downloadListRaw.value){
+    const submissionInfo = await getSubmissionInfo(downloadListRaw.value[item].gid);
+    let urls = submissionInfo.submission.answers[0].files.map((file) => {
+      return file.url
+    })
+    let names = submissionInfo.submission.answers[0].files.map((file) => {
+      return file.name
+    })
+    await downloadAll(path,urls, (downloadListRaw.value[item].gid as string), names)
+  }
 }
 
 const submissionList = await getSubmissions(cid)
@@ -180,6 +209,7 @@ let isFirst = true;
 const firstEid = ref('')
 const firstGid = ref('')
 const firstSid = ref('')
+const selectGid = []
 const flash = ()=>{
     submissions.value.slice(0, 0)
     tableData.value.slice(0, 0)
