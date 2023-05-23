@@ -239,9 +239,9 @@ const submit = async () => {
     const i = idx.value
     showInformation.value = {
         name: course.assignmentList[i].name,
-        ddl: moment(course.assignmentList[i].ddl).format("YYYY-MM-DD hh:mm"),
+        ddl: moment.unix(course.assignmentList[i].ddl.getTime()).format("YYYY-MM-DD hh:mm"),
         submitTime: moment(new Date()).format("YYYY-MM-DD hh:mm"),
-        lateTime: moment(course.assignmentList[i].lateTime).format("YYYY-MM-DD hh:mm"),
+        lateTime: moment.unix(course.assignmentList[i].lateTime.getTime()).format("YYYY-MM-DD hh:mm"),
         files: li,
     }
 }

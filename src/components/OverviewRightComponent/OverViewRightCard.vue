@@ -63,12 +63,16 @@ const props = defineProps({
 
 const go = (item: TodoItem) => {
     if (props.Todo.identify == ToDoIdentity.todoStudent) {
+
         routerPush({name: 'upload', params: {cid: item.id}, query: {courseName: item.courseTitle}})
+
     } else {
+
         routerPush({
             name: 'teacherCourse', params: {cid: item.id},
             query: {courses: JSON.stringify(props.cardList)}
         })
+
     }
 
 

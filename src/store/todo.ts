@@ -67,8 +67,8 @@ class Card {
 }
 
 enum ToDoIdentity {
-    todoSa = "submit",
-    todoStudent = "check",
+    todoSa = "check",
+    todoStudent = "submit",
     toTeacher = "Check",
 }
 

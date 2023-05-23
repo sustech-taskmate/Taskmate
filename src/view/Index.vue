@@ -4,10 +4,10 @@
       <over-view-main :cardList="cardList"/>
     </el-col>
     <el-col :span="8" style="border: 2px solid black; border-radius: 0 0 0 0;">
-      <over-view-right-card :Todo="SaTodo" :cardList="cardList"
+      <over-view-right-card :Todo="StudentTodo"
                             style="height: 50%;">
       </over-view-right-card>
-      <over-view-right-card :Todo="StudentTodo"
+      <over-view-right-card :Todo="SaTodo" :cardList="cardList"
                             style="height: 50%;">
       </over-view-right-card>
     </el-col>
@@ -66,6 +66,8 @@ export default defineComponent({
 
         cardList.sort((a, b) => b.index - a.index);
 
+        console.log(cardList)
+
         for (const semester of cardList) {
             for (const item of semester.listContainCard) {
                 let AssignmentList = await getAssignments(item.id + '')
@@ -73,14 +75,18 @@ export default defineComponent({
                     let {name, title, status, due, availableFrom, availableTo} = value
                     if (availableTo > Date.parse(new Date().toString()) / 1000) {
                         if (item.identify == ClassUserRole.STUDENT) {
-                            SaTodo.todoList.push(new TodoItem(name, availableTo, item.id, title))
-                        } else {
                             StudentTodo.todoList.push(new TodoItem(name, availableTo, item.id, title))
+                        } else {
+                            SaTodo.todoList.push(new TodoItem(name, availableTo, item.id, title))
                         }
                     }
                 })
             }
         }
+
+        console.log(SaTodo)
+        console.log(StudentTodo)
+
         return{
             cardList,
             SaTodo,
