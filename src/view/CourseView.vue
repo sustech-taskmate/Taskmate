@@ -156,7 +156,7 @@ export default defineComponent({
                         moment.unix(availableFrom).format('YYYY-MM-DD HH:mm:ss'),
                         moment.unix(availableTo).format('YYYY-MM-DD HH:mm:ss'),
                         moment.unix(due).format('YYYY-MM-DD HH:mm:ss'),
-                        notGraded + " / " + all, notGraded, all)
+                        (all - notGraded) + " / " + all, notGraded, all)
                 )
             })
             key = Math.random()
@@ -226,7 +226,7 @@ export default defineComponent({
         const getRowStyle = ({rowIndex}: { rowIndex: number }) => {
             let color: string;
             let assignment = tableData[rowIndex];
-            if (assignment.notGraded == assignment.all) {
+            if (assignment.notGraded == 0) {
                 color = 'rgb(229, 255, 234)'
             } else {
                 color = 'rgb(255, 228, 227)'

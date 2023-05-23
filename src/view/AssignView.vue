@@ -171,7 +171,7 @@ const changeAid = (index: number)=>{
 }
 
 const submissionList = await getSubmissions(cid)
-const submissions = ref([] as Submission[]);
+const submissions = ref(submissionList.submissions);
 const temp = submissionList.submissions;
 const tableData = ref([] as StudentContent[])
 const allStudents = ref(submissions.value.length)
