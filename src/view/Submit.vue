@@ -126,9 +126,6 @@
                 </el-row>
 
             </div>
-
-
-
         </el-main>
     </el-container>
 </template>
@@ -243,8 +240,16 @@ const selectFile = async () => {
                         size: file.size,
                         time: new Date().toLocaleString(),
                         file_path: path
-                    };
-                    fileList.value.push(fileInfo);
+                    }
+                    let flag = true
+                    for (const item in fileList.value) {
+                      if (fileList.value[item].name==fileInfo.name){
+                        fileList.value[item]=fileInfo;
+                        flag=false
+                        break;
+                      }
+                    }
+                    if (flag)fileList.value.push(fileInfo);
                     resolve(file);
                 };
                 xhr.onerror = reject;
