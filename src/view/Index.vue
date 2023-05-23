@@ -1,9 +1,9 @@
 <template>
   <el-container type="flex" style="height: 100vh; width: 100%">
-    <el-col :span="16" type="flex" style="border-bottom: 2px solid black;">
+    <el-col :span="16" type="flex" style="border-bottom: 2px solid #938b8b;">
       <over-view-main :cardList="cardList"/>
     </el-col>
-    <el-col :span="8" style="border: 2px solid black; border-radius: 0 0 0 0;">
+    <el-col :span="8" style="border: 2px solid #938b8b; border-radius: 0 0 0 0;">
       <over-view-right-card :Todo="StudentTodo"
                             style="height: 50%;">
       </over-view-right-card>

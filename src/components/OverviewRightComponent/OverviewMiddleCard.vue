@@ -1,30 +1,48 @@
 <template>
   <el-col :span="24" style="height: 100%; width: 100%">
     <div v-for="item in cards">
-      <el-row style="height: 10vh" @click="rotate(item)">
+
+      <el-row v-if="!item.indexDown" style="height: 10vh;" @click="rotate(item)">
         <el-col :span="21"
-                style="display: flex; align-items: center; padding-left: 10px; border-radius: 10px 0 0 10px;
-                        border-bottom: 2px solid black; border-top: 2px solid black; border-left: 2px solid black;
-                        font-size: calc(100vw * 28 / 1500)"
+                style="display: flex; align-items: center; padding-left: 10px;
+                        border-bottom: 2px solid #6b5b5b; border-top: 2px solid #6b5b5b; border-left: 2px solid #6b5b5b;
+                        font-size: calc(100vw * 28 / 1500);border-top-left-radius: 10px; border-bottom-left-radius: 10px"
                 ref="class">
           {{ item.name }}
         </el-col>
-        <el-col :span="3" style="display: flex; align-items: center; justify-content: center; border-radius: 0 10px 10px 0;
-                                  border-bottom: 2px solid black; border-top: 2px solid black; border-right: 2px solid black">
+        <el-col :span="3" style="display: flex; align-items: center; justify-content: center;
+                                  border-bottom: 2px solid #6b5b5b; border-top: 2px solid #6b5b5b; border-right: 2px solid #6b5b5b;
+                                  border-top-right-radius: 10px;border-bottom-right-radius: 10px">
           <svg-icon name="down" color="#272636" class="icon rotate" :class="{active: item.indexDown}"/>
         </el-col>
       </el-row>
+
+      <el-row v-if="item.indexDown" style="height: 10vh" @click="rotate(item)">
+        <el-col :span="21"
+                style="display: flex; align-items: center; padding-left: 10px;
+                        border-bottom: 2px solid #6b5b5b; border-top: 2px solid #6b5b5b; border-left: 2px solid #6b5b5b;
+                        font-size: calc(100vw * 28 / 1500); border-top-left-radius: 10px"
+                ref="class">
+          {{ item.name }}
+        </el-col>
+        <el-col :span="3" style="display: flex; align-items: center; justify-content: center; border-top-right-radius: 10px;
+                                  border-bottom: 2px solid #6b5b5b; border-top: 2px solid #6b5b5b; border-right: 2px solid #6b5b5b">
+          <svg-icon name="down" color="#272636" class="icon rotate" :class="{active: item.indexDown}"/>
+        </el-col>
+      </el-row>
+
       <el-row class="downList" v-if="item.indexDown"
-              style="overflow-y: auto; border-radius: 10px; border-bottom: 2px solid black;
-               border-left: 2px solid black; border-right: 2px solid black;"
+              style="overflow-y: auto; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; border-bottom: 2px solid #6b5b5b;
+               border-left: 2px solid #6b5b5b; border-right: 2px solid #6b5b5b;"
               ref="down">
         <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;">
           <el-col :span="8" v-for="context in item.listContainCard"
                   style="height: 20vh; width: 100%; flex: 1 0 30%; max-width: 24vh;
                                       display: flex; justify-content: center; align-items: center;">
             <el-col :span="20"
-                    style="height: 95%; width: 95%; border: 2px solid black;
-                                    border-radius: 10px;cursor: pointer"
+                    style="height: 80%; width: 95%; border: 2px solid black;
+                    border-radius: 10px;
+                                    cursor: pointer"
                     :style="{ background: contextColor(context)}"
                     @click="toCourse(context)">
               <el-col style="height: 30%; width: 100%;
