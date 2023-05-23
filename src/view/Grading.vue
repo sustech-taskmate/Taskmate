@@ -77,7 +77,6 @@ import {
     getEntry,
     getSubmissionInfo,
     getSubmissions,
-    sendNote,
     Submission
 } from "@/composable/serverRequest";
 import {Card} from "@/store/todo";
@@ -110,7 +109,7 @@ for (const i of courses) {
 const toAssign = () =>
     routerPush({
         name: 'teacherAssign', params: {cid: cid.value, aid: aid.value},
-        query: {assignments: route.query.assignments, courses: route.query.courses}
+        query: {...route.query}
     });
 const next = async () => {
     const submissionList = await getSubmissions(cid.value);

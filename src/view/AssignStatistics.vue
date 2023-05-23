@@ -458,7 +458,7 @@ const toAssign = () => {
   let cid = route.params.cid;
   let aid = route.params.aid;
   routerPush({name: 'teacherAssign', params: {cid: cid, aid: aid},
-  query: {assignments: route.query.assignments, courses: route.query.courses}});
+  query: {...route.query}});
 }
 
 </script>

@@ -79,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, ref, watch} from "vue";
+import {reactive, ref} from "vue";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
@@ -104,7 +104,7 @@ const toCourse = () => {
     if (path === '/grade/t') {
         name = 'teacherCourse';
     }
-    routerPush({name: name, params: {cid: cid}, query: {courses: route.query.courses}});
+    routerPush({name: name, params: {cid: cid}, query: {...route.query}});
 }
 
 const toStatistics = () => {

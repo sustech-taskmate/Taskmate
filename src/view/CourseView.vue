@@ -129,7 +129,7 @@ export default defineComponent({
         const chooseAssignment = async (semesterIndex: number, courseIndex: number) => {
             let num = courses[semesterIndex].listContainCard[courseIndex].id
             classId.value = num + ''
-            await routerPush({params: {cid: num}});
+            await routerPush({params: {cid: num}, query: {...route.query}});
             await showInformation().then(() => {
                 turn.value = true
             })
