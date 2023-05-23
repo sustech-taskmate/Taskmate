@@ -9,7 +9,7 @@
           <div/>
         </el-col>
         <el-col span="15">
-          <h1>CS307 Assignment 1 Statistics</h1>
+          <h1>{{assignmentName}}</h1>
         </el-col>
       </el-row>
     </el-header>
@@ -147,7 +147,7 @@ import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
 import {Problem, ScoreDistribution} from "@/store/statistics";
 import {getStatisticalInformation, getScoreDistribution, getPrefixData, getSuffixData} from "@/composable/statistics";
-import {Submission} from "@/composable/serverRequest";
+import {Assignment, Submission} from "@/composable/serverRequest";
 import '@/assets/style/local/statistics.css';
 
 const route = useRoute();
@@ -162,6 +162,8 @@ const [average, median, minimum, maximum] = getStatisticalInformation(submission
 const scoreDistribution = getScoreDistribution(submissions.value);
 const preData = getPrefixData(submissions.value);
 const sufData = getSuffixData(submissions.value);
+const assignments =JSON.parse(route.query.assignments as string) as Assignment[]
+const assignmentName = assignments[parseInt(route.params.aid as string)].name
 
 const problemData = ref([] as Problem[]);
 let scoreMap = undefined as Map<number, number>[] | undefined;
