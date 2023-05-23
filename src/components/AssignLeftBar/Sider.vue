@@ -37,6 +37,8 @@ import {useRouterPush} from "@/composable";
 import {AssignFileType} from "@/store/assign";
 import {encrypt} from "@/util";
 import {findNode} from "@/composable/grade";
+import {useRoute} from "vue-router";
+const route = useRoute();
 
 const props = defineProps({
   nodes: {
@@ -62,6 +64,7 @@ const handleUpdateMenu = (_key: string, keyPath: string[]) => {
   routerPush({
     name: 'render',
     query: {
+      ...route.query,
       detail: encrypt(to),
     }
   })

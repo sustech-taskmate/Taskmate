@@ -1,6 +1,14 @@
-<!--<script setup lang="ts">-->
-
-<!--</script>-->
+<script lang="ts" setup>
+import {nextTick, provide, ref} from "vue";
+    const isRouterAlive = ref(true)
+    const reload = () => {
+        isRouterAlive.value = false
+        nextTick(() => {
+            isRouterAlive.value = true
+        })
+    }
+    provide('reload', reload)
+</script>
 
 <!--<template>-->
 <!--  <div class="container">-->
@@ -13,7 +21,7 @@
 <!--</style>-->
 <template>
   <suspense>
-    <router-view/>
+    <router-view v-if="isRouterAlive"/>
   </suspense>
 </template>
 

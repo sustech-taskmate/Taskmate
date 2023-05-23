@@ -63,7 +63,7 @@
 <script lang="ts" setup>
 import {analyzeDir, downloadAll} from '@/composable/grade'
 import {FileTreeNode} from '@/store/assign';
-import {reactive, ref, watch} from "vue";
+import {inject, reactive, ref, watch} from "vue";
 import {useElementBounding} from '@vueuse/core';
 import {useTabStore} from "@/store";
 import Sider from "@/components/AssignLeftBar/Sider.vue";
@@ -82,6 +82,7 @@ import {
 } from "@/composable/serverRequest";
 import {Card} from "@/store/todo";
 
+const reload: Function = inject('reload') as Function
 const route = useRoute();
 const {routerPush} = useRouterPush();
 const tab = useTabStore();
@@ -137,7 +138,7 @@ const next = async () => {
         await toAssign();
     } else {
         await routerPush({
-            name: 'grade', params: {cid: cid.value, aid: aid.value, gid: tempGid.value},
+            params: {cid: cid.value, aid: aid.value, gid: tempGid.value},
             query: {
                 assignments: route.query.assignments,
                 courses: route.query.courses,
@@ -147,7 +148,7 @@ const next = async () => {
                 finishedStudents: cnt
             }
         });
-        //TODO: rendering page again
+        reload()
     }
 }
 

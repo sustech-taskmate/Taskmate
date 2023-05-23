@@ -40,6 +40,8 @@ const videoSrc = ref("")
 updateData()
 
 async function updateData(){
+    if (route.query.detail == null)
+        return
     selectedFile.value = decrypt(route.query.detail as string) as FileTo;
     format.value = selectedFile.value.format;
     url.value = convertFileSrc(selectedFile.value.url);
@@ -49,8 +51,11 @@ async function updateData(){
 }
 
 watch(
-    () => route.query,
-    () => updateData(),
+    () => route.query.detail,
+    () => {
+        if (route.query.detail != null)
+            updateData()
+    },
     {immediate: true}
 )
 
