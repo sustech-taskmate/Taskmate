@@ -88,10 +88,10 @@ import {Assignment, getSubmissionInfo, getSubmissions, Submission} from "@/compo
 import moment from "moment";
 import {AssignmentState, StudentContent} from "@/store/assignview";
 import '@/assets/style/local/assignview.css'
-import {FileTreeNode} from "@/store/assign";
 import {open, save} from "@tauri-apps/api/dialog";
 import {downloadAll} from "@/composable/assign";
 import {fs} from "@tauri-apps/api";
+import _ from "lodash";
 
 const route = useRoute();
 const {routerPush} = useRouterPush();
@@ -215,17 +215,22 @@ const transmit = async () => {
     return
   }
   let csvData=[]
-  for (const item in submissionList.submissions){
-    csvData.push({sid: submissionList.submissions[item].submitter.sid,score:submissionList.submissions[item].score})
+  for (const item in submissions.value){
+    csvData.push({sid: submissions.value[item].submitter.sid,score:submissions.value[item].score})
   }
   const csvContent = convertArrayToCSV(csvData);
   await fs.writeFile(path, csvContent);
-
 }
 
 const submissionList = await getSubmissions(cid)
-const submissions = ref(submissionList.submissions);
-const temp = submissionList.submissions;
+const assignmentSubmission = submissionList.submissions.filter((s) => { return s.assignment.name == assignments.value[Number(route.params.aid)].name})
+    .sort((s1, s2) => s2.createdAt - s1.createdAt)
+const gb = _.groupBy(assignmentSubmission, (s) => s.submitter.sid)
+const submissions = ref<Submission[]>([])
+Object.keys(gb).forEach((sid) => {
+    submissions.value.push(gb[sid][0])
+})
+const temp = submissions.value;
 const tableData = ref([] as StudentContent[])
 const allStudents = ref(submissions.value.length)
 const finishedStudents = ref(0)
