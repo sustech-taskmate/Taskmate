@@ -66,10 +66,10 @@
                     <div style="color: white;">Submit Content</div>
                 </div>
 
-                <div style="width: 100%; height: 70%; overflow-y: auto">
+                <div style="width: 100%; height: 60%; overflow-y: auto">
                     <div style="display: flex; flex-wrap: wrap; width: 100%; align-items: center;"
                          v-for="item in fileList">
-                        <el-row style="height: 8vh; width: 100%; flex: 1 0 30%;
+                        <el-row style="height: 6vh; width: 100%; flex: 1 0 30%;
                              display: flex; justify-content: center; align-items: center;">
                             <el-col :span="12" class="format" style="font-size: calc(100vh * 30 / 1500);">
                                 {{ item.name }}
@@ -339,6 +339,7 @@ const handleChildEvent = async (index: number, data: Assignment) => {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 3vh;
 }
 
 .btn {
