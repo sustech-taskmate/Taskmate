@@ -68,9 +68,9 @@
         "fullscreen": false,
         "resizable": true,
         "title": "Taskmate",
-        "width": 800,
+        "width": 1140,
         "height": 600,
-        "minWidth": 800,
+        "minWidth": 1140,
         "minHeight": 600
       }
     ],

@@ -3,9 +3,9 @@
         <el-aside style="width: 15%; height: 100%; border-right: 2px solid black">
             <div style="width: 100%; height: 10%; background: steelblue">
                 <svg-icon name="arrayLeft" color="white"
-                          style="width: 20%; height: 100%" @click="back()"></svg-icon>
+                          style="width: 20%; height: 100%; cursor:pointer;" @click="back()"></svg-icon>
                 <svg-icon name="home" color="white"
-                          style="width: 20%; height: 100%"></svg-icon>
+                          style="width: 20%; height: 100%; cursor:pointer;" @click="back()"></svg-icon>
                 <svg-icon name="menu2" color="white"
                           style="width: 20%; height: 100%; float: right;"></svg-icon>
             </div>
