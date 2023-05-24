@@ -131,7 +131,7 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, ref, watch} from 'vue';
+import {reactive, ref} from 'vue';
 import {Assignment, AttachFile, Course} from "@/store/submit";
 import SvgIcon from "@/components/util/SvgIcon.vue";
 import SubmitRightCourseCard from "@/components/SubmitComponent/SubmitRightCourseCard.vue";
@@ -149,7 +149,7 @@ import {
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
 import {open} from '@tauri-apps/api/dialog';
-import {convertFileSrc} from "@tauri-apps/api/tauri";
+import {readBinaryFile} from "@tauri-apps/api/fs";
 
 const route = useRoute()
 const {routerPush} = useRouterPush();
@@ -225,36 +225,25 @@ const selectFile = async () => {
     if (paths === null) {
         return
     } else {
-        await Promise.all(paths.map(async (path): Promise<File> => {
-            const url = convertFileSrc(path)
-            return new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open("GET", url, true);
-                xhr.responseType = "blob";
-                xhr.onload = () => {
-                    const blob = xhr.response;
-                    const fileName = path.includes("\\")?path.substring(path.lastIndexOf("\\") + 1):path.substring(path.lastIndexOf("/") + 1);
-                    const file = new File([blob], fileName, {type: blob.type});
-                    const fileInfo = {
-                        name: file.name,
-                        size: file.size,
-                        time: new Date().toLocaleString(),
-                        file_path: path
-                    }
-                    let flag = true
-                    for (const item in fileList.value) {
-                      if (fileList.value[item].name==fileInfo.name){
-                        fileList.value[item]=fileInfo;
-                        flag=false
-                        break;
-                      }
-                    }
-                    if (flag)fileList.value.push(fileInfo);
-                    resolve(file);
-                };
-                xhr.onerror = reject;
-                xhr.send();
-            });
+        await Promise.all(paths.map(async (path) => {
+            const contents = await readBinaryFile(path)
+            const fileName = path.includes("\\") ? path.substring(path.lastIndexOf("\\") + 1) : path.substring(path.lastIndexOf("/") + 1);
+            const file = new File([contents], fileName);
+            const fileInfo = {
+                name: file.name,
+                size: file.size,
+                time: new Date().toLocaleString(),
+                file_path: path
+            }
+            let flag = true
+            for (const item in fileList.value) {
+                if (fileList.value[item].name == fileInfo.name) {
+                    fileList.value[item] = fileInfo;
+                    flag = false
+                    break;
+                }
+            }
+            if (flag) fileList.value.push(fileInfo);
         }))
     }
     if (fileList.value.length>0)
