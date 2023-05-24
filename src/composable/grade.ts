@@ -1,5 +1,4 @@
 import {invoke} from "@tauri-apps/api/tauri";
-import {exists, readTextFile} from "@tauri-apps/api/fs";
 import {AssignFileType, FileTreeNode, ZipFile} from "@/store/assign";
 import {appDataDir} from "@tauri-apps/api/path";
 
@@ -26,29 +25,13 @@ export async function downloadFile(url: string, submitId: string, name: string) 
     let path = await getDownloadPath();
     path += "\\taskmate" + "\\" + submitId;
     // console.log(path)
-    invoke('download_file', {url: url, filePath: path, fileName: name}).then(
-        (resolved: any) => {
-            // console.log(resolved)
-        }
-    ).catch((err) => {
-        // console.log(err)
-    });
+    await invoke('download_file', {url: url, filePath: path, fileName: name})
 }
 
 async function analyzeDir(submitId: string) {
     let path = await getDownloadPath();
     path += "\\taskmate" + "\\" + submitId;
-    const origin = path;
-
-    await invoke('analyze_dir', {target: path + "\\student_file", origin: origin})
-    // from origin path get path.json and buildFileTree
-    let fPath: string = path.concat("\\").concat("path.json");
-    // console.log(fPath);
-    exists(fPath).then()
-        .catch((err) => {
-            // console.log(err);
-        })
-    const fileContent = await readTextFile(fPath);
+    const fileContent: string = await invoke('analyze_dir', {target: path})
     const zipFiles: ZipFile[] = JSON.parse(fileContent).data as ZipFile[];
     return buildFileTree("student_file", zipFiles);
 }

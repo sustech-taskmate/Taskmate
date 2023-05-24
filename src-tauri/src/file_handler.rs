@@ -1,27 +1,25 @@
-use std::fs::{File, create_dir_all, OpenOptions, remove_file};
-use std::io::{Write};
+use std::fs::{create_dir_all, File, remove_file};
+use std::io::Write;
 use std::path::Path;
+
+use anyhow::Result;
+use flate2::read::GzDecoder;
+use mime;
 use reqwest::blocking::get;
 use reqwest::multipart;
-use anyhow::{Result};
-use flate2::read::GzDecoder;
 use tar::Archive;
 use walkdir::WalkDir;
-use mime;
-use base64::{Engine, engine::{general_purpose}};
+
+pub use custom_error_set::*;
 
 #[tauri::command]
-pub async fn analyze_dir(target: &str, origin: &str) -> Result<(), String>{
+pub async fn analyze_dir(target: &str) -> Result<String, String> {
     let target = Path::new(target);
-    let origin = Path::new(origin);
-    //target is dir in origin
-    let json_file = origin.join(Path::new("path.json"));
-    File::create(&json_file).map_err(|err| err.to_string())?;
-    let mut json_file = OpenOptions::new().write(true).open(&json_file).map_err(|err| err.to_string())?;
     let dir = WalkDir::new(target);
-    write!(json_file, "{{\"data\":[").map_err(|err| err.to_string())?;
+    let mut result_json = "".to_string();
+    result_json += "{\"data\":[";
     let target = target.to_str().ok_or("to str error")?;
-    let len=target.len();
+    let len = target.len();
     let mut comma = false;
     for f in dir {
         let f = f.map_err(|err| err.to_string())?;
@@ -46,18 +44,17 @@ pub async fn analyze_dir(target: &str, origin: &str) -> Result<(), String>{
             let path = path.to_str().ok_or("to str error")?;
         #[cfg(target_os = "linux")]
             let path = path.to_str().unwrap();
-        let simple_path = simple_path.replace("\\","/");
-        let path = path.replace("\\","/");
+        let simple_path = simple_path.replace("\\", "/");
+        let path = path.replace("\\", "/");
         if comma {
-            write!(json_file, ",{{ \"name\" : \"{}\", \"dir\" : {}, \"url\" : \"{}\" }}\n", simple_path, is_dir, path).map_err(|err| err.to_string())?;
+            result_json += &*format!(",{{ \"name\" : \"{}\", \"dir\" : {}, \"url\" : \"{}\" }}\n", simple_path, is_dir, path);
+        } else {
+            result_json += &*format!("{{ \"name\" : \"{}\", \"dir\" : {}, \"url\" : \"{}\" }}\n", simple_path, is_dir, path);
         }
-        else {
-            write!(json_file, "{{ \"name\" : \"{}\", \"dir\" : {}, \"url\" : \"{}\" }}\n", simple_path, is_dir, path).map_err(|err| err.to_string())?;
-        }
-        comma=true;
+        comma = true;
     }
-    write!(json_file, "]}}").map_err(|err| err.to_string())?;
-    Ok(())
+    result_json += "]}";
+    Ok(result_json)
 }
 
 fn extract_zip(test: &Path, target: &Path) -> Result<()> {
@@ -72,7 +69,7 @@ fn extract_zip(test: &Path, target: &Path) -> Result<()> {
     Ok(())
 }
 
-fn extract_targz(test: &Path, target: &Path) -> Result<()>{
+fn extract_targz(test: &Path, target: &Path) -> Result<()> {
     let tar_gz = File::open(test)?;
     let tar = GzDecoder::new(tar_gz);
     let mut archive = Archive::new(tar);
@@ -83,6 +80,7 @@ fn extract_targz(test: &Path, target: &Path) -> Result<()>{
     // remove_file(&test)?;
     Ok(())
 }
+
 #[derive(Default, Copy, Clone, PartialEq, Eq)]
 enum ExtractOperationType {
     #[default]
@@ -118,7 +116,7 @@ pub async fn upload_file(url: &str, file_path: &str, key: &str, token: &str) -> 
 
 #[tauri::command]
 pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), String> {
-    let should_extract : ExtractOperationType;
+    let should_extract: ExtractOperationType;
     let response = get(url).map_err(|err| err.to_string())?;
     let bytes = response.bytes().map_err(|err| err.to_string())?;
     let bit = bytes.iter();
@@ -138,11 +136,11 @@ pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), 
             file_name
         }
     };
-    let root_path = Path::new(file_path).join("student_file");
-    let file_path = Path::new(file_path).join("student_file").join(file_name);
+    let root_path = Path::new(file_path);
+    let file_path = Path::new(file_path).join(file_name);
     let zip_path = file_path.file_stem().ok_or("get file stem error")?;
     let zip_path = Path::new(&root_path).join(zip_path);
-    if !root_path.exists(){
+    if !root_path.exists() {
         create_dir_all(&root_path).map_err(|err| err.to_string())?;
     }
     // drop(root_path);
@@ -153,34 +151,34 @@ pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), 
             // drop(file);
 
             #[cfg(target_os = "windows")]
-            {
-                if should_extract == ExtractOperationType::Zip {
-                    // extract(&filePath,  &zip_path, &origin_path);
-                    extract_zip(&file_path,  &zip_path).map_err(|err| err.to_string())?;
-                    //delete filePath
+                {
+                    if should_extract == ExtractOperationType::Zip {
+                        // extract(&filePath,  &zip_path, &origin_path);
+                        extract_zip(&file_path, &zip_path).map_err(|err| err.to_string())?;
+                        //delete filePath
+                    }
+                    if should_extract == ExtractOperationType::TarGz {
+                        extract_targz(&file_path, &zip_path).map_err(|err| err.to_string())?;
+                        //delete filePath
+                    }
                 }
-                if should_extract == ExtractOperationType::TarGz{
-                    extract_targz(&file_path, &zip_path).map_err(|err| err.to_string())?;
-                    //delete filePath
-                }
-            }
             #[cfg(target_os = "macos")]
-            {
-                if should_extract == ExtractOperationType::Zip {
-                    // extract(&filePath,  &zip_path, &origin_path);
-                    extract_zip(&file_path,  &zip_path).map_err(|err| err.to_string())?;
-                    //delete filePath
+                {
+                    if should_extract == ExtractOperationType::Zip {
+                        // extract(&filePath,  &zip_path, &origin_path);
+                        extract_zip(&file_path, &zip_path).map_err(|err| err.to_string())?;
+                        //delete filePath
+                    }
                 }
-            }
             // if should_extract {
             //     extract(&filePath,  &zip_path, &origin_path);
             // }
             #[cfg(not(any(target_os = "windows", target_os = "macos")))]
-            {
-                compile_error!("test");
-            }
+                {
+                    compile_error!("test");
+                }
             Ok(())
-        },
+        }
         Err(err) => {
             // create file failed
             println!("create file failed：{}", err);
@@ -193,41 +191,34 @@ pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), 
 #[cfg(test)]
 mod tests {
     use tauri::async_runtime::block_on;
+
     use super::*;
 
     #[test]
     fn test_win() {
-        download_file("https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.zip",
-                      "D:\\Desktop\\test",
-                      "test.zip"
-                      // "./res"
-        ).unwrap();
-        let task = analyze_dir(Path::new(
-            "D:\\Desktop\\test\\student_file"
-            // "./res/student_file"
-        ).to_str().unwrap(), Path::new(
-            "D:\\Desktop\\test"
-            // "./res"
-        ).to_str().unwrap());
-        block_on(task).unwrap();
+        #[cfg(target_os = "windows")]
+            {
+                download_file("https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.zip",
+                              "D:\\Desktop\\testStudent",
+                              "test.zip",
+                ).unwrap();
+                let task = analyze_dir(Path::new(
+                    "D:\\Desktop\\testStudent"
+                ).to_str().unwrap());
+                block_on(task).unwrap();
+            }
     }
 
     #[test]
     fn test_mac() {
-        // download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-large-zip-file.zip", "C:\\Users\\31028\\Desktop\\test").unwrap();
-        download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample.tar", "./res", "sample.tar").unwrap();
-        // let file_path=Path::new("C:\\Users\\31028\\Desktop\\test").join("qwq.zip");
-        // extract(&file_path,Path::new("C:\\Users\\31028\\Desktop\\test\\qwq"));
-        // let file_path=Path::new("D:\\Desktop\\test\\student_file").join("sample.tar");
-        // extract_targz(&file_path,Path::new("D:\\Desktop\\test\\student_file\\sample")).unwrap();
-        let task = analyze_dir(Path::new(
-            // "D:\\Desktop\\test\\student_file"
-            "./res/student_file"
-        ).to_str().unwrap(), Path::new(
-            // "D:\\Desktop\\test"
-            "./res"
-        ).to_str().unwrap());
-        block_on(task).unwrap();
+        #[cfg(target_os = "macos")]
+            {
+                download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample.tar", "./res/testStudent", "sample.tar").unwrap();
+                let task = analyze_dir(Path::new(
+                    "./res/testStudent"
+                ).to_str().unwrap());
+                block_on(task).unwrap();
+            }
     }
 
     #[test]
@@ -238,8 +229,6 @@ mod tests {
         Ok(())
     }
 }
-
-pub use custom_error_set::*;
 
 pub mod custom_error_set {
     use std::error::Error;
@@ -257,8 +246,7 @@ pub mod custom_error_set {
         }
     }
 
-    impl Error for FileNameMiss {
-    }
+    impl Error for FileNameMiss {}
 
     impl Display for FilePostfixMiss {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -266,7 +254,5 @@ pub mod custom_error_set {
         }
     }
 
-    impl Error for FilePostfixMiss {
-    }
-
+    impl Error for FilePostfixMiss {}
 }
