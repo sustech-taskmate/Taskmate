@@ -1,5 +1,5 @@
 <template>
-    <el-container type="flex" style="height: 100vh; width: 100%">
+    <el-container type="flex" style="height: 100vh; width: 100% ;overflow-y: hidden">
         <el-aside style="width: 15%; height: 100%; border-right: 2px solid black">
             <div style="width: 100%; height: 10%; background: steelblue">
                 <svg-icon name="arrayLeft" color="white"
@@ -19,7 +19,7 @@
             </div>
         </el-aside>
         <el-main
-            style="width: 85%; height: 100%; border: none; padding: 0; margin: 0; font-size: calc(100vh * 28 / 1500);">
+            style="width: 85%; height: 100%; border: none; padding: 0; margin: 0; font-size: calc(100vh * 28 / 1500); overflow-y: hidden">
             <div
                 style="width: 100%; height: 10%; background: steelblue; display: flex; justify-content: center; align-items: center; color: white;">
                 Assignment Information
