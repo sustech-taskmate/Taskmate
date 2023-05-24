@@ -74,7 +74,9 @@
                         <el-table-column prop="gradeRatio" label="Grading Ratio" width="auto" align="center"/>
                         <el-table-column width="auto" align="center">
                             <template #default="scope">
-                                <el-button type="primary" @click="toAssign(scope.$index)">View</el-button>
+                                <button class="btn" @click="toAssign(scope.$index)">
+                                  View
+                                </button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -288,6 +290,19 @@ a {
     .word {
         font-size: 3.5vw;
     }
+}
+
+.btn {
+  border: 1px solid;
+  background-color: transparent;
+  text-transform: uppercase;
+  font-size: calc(100vw * 12 / 1500)
+}
+
+.btn:hover {
+  color: #ffffff;
+  background-color: #6c6060;
+  cursor: pointer;
 }
 
 #container {

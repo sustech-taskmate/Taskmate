@@ -68,7 +68,7 @@
                         <el-table-column prop="lastTime" label="Last Modification Time" width="auto" align="center"/>
                         <el-table-column width="auto" align="center">
                             <template v-slot="scope">
-                                <el-button type="primary" @click="toGrade(scope)">GRADE</el-button>
+                                <el-button  class="btn" @click="toGrade(scope)">GRADE</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -348,3 +348,18 @@ const getRowStyle = ({rowIndex}: { rowIndex: number }) => {
     };
 };
 </script>
+<style>
+
+.btn {
+  border: 1px solid;
+  background-color: transparent;
+  text-transform: uppercase;
+  font-size: calc(100vw * 12 / 1500)
+}
+
+.btn:hover {
+  color: #ffffff;
+  background-color: #6c6060;
+  cursor: pointer;
+}
+</style>
