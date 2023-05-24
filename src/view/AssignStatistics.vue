@@ -192,6 +192,7 @@ scoreMap?.forEach((value, idx) => {
     value.forEach((count, score) => {
         distributions.push(new ScoreDistribution(score, count));
     })
+    distributions.sort((x,y)=>-x.score+y.score)
     problemData.value.push(new Problem(distributions));
 })
 
