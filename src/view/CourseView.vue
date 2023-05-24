@@ -1,7 +1,7 @@
 <template>
     <div style="overflow: hidden; height: 100vh; width: 100vw">
         <div id="container">
-            <div style="border-right: 1px solid darkseagreen; height: 100vh; position: relative"
+            <div style="border-right: 2px solid #b4c0c0; height: 100vh; position: relative"
                  v-bind:style="{ width: leftSize.width }">
                 <div style="background-color: steelblue; position: relative; display: flex"
                      v-bind:style="{width: leftSize.width, height: leftSize.height}">
@@ -307,7 +307,7 @@ a {
 
 #container {
     display: flex;
-    border: 2px solid black;
+    border: 2px solid #938b8b ;
     border-radius: 5px;
 }
 </style>
