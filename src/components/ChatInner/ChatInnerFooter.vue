@@ -13,23 +13,23 @@
               @keydown.ctrl.enter="sendMessage"
               style="background-color: snow"
           />
-      <div
-          class="vac-svg-button"
-          @click="openEmoji"
-      >
-        <svg-icon name="emoji" color="#000"/>
-      </div>
-      <template v-if="showEmoji">
-        <div
-            class="vac-emoji-picker"
-        >
-          <emoji-picker
-              :disable-skin-tones="true"
-              v-if="showEmoji"
-              @select="selectEmoji"
-          />
-        </div>
-      </template>
+<!--      <div-->
+<!--          class="vac-svg-button"-->
+<!--          @click="openEmoji"-->
+<!--      >-->
+<!--        <svg-icon name="emoji" color="#000"/>-->
+<!--      </div>-->
+<!--      <template v-if="showEmoji">-->
+<!--        <div-->
+<!--            class="vac-emoji-picker"-->
+<!--        >-->
+<!--          <emoji-picker-->
+<!--              :disable-skin-tones="true"-->
+<!--              v-if="showEmoji"-->
+<!--              @select="selectEmoji"-->
+<!--          />-->
+<!--        </div>-->
+<!--      </template>-->
       <div
               ref="temp"
           class="vac-svg-button"
