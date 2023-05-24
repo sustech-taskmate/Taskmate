@@ -52,7 +52,9 @@
     "bundle": {
       "active": true,
       "icon": [
-        "icons/icon.ico"
+        "icons/icon.icns",
+        "icons/icon.ico",
+        "icons/icon.png"
       ],
       "identifier": "cn.taskmate.edu",
       "targets": "all"
@@ -68,14 +70,14 @@
         "fullscreen": false,
         "resizable": true,
         "title": "Taskmate",
-        "width": 800,
+        "width": 1140,
         "height": 600,
-        "minWidth": 800,
+        "minWidth": 1140,
         "minHeight": 600
       }
     ],
     "systemTray": {
-      "iconPath": "icons/icon.ico",
+      "iconPath": "icons/icon.png",
       "iconAsTemplate": true
     }
   }
