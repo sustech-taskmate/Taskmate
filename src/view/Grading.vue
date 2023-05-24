@@ -80,6 +80,7 @@ import {
     Submission
 } from "@/composable/serverRequest";
 import {Card} from "@/store/todo";
+import _ from "lodash";
 
 const reload: Function = inject('reload') as Function
 const route = useRoute();
@@ -113,13 +114,19 @@ const toAssign = () =>
     });
 const next = async () => {
     const submissionList = await getSubmissions(cid.value);
-    const submissions = [] as Submission[];
-    const temp = submissionList.submissions;
-    temp.forEach((value) => {
-        if (value.assignment.name == assignments[parseInt(aid.value)].name) {
-            submissions.push(value);
-        }
+    const s = submissionList.submissions.filter((s) => s.entry.uuid == eid.value)
+        .sort((s1, s2) => s2.createdAt - s1.createdAt)
+    const gb = _.groupBy(s, (s) => s.submitter.sid)
+    const submissions = [] as Submission[]
+    Object.keys(gb).forEach((key) => {
+        submissions.push(gb[key][0])
     })
+    // const temp = submissionList.submissions;
+    // temp.forEach((value) => {
+    //     if (value.assignment.name == assignments[parseInt(aid.value)].name) {
+    //         submissions.push(value);
+    //     }
+    // })
     let tempEid = ref('');
     let tempGid = ref('');
     let tempSid = ref('');

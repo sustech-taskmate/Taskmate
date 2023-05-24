@@ -118,7 +118,7 @@ const toStatistics = () => {
     routerPush({
         name: 'statistics', params: {cid: cid, aid: aid},
         query: {
-            submissions: JSON.stringify(submissionList.submissions),
+            submissions: JSON.stringify(submissions.value),
             assignments: route.query.assignments,
             courses: route.query.courses
         }
