@@ -15,7 +15,8 @@
                 </div>
                 <div v-if="leftShow" style="height: 90vh; overflow-y: auto; overflow-x: hidden">
                     <template v-for="(item, index) in courses" :key="index">
-                        <div style="width: 20vw; left: 1vw; position: relative" v-if="item.listContainCard.length !== 0">
+                        <div style="width: 20vw; left: 1vw; position: relative"
+                             v-if="item.listContainCard.length !== 0">
                             <div style="position: relative; width: 20vw; height: 7vh">
                                 <span
                                     style="margin-left: 1vw; line-height: 5vh; font-size: 2vw; position: absolute; left: 0; top: 1vh">{{
@@ -50,7 +51,7 @@
                 <div style="left: 0; top: 1vh; position: relative">
           <span class="word"
                 style="line-height: 3vh; position: absolute; left: 2.5vw; top: 4vh;">
-                  {{currentClass.course.name + ' ' + currentClass.course.number }}
+                  {{ currentClass.course.name + ' ' + currentClass.course.number }}
           </span>
                 </div>
                 <div style="position: relative; height: 77vh; top: 13vh" v-bind:style="{ width: rightWidth }">
@@ -75,7 +76,7 @@
                         <el-table-column width="auto" align="center">
                             <template #default="scope">
                                 <button class="btn" @click="toAssign(scope.$index)">
-                                  View
+                                    View
                                 </button>
                             </template>
                         </el-table-column>
@@ -93,8 +94,9 @@ import SvgIcon from "@/components/util/SvgIcon.vue";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
 import {Card, ClassUserRole} from "@/store/todo";
-import {getAssignments, getClassbyId, getSubmissions} from "@/composable/serverRequest";
+import {getAssignments, getClassbyId, getSubmissions, Submission} from "@/composable/serverRequest";
 import {CourseData} from "@/store/courseview";
+import _ from "lodash";
 
 export default defineComponent({
     name: "CourseView",
@@ -103,9 +105,9 @@ export default defineComponent({
         const route = useRoute();
         const {routerPush} = useRouterPush();
         const courses = reactive(JSON.parse(route.query.courses as string) as Card[])
-        for(const i of courses){
-            for(const j of i.listContainCard){
-                if(j.identify == ClassUserRole.STUDENT){
+        for (const i of courses) {
+            for (const j of i.listContainCard) {
+                if (j.identify == ClassUserRole.STUDENT) {
                     i.listContainCard = i.listContainCard.filter((item) => item != j)
                 }
             }
@@ -113,7 +115,11 @@ export default defineComponent({
         let classId = ref()
         classId.value = route.params.cid as string
         const submissionList = await getSubmissions(classId.value)
-        const submissions = submissionList.submissions
+        const gb = _.groupBy(submissionList.submissions.sort((s1, s2) => s2.createdAt - s1.createdAt), (s) => s.entry.uuid + " " + s.submitter.sid)
+        const submissions = [] as Submission[]
+        Object.keys(gb).forEach((key) => {
+            submissions.push(gb[key][0])
+        })
         const tableData: CourseData[] = reactive([])
         for (const i of courses) {
             i.courseviewDown = false
@@ -293,21 +299,21 @@ a {
 }
 
 .btn {
-  border: 1px solid;
-  background-color: transparent;
-  text-transform: uppercase;
-  font-size: calc(100vw * 12 / 1500)
+    border: 1px solid;
+    background-color: transparent;
+    text-transform: uppercase;
+    font-size: calc(100vw * 12 / 1500)
 }
 
 .btn:hover {
-  color: #ffffff;
-  background-color: #6c6060;
-  cursor: pointer;
+    color: #ffffff;
+    background-color: #6c6060;
+    cursor: pointer;
 }
 
 #container {
     display: flex;
-    border: 2px solid #938b8b ;
+    border: 2px solid #938b8b;
     border-radius: 5px;
 }
 </style>
