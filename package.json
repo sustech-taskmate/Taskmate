@@ -15,11 +15,9 @@
     "@kangc/v-md-editor": "^2.1.7",
     "@tauri-apps/api": "^1.2.0",
     "@vueuse/core": "^9.13.0",
-    "class-transformer": "^0.5.1",
     "crypto-js": "^4.1.1",
     "echarts": "^5.4.2",
     "element-plus": "^2.3.0",
-    "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "next": "^13.4.3",
@@ -28,12 +26,7 @@
     "prismjs": "^1.29.0",
     "vue": "^3.2.47",
     "vue-pdf-embed": "^1.1.6",
-    "vue-router": "^4.1.6",
-    "vue-template-compiler": "^2.7.14",
-    "vue-video-player": "6.0.0",
-    "vue3-emoji-picker": "^1.1.7",
-    "vue3-video-play": "^1.3.1-beta.6",
-    "vuex": "^4.1.0"
+    "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@babel/core": "^7.21.8",
