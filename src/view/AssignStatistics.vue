@@ -92,16 +92,16 @@
         </el-col>
       </el-row>
       <el-row v-for="(problem, idx) in problemData" style="margin: 20px -20px;">
-        <el-col :span="6" style="padding-right: 20px; padding-left: 20px;">
+        <el-col :span="8" style="padding-right: 20px; padding-left: 20px;">
           <div style="justify-content: space-around;  align-items: center; ">
             <div class="card">
               <div class="card-header">
                 <h2>Problem {{ idx + 1 }} Distribution</h2>
               </div>
               <hr class="division"/>
-              <div style="width: 100%">
+              <div style="width: 100% ;height: 400px" >
                 <div :id="'problem'+idx+'Table'" class="problem-table">
-                  <table class="table-container">
+                  <table class="table-container" >
                     <thead style="width: 100%">
                     <th>Score</th>
                     <th>Count</th>
@@ -118,15 +118,15 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="18" style="padding-right: 20px; padding-left: 20px;">
+        <el-col :span="16" style="padding-right: 20px; padding-left: 20px;">
           <div style="justify-content: space-around;  align-items: center; ">
             <div class="card">
               <div class="card-header">
                 <h2>Problem {{ idx + 1 }} Detail</h2>
               </div>
               <hr class="division"/>
-              <div class="card-body">
-                <div :id="'problem'+idx+'Figure'" style="height: 500px;"/>
+              <div class="card-body" style="height: 400px">
+                <div :id="'problem'+idx+'Figure'" style="height: 100%"/>
               </div>
             </div>
           </div>
@@ -450,10 +450,10 @@ const addFigure2 = () => {
 
 onMounted(async () => {
   await nextTick();
-  addFigure1();
-  addFigure2();
+  await addFigure1();
+  await addFigure2();
   for (let i = 0; i < problemData.value.length; i++) {
-    getProblemFigure(i);
+    await getProblemFigure(i);
   }
 });
 
