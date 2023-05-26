@@ -23,14 +23,21 @@ export async function downloadFile(url: string, submitId: string, name: string) 
         let url = "https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.zip";      //zip
      */
     let path = await getDownloadPath();
-    path += "\\taskmate" + "\\" + submitId;
+    if (path.includes("\\"))
+        path += "\\taskmate\\" + submitId;
+    else
+        path += "/taskmate/" + submitId
     // console.log(path)
     await invoke('download_file', {url: url, filePath: path, fileName: name})
 }
 
 async function analyzeDir(submitId: string) {
     let path = await getDownloadPath();
-    path += "\\taskmate" + "\\" + submitId;
+
+    if (path.includes("\\"))
+        path += "\\taskmate\\" + submitId;
+    else
+        path += "/taskmate/" + submitId
     const fileContent: string = await invoke('analyze_dir', {target: path})
     const zipFiles: ZipFile[] = JSON.parse(fileContent).data as ZipFile[];
     return buildFileTree("student_file", zipFiles);

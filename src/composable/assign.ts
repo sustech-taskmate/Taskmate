@@ -23,7 +23,10 @@ export async function downloadFile(path: string, url: string, submitId: string, 
         let url = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-zip-file.zip";    //small zip
         let url = "https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.zip";      //zip
      */
-    path += "\\" + submitId;
+    if (path.includes("\\"))
+        path += "\\" + submitId;
+    else
+        path += "/" + submitId
     // console.log(path)
     invoke('download_file', {url: url, filePath: path, fileName: name}).then(
         (resolved: any) => {
