@@ -94,10 +94,10 @@ import {fs} from "@tauri-apps/api";
 import _ from "lodash";
 
 const route = useRoute();
-const {routerPush} = useRouterPush();
+const {routerPush, toRoot} = useRouterPush();
 
 const toIndex = () => {
-    routerPush({name: 'index'});
+    toRoot();
 }
 
 const toCourse = () => {

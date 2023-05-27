@@ -152,10 +152,10 @@ import {open} from '@tauri-apps/api/dialog';
 import {readBinaryFile} from "@tauri-apps/api/fs";
 
 const route = useRoute()
-const {routerPush} = useRouterPush();
+const {toRoot} = useRouterPush();
 
 const back = () => {
-    routerPush({name: 'index'});
+    toRoot();
 }
 
 const idx = ref();

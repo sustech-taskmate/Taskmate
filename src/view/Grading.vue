@@ -84,7 +84,7 @@ import _ from "lodash";
 
 const reload: Function = inject('reload') as Function
 const route = useRoute();
-const {routerPush} = useRouterPush();
+const {routerPush, routerBack} = useRouterPush();
 const tab = useTabStore();
 
 const cid = ref(route.params.cid as string);
@@ -107,11 +107,10 @@ for (const i of courses) {
     }
 }
 
-const toAssign = () =>
-    routerPush({
-        name: 'teacherAssign', params: {cid: cid.value, aid: aid.value},
-        query: {...route.query}
-    });
+const toAssign = () => {
+    routerBack();
+}
+
 const next = async () => {
     const submissionList = await getSubmissions(cid.value);
     const s = submissionList.submissions.filter((s) => s.entry.uuid == eid.value)

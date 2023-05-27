@@ -18,7 +18,7 @@ export function useRouterPush(inSetup = false) {
     }
 
     function toRoot() {
-        routerPush({name: 'root'});
+        router.replace({name: 'index'})
     }
 
     return {

@@ -103,7 +103,7 @@ export default defineComponent({
     components: {SvgIcon},
     async setup() {
         const route = useRoute();
-        const {routerPush} = useRouterPush();
+        const {routerPush, toRoot} = useRouterPush();
         const courses = reactive(JSON.parse(route.query.courses as string) as Card[])
         for (const i of courses) {
             for (const j of i.listContainCard) {
@@ -183,7 +183,7 @@ export default defineComponent({
         }
 
         const toIndex = () => {
-            routerPush({name: 'index'});
+            toRoot();
         }
 
         const toAssign = (index: any) => {
