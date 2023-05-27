@@ -240,10 +240,19 @@ const firstGid = ref('')
 const firstSid = ref('')
 const selectGid = []
 const flash = ()=>{
+    const assignmentSubmission = submissionList.submissions.filter((s) => { return s.assignment.name == assignments.value[Number(route.params.aid)].name})
+        .sort((s1, s2) => s2.createdAt - s1.createdAt)
+    const gb = _.groupBy(assignmentSubmission, (s) => s.submitter.sid)
+    const submissions = ref<Submission[]>([])
+    Object.keys(gb).forEach((sid) => {
+      submissions.value.push(gb[sid][0])
+    })
+
     submissions.value.slice(0, 0)
     tableData.value.slice(0, 0)
     let tempSubmit = [] as Submission[]
     let tempTableData = [] as StudentContent[]
+    const  temp=submissions.value;
     temp.forEach((value) => {
         if (value.assignment.name == assignments.value[parseInt(aid.value)].name) {
             tempSubmit.push(value)
