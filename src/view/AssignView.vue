@@ -20,10 +20,10 @@
                 </div>
                 <div v-if="leftShow" style="height: 90vh; overflow-y: auto">
                     <div v-for="(item, index) in assignments" :key="index" @click="changeAid(index)">
-                            <div style="position: relative; left: 1vw; width: 20vw; height: 7vh">
-                <div style="margin-left: 1vw; line-height: 5vh; font-size: 2vw; position: absolute; left: 0; top: 1vh">
-                    {{item.name }}
-                </div>
+                        <div style="position: relative; left: 1vw; width: 20vw; height: 7vh">
+                            <div class="assign-sub-card">
+                                {{ item.name }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -38,8 +38,10 @@
               {{ assignments[Number(aid)].name }}
           </span>
                     <div style="width: 20vw; height: 7vh; position: absolute; right: 0; top: 8vh;">
-                        <svg-icon name="download" style="width: 6vw; height: 6vh; cursor: pointer" @click="downloadFile"></svg-icon>
-                        <svg-icon name="transmit" style="width: 6vw; height: 6vh; cursor: pointer" @click="transmit"></svg-icon>
+                        <svg-icon name="download" style="width: 6vw; height: 6vh; cursor: pointer"
+                                  @click="downloadFile"></svg-icon>
+                        <svg-icon name="transmit" style="width: 6vw; height: 6vh; cursor: pointer"
+                                  @click="transmit"></svg-icon>
                         <svg-icon name="signal" style="width: 6vw; height: 6vh; cursor: pointer"
                                   @click="toStatistics"></svg-icon>
                     </div>
@@ -50,7 +52,7 @@
                               style="line-height: 3vh; color: white; position: absolute; left: 2.5vw; top: 4vh;">Student List</span>
                         <svg-icon name="play2" color="white"
                                   style="position: absolute; right: 0; top: 1vh; width: 8vw; height: 8vh;cursor: pointer"
-                        @click="toFirstNoGrade"/>
+                                  @click="toFirstNoGrade"/>
                     </div>
                     <el-table
                         :data="tableData"
@@ -68,7 +70,7 @@
                         <el-table-column prop="lastTime" label="Last Modification Time" width="auto" align="center"/>
                         <el-table-column width="auto" align="center">
                             <template v-slot="scope">
-                                <el-button  class="btn" @click="toGrade(scope)">GRADE</el-button>
+                                <el-button class="btn" @click="toGrade(scope)">GRADE</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -170,60 +172,63 @@ let downloadListRaw = ref<StudentContent[]>([])
 
 const assignments = ref(JSON.parse(route.query.assignments as string) as Assignment[])
 
-const changeAid = (index: number)=>{
+const changeAid = (index: number) => {
     route.params.aid = index + ''
     aid.value = index + ''
     flash()
 }
-const handleSelectionChange = (input:StudentContent[])=>{
-  downloadListRaw.value=input
+const handleSelectionChange = (input: StudentContent[]) => {
+    downloadListRaw.value = input
 }
 const downloadFile = async () => {
-  if (downloadListRaw.value.length == 0) {
-    return
-  }
-  const path = await open({
-    directory: true
-  }) as string | null;
-  if (path == null) {
-    return
-  }
-  for (const item in downloadListRaw.value){
-    const submissionInfo = await getSubmissionInfo(downloadListRaw.value[item].gid);
-    let urls = submissionInfo.submission.answers[0].files.map((file) => {
-      return file.url
-    })
-    let names = submissionInfo.submission.answers[0].files.map((file) => {
-      return file.name
-    })
-    await downloadAll(path,urls, (downloadListRaw.value[item].gid as string), names)
-  }
+    if (downloadListRaw.value.length == 0) {
+        return
+    }
+    const path = await open({
+        directory: true
+    }) as string | null;
+    if (path == null) {
+        return
+    }
+    for (const item in downloadListRaw.value) {
+        const submissionInfo = await getSubmissionInfo(downloadListRaw.value[item].gid);
+        let urls = submissionInfo.submission.answers[0].files.map((file) => {
+            return file.url
+        })
+        let names = submissionInfo.submission.answers[0].files.map((file) => {
+            return file.name
+        })
+        await downloadAll(path, urls, (downloadListRaw.value[item].gid as string), names)
+    }
 }
 
 function convertArrayToCSV(arr: any[]) {
-  const header = Object.keys(arr[0]).join(',') + '\n';
-  const rows = arr.map(obj => Object.values(obj).join(',')).join('\n');
-  return header + rows;
+    const header = Object.keys(arr[0]).join(',') + '\n';
+    const rows = arr.map(obj => Object.values(obj).join(',')).join('\n');
+    return header + rows;
 }
+
 const transmit = async () => {
-  const path = await save(
-      {
-        defaultPath:'score.csv'
-      }
-  ) as string | null;
-  if (path == null) {
-    return
-  }
-  let csvData=[]
-  for (const item in submissions.value){
-    csvData.push({sid: submissions.value[item].submitter.sid,score:submissions.value[item].score})
-  }
-  const csvContent = convertArrayToCSV(csvData);
-  await fs.writeFile(path, csvContent);
+    const path = await save(
+        {
+            defaultPath: 'score.csv'
+        }
+    ) as string | null;
+    if (path == null) {
+        return
+    }
+    let csvData = []
+    for (const item in submissions.value) {
+        csvData.push({sid: submissions.value[item].submitter.sid, score: submissions.value[item].score})
+    }
+    const csvContent = convertArrayToCSV(csvData);
+    await fs.writeFile(path, csvContent);
 }
 
 const submissionList = await getSubmissions(cid)
-const assignmentSubmission = submissionList.submissions.filter((s) => { return s.assignment.name == assignments.value[Number(route.params.aid)].name})
+const assignmentSubmission = submissionList.submissions.filter((s) => {
+    return s.assignment.name == assignments.value[Number(route.params.aid)].name
+})
     .sort((s1, s2) => s2.createdAt - s1.createdAt)
 const gb = _.groupBy(assignmentSubmission, (s) => s.submitter.sid)
 const submissions = ref<Submission[]>([])
@@ -239,20 +244,22 @@ const firstEid = ref('')
 const firstGid = ref('')
 const firstSid = ref('')
 const selectGid = []
-const flash = ()=>{
-    const assignmentSubmission = submissionList.submissions.filter((s) => { return s.assignment.name == assignments.value[Number(route.params.aid)].name})
+const flash = () => {
+    const assignmentSubmission = submissionList.submissions.filter((s) => {
+        return s.assignment.name == assignments.value[Number(route.params.aid)].name
+    })
         .sort((s1, s2) => s2.createdAt - s1.createdAt)
     const gb = _.groupBy(assignmentSubmission, (s) => s.submitter.sid)
     const submissions = ref<Submission[]>([])
     Object.keys(gb).forEach((sid) => {
-      submissions.value.push(gb[sid][0])
+        submissions.value.push(gb[sid][0])
     })
 
     submissions.value.slice(0, 0)
     tableData.value.slice(0, 0)
     let tempSubmit = [] as Submission[]
     let tempTableData = [] as StudentContent[]
-    const  temp=submissions.value;
+    const temp = submissions.value;
     temp.forEach((value) => {
         if (value.assignment.name == assignments.value[parseInt(aid.value)].name) {
             tempSubmit.push(value)
@@ -264,11 +271,11 @@ const flash = ()=>{
             eid: value.entry.uuid,
             gid: value.uuid,
             sid: value.submitter.sid,
-            lastModifiedBy: value.scoring === null? '': value.scoring.lastModifiedBy.sid,
-            lastTime: value.scoring === null? '': moment.unix(value.scoring.lastModifiedAt).format('YYYY-MM-DD HH:mm:ss'),
+            lastModifiedBy: value.scoring === null ? '' : value.scoring.lastModifiedBy.sid,
+            lastTime: value.scoring === null ? '' : moment.unix(value.scoring.lastModifiedAt).format('YYYY-MM-DD HH:mm:ss'),
             score: value.score,
             submitTime: moment.unix(value.createdAt).format('YYYY-MM-DD HH:mm:ss'),
-            modifyState: value.scoring === null? AssignmentState.NOT_GRADED: AssignmentState.GRADED
+            modifyState: value.scoring === null ? AssignmentState.NOT_GRADED : AssignmentState.GRADED
         } as StudentContent)
         if (value.scoring !== null) {
             finishedStudents.value += 1;
@@ -362,18 +369,3 @@ const getRowStyle = ({rowIndex}: { rowIndex: number }) => {
     };
 };
 </script>
-<style>
-
-.btn {
-  border: 1px solid;
-  background-color: transparent;
-  text-transform: uppercase;
-  font-size: calc(100vw * 12 / 1500)
-}
-
-.btn:hover {
-  color: #ffffff;
-  background-color: #6c6060;
-  cursor: pointer;
-}
-</style>

@@ -29,10 +29,10 @@
                             </div>
                             <div v-if="item.courseviewDown"
                                  style="width: 20vw; min-height: 4vh; position:relative; border-top: 2px solid black">
-                                <ul style="list-style: none; padding-left: 3vw; padding-bottom: 5vh">
-                                    <li v-for="(course, index2) in item.listContainCard" style="margin-top: 1vh">
-                                        <a style="padding-bottom: 10px; height: 3vh; cursor: pointer"
-                                           @click="chooseAssignment(index, index2)">
+                                <ul style="list-style: none; padding-bottom: 5vh;display: flex;">
+                                    <li v-for="(course, index2) in item.listContainCard"
+                                        class="item-sub-card">
+                                        <a @click="chooseAssignment(index, index2)" style="cursor: pointer">
                                             <span class="table-word">{{ course.code }}</span>
                                         </a>
                                     </li>
@@ -64,7 +64,7 @@
                         :row-style="getRowStyle"
                         :header-row-style="{height: '8vh', fontSize: '14px'}"
                         :key="key"
-                        height="100%"
+                        height="93.2%"
                         ref="myTable"
                         v-if="turn"
                     >
@@ -97,6 +97,7 @@ import {Card, ClassUserRole} from "@/store/todo";
 import {getAssignments, getClassbyId, getSubmissions, Submission} from "@/composable/serverRequest";
 import {CourseData} from "@/store/courseview";
 import _ from "lodash";
+import "@/assets/style/local/courseview.css"
 
 export default defineComponent({
     name: "CourseView",
@@ -264,56 +265,3 @@ export default defineComponent({
     },
 })
 </script>
-
-<style scoped>
-a {
-    color: black;
-}
-
-@media screen and (min-width: 1001px) {
-    .word {
-        font-size: 2.5vw;
-    }
-
-    .table-word {
-        font-size: 2vw;
-        margin-right: 2vw;
-    }
-}
-
-@media screen and (min-width: 601px) and (max-width: 1000px) {
-    .word {
-        font-size: 3vw;
-    }
-
-    .table-word {
-        font-size: 2.5vw;
-        margin-right: 0.5vw;
-    }
-}
-
-@media screen and (max-width: 600px) {
-    .word {
-        font-size: 3.5vw;
-    }
-}
-
-.btn {
-    border: 1px solid;
-    background-color: transparent;
-    text-transform: uppercase;
-    font-size: calc(100vw * 12 / 1500)
-}
-
-.btn:hover {
-    color: #ffffff;
-    background-color: #6c6060;
-    cursor: pointer;
-}
-
-#container {
-    display: flex;
-    border: 2px solid #938b8b;
-    border-radius: 5px;
-}
-</style>

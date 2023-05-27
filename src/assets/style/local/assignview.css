@@ -33,3 +33,30 @@ a {
 #container {
     display: flex;
 }
+
+.assign-sub-card {
+    margin-left: 1vw;
+    line-height: 5vh;
+    font-size: 2vw;
+    position: absolute;
+    left: 0;
+    top: 1vh;
+    cursor: pointer;
+}
+
+.assign-sub-card:hover {
+    color: #646cff;
+}
+
+.btn {
+    border: 1px solid;
+    background-color: transparent;
+    text-transform: uppercase;
+    font-size: calc(100vw * 12 / 1500)
+}
+
+.btn:hover {
+    color: #ffffff;
+    background-color: #6c6060;
+    cursor: pointer;
+}
