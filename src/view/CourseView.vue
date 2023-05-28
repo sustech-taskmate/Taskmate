@@ -29,7 +29,7 @@
                             </div>
                             <div v-if="item.courseviewDown"
                                  style="width: 20vw; min-height: 4vh; position:relative; border-top: 2px solid black">
-                                <ul style="list-style: none; padding-bottom: 5vh;display: flex;">
+                                <ul style="list-style: none; padding-bottom: 5vh;">
                                     <li v-for="(course, index2) in item.listContainCard"
                                         class="item-sub-card">
                                         <a @click="chooseAssignment(index, index2)" style="cursor: pointer">
