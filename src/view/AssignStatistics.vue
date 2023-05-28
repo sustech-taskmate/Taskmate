@@ -140,7 +140,7 @@
 import {
   ArrowLeft
 } from '@element-plus/icons-vue'
-import {onMounted, createApp, watch, nextTick, onBeforeMount, ref} from 'vue';
+import {onMounted, nextTick, ref} from 'vue';
 import {ECharts, EChartsOption, init} from 'echarts';
 import * as echarts from 'echarts';
 import {useRoute} from "vue-router";
@@ -200,7 +200,7 @@ scoreMap?.forEach((value, idx) => {
 const table1Data = ref([
   {
     type: 'average',
-    score: average,
+    score: average?.toFixed(2),
   },
   {
     type: 'median',
