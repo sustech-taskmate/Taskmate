@@ -84,7 +84,7 @@ import _ from "lodash";
 
 const reload: Function = inject('reload') as Function
 const route = useRoute();
-const {routerPush, routerBack} = useRouterPush();
+const {routerPush} = useRouterPush();
 const tab = useTabStore();
 
 const cid = ref(route.params.cid as string);
@@ -107,9 +107,11 @@ for (const i of courses) {
     }
 }
 
-const toAssign = () => {
-    routerBack();
-}
+const toAssign = () =>
+    routerPush({
+        name: 'teacherAssign', params: {cid: cid.value, aid: aid.value},
+        query: {...route.query}
+    });
 
 const next = async () => {
     const submissionList = await getSubmissions(cid.value);
@@ -239,7 +241,7 @@ let names = submissionInfo.submission.answers[0].files.map((file) => {
 })
 
 // urls = ['https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/a.zip', 'https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.pdf']
-downloadAll(urls, (gid.value as string), names);
+await downloadAll(urls, (gid.value as string), names);
 let nodes = ref(new Map<string, FileTreeNode>());
 analyzeDir((gid.value as string)).then((res) => {
     for (let i = 0; i < res.children.length; i++) {
