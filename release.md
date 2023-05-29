@@ -1,11 +1,8 @@
-### :sparkles:
-- **Add**: 
+### :sparkles: **ADD**
 - 
 
-### :recycle:
-- **Adjust**:
+### :recycle: **ADJUST**
 - 
 
-### :bug:
-- **Fix**:
+### :bug: **FIX**
 - 
