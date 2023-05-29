@@ -198,7 +198,7 @@ const downloadFile = async () => {
         let names = submissionInfo.submission.answers[0].files.map((file) => {
             return file.name
         })
-        await downloadAll(path, urls, (downloadListRaw.value[item].gid as string), names)
+        await downloadAll(path, urls, (downloadListRaw.value[item].sid as string), names)
     }
 }
 
