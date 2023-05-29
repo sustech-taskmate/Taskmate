@@ -1,7 +1,6 @@
 use std::fs::{create_dir_all, File, remove_file};
 use std::io::Write;
 use std::path::Path;
-
 use anyhow::Result;
 use flate2::read::GzDecoder;
 use mime;
@@ -9,8 +8,14 @@ use reqwest::blocking::get;
 use reqwest::multipart;
 use tar::Archive;
 use walkdir::WalkDir;
-
 pub use custom_error_set::*;
+use std::io::{Read, Cursor};
+use std::path::{PathBuf};
+use std::error::Error;
+use zip::ZipArchive;
+use encoding::{DecoderTrap, Encoding};
+use std::borrow::Cow;
+use encoding_rs::GBK;
 
 #[tauri::command]
 pub async fn analyze_dir(target: &str) -> Result<String, String> {
@@ -57,14 +62,75 @@ pub async fn analyze_dir(target: &str) -> Result<String, String> {
     Ok(result_json)
 }
 
-fn extract_zip(test: &Path, target: &Path) -> Result<()> {
-    let zipfile = File::open(&test)?;
-    let mut zip = zip::ZipArchive::new(zipfile)?;
+fn decompress_zip_file<P: AsRef<Path>>(zip_file_path: P, directory: P) -> Result<(), Box<dyn Error>> {
+    let file = File::open(zip_file_path)?;
+    let mut zip_archive = ZipArchive::new(file)?;
 
-    if !target.exists() {
-        create_dir_all(target)?;
+    for i in 0..zip_archive.len() {
+        let mut zip_file = zip_archive.by_index(i)?;
+        let entry_name = GBK.decode(&zip_file.name_raw()).0.into_owned().to_string();
+
+        let decoded =
+            if guess_zip_file_name_utf8(&zip_file.name()) {
+                zip_file.name()
+            }
+            else {
+                &entry_name
+            };
+
+        let output_file_path = directory.as_ref().join(PathBuf::from(decoded.to_string()));
+
+        if decoded.ends_with('/') {
+            create_dir_all(&output_file_path)?;
+        }
+        else {
+            if let Some(p) = output_file_path.parent() {
+                if !p.exists() {
+                    create_dir_all(p)?;
+                }
+            }
+            let mut output_file = File::create(&output_file_path)?;
+            let mut buffer = Vec::new();
+            zip_file.read_to_end(&mut buffer)?;
+            let mut cursor = Cursor::new(buffer);
+            std::io::copy(&mut cursor, &mut output_file)?;
+        }
     }
-    zip.extract(target)?;
+    Ok(())
+}
+
+fn is_utf8(file_name: &str) -> bool {
+    file_name.is_char_boundary(file_name.len())
+}
+fn is_chinese_character(c: char) -> bool {
+    let unicode_value = c as u32;
+    unicode_value >= 0x4E00 && unicode_value <= 0x9FFF
+}
+fn is_chinese_charset(file_name: &str) -> bool {
+    for c in file_name.chars() {
+        let unicode_value = c as u32;
+        if (unicode_value >= 0x4E00 && unicode_value <= 0x9FFF) || (unicode_value >= 0x00 && unicode_value <= 0x7F) {
+            continue; // 中文字符集或ASCII标准字符
+        } else {
+            return false;
+        }
+    }
+    true
+}
+fn guess_zip_file_name_utf8(file_name: &str) ->  bool {
+    if is_utf8(file_name) && is_chinese_charset(file_name) {
+        true
+    }
+    else {
+        false
+    }
+}
+
+fn extract_zip(test: &Path, target: &Path) -> Result<()> {
+    if !target.exists() {
+        create_dir_all(&target)?;
+    }
+    decompress_zip_file(test,target).expect("extract zip failed");
     remove_file(&test)?;
     Ok(())
 }
@@ -188,9 +254,13 @@ pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), 
 }
 
 
+
 #[cfg(test)]
 mod tests {
+    use serde_json::Value::String;
     use tauri::async_runtime::block_on;
+    use tokio::io::AsyncReadExt;
+    use zip::read::ZipFile;
 
     use super::*;
 
@@ -207,6 +277,16 @@ mod tests {
                 ).to_str().unwrap());
                 block_on(task).unwrap();
             }
+    }
+
+    #[test]
+    fn extract_zip_win() {
+        #[cfg(target_os = "windows")]
+        {
+            let file_path = Path::new("D:\\Desktop\\qwq").join("test2.zip");
+            extract_zip(&file_path,Path::new("D:\\Desktop\\qwq\\test2")).unwrap();
+            // extract_zip(&file_path, Path::new("D:\\Desktop\\qwq\\test"));
+        }
     }
 
     #[test]

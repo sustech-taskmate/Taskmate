@@ -27,6 +27,8 @@ walkdir = "2.3.3"
 url = "2.3.1"
 tauri-plugin-deep-link = "0.1.1"
 mime = "0.3.17"
+encoding = "0.2.33"
+encoding_rs = "0.8.32"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
