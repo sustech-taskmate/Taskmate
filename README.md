@@ -77,7 +77,7 @@ Please ensure your contribution adheres to the following guidelines:
 
 If you have any questions, suggestions, or feedback regarding this project, please feel free to reach out to us through the following channels:
 
-- Email: [enter email address]
+- Email: [![](https://img.shields.io/badge/-tavish9.chen%40gmail.com-black?logo=gmail&style=flat)](mailto:tavish9.chen@gmail.com)
 - Issue Tracker: [Issues Taskmate](https://github.com/sustech-taskmate/Taskmate/issues)
 
 We value your input and will do our best to respond promptly.
