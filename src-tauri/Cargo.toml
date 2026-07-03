@@ -10,10 +10,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1.2", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "1.2", features = ["dialog-all", "fs-all", "http-all", "http-multipart", "path-all", "protocol-all", "shell-open", "system-tray"] }
+tauri = { version = "2", features = ["protocol-asset", "tray-icon"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 reqwest = { version = "0.11", features = ["blocking", "json", "multipart"] }
@@ -25,10 +25,13 @@ flate2 = "1.0.25"
 tar = "0.4.38"
 walkdir = "2.3.3"
 url = "2.3.1"
-tauri-plugin-deep-link = "0.1.1"
+tauri-plugin-deep-link = "2"
 mime = "0.3.17"
 encoding = "0.2.33"
 encoding_rs = "0.8.32"
+tauri-plugin-http = { version = "2.5.9", features = ["unsafe-headers"] }
+tauri-plugin-fs = "2.5.1"
+tauri-plugin-dialog = "2.7.1"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

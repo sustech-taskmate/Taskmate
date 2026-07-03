@@ -148,8 +148,8 @@ import {
 } from "@/composable/serverRequest";
 import {useRoute} from "vue-router";
 import {useRouterPush} from "@/composable";
-import {open} from '@tauri-apps/api/dialog';
-import {readBinaryFile} from "@tauri-apps/api/fs";
+import {open} from "@tauri-apps/plugin-dialog";
+import {readFile} from "@tauri-apps/plugin-fs";
 
 const route = useRoute()
 const {toRoot} = useRouterPush();
@@ -226,7 +226,7 @@ const selectFile = async () => {
         return
     } else {
         await Promise.all(paths.map(async (path) => {
-            const contents = await readBinaryFile(path)
+            const contents = await readFile(path)
             const fileName = path.includes("\\") ? path.substring(path.lastIndexOf("\\") + 1) : path.substring(path.lastIndexOf("/") + 1);
             const file = new File([contents], fileName);
             const fileInfo = {

@@ -1,4 +1,4 @@
-import {invoke} from "@tauri-apps/api/tauri";
+import {invoke} from "@tauri-apps/api/core";
 import {AssignFileType, FileTreeNode, ZipFile} from "@/store/assign";
 import {appDataDir} from "@tauri-apps/api/path";
 

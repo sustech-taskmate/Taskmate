@@ -1,21 +1,21 @@
-use std::fs::{create_dir_all, File, remove_file};
-use std::io::Write;
-use std::path::Path;
 use anyhow::Result;
+pub use custom_error_set::*;
+use encoding::{DecoderTrap, Encoding};
+use encoding_rs::GBK;
 use flate2::read::GzDecoder;
 use mime;
 use reqwest::blocking::get;
 use reqwest::multipart;
+use std::borrow::Cow;
+use std::error::Error;
+use std::fs::{create_dir_all, remove_file, File};
+use std::io::Write;
+use std::io::{Cursor, Read};
+use std::path::Path;
+use std::path::PathBuf;
 use tar::Archive;
 use walkdir::WalkDir;
-pub use custom_error_set::*;
-use std::io::{Read, Cursor};
-use std::path::{PathBuf};
-use std::error::Error;
 use zip::ZipArchive;
-use encoding::{DecoderTrap, Encoding};
-use std::borrow::Cow;
-use encoding_rs::GBK;
 
 #[tauri::command]
 pub async fn analyze_dir(target: &str) -> Result<String, String> {
@@ -35,7 +35,7 @@ pub async fn analyze_dir(target: &str) -> Result<String, String> {
         let is_dir = f.file_type().is_dir();
         let path = Path::new(path);
         #[cfg(target_os = "windows")]
-            let path = {
+        let path = {
             let path_str = path.to_str().ok_or("to str error")?;
             if let Some(path_str) = path_str.strip_prefix("\\\\?\\") {
                 path_str
@@ -46,15 +46,21 @@ pub async fn analyze_dir(target: &str) -> Result<String, String> {
             }
         };
         #[cfg(target_os = "macos")]
-            let path = path.to_str().ok_or("to str error")?;
+        let path = path.to_str().ok_or("to str error")?;
         #[cfg(target_os = "linux")]
-            let path = path.to_str().unwrap();
+        let path = path.to_str().unwrap();
         let simple_path = simple_path.replace("\\", "/");
         let path = path.replace("\\", "/");
         if comma {
-            result_json += &*format!(",{{ \"name\" : \"{}\", \"dir\" : {}, \"url\" : \"{}\" }}\n", simple_path, is_dir, path);
+            result_json += &*format!(
+                ",{{ \"name\" : \"{}\", \"dir\" : {}, \"url\" : \"{}\" }}\n",
+                simple_path, is_dir, path
+            );
         } else {
-            result_json += &*format!("{{ \"name\" : \"{}\", \"dir\" : {}, \"url\" : \"{}\" }}\n", simple_path, is_dir, path);
+            result_json += &*format!(
+                "{{ \"name\" : \"{}\", \"dir\" : {}, \"url\" : \"{}\" }}\n",
+                simple_path, is_dir, path
+            );
         }
         comma = true;
     }
@@ -62,7 +68,10 @@ pub async fn analyze_dir(target: &str) -> Result<String, String> {
     Ok(result_json)
 }
 
-fn decompress_zip_file<P: AsRef<Path>>(zip_file_path: P, directory: P) -> Result<(), Box<dyn Error>> {
+fn decompress_zip_file<P: AsRef<Path>>(
+    zip_file_path: P,
+    directory: P,
+) -> Result<(), Box<dyn Error>> {
     let file = File::open(zip_file_path)?;
     let mut zip_archive = ZipArchive::new(file)?;
 
@@ -70,20 +79,17 @@ fn decompress_zip_file<P: AsRef<Path>>(zip_file_path: P, directory: P) -> Result
         let mut zip_file = zip_archive.by_index(i)?;
         let entry_name = GBK.decode(&zip_file.name_raw()).0.into_owned().to_string();
 
-        let decoded =
-            if guess_zip_file_name_utf8(&zip_file.name()) {
-                zip_file.name()
-            }
-            else {
-                &entry_name
-            };
+        let decoded = if guess_zip_file_name_utf8(&zip_file.name()) {
+            zip_file.name()
+        } else {
+            &entry_name
+        };
 
         let output_file_path = directory.as_ref().join(PathBuf::from(decoded.to_string()));
 
         if decoded.ends_with('/') {
             create_dir_all(&output_file_path)?;
-        }
-        else {
+        } else {
             if let Some(p) = output_file_path.parent() {
                 if !p.exists() {
                     create_dir_all(p)?;
@@ -109,7 +115,9 @@ fn is_chinese_character(c: char) -> bool {
 fn is_chinese_charset(file_name: &str) -> bool {
     for c in file_name.chars() {
         let unicode_value = c as u32;
-        if (unicode_value >= 0x4E00 && unicode_value <= 0x9FFF) || (unicode_value >= 0x00 && unicode_value <= 0x7F) {
+        if (unicode_value >= 0x4E00 && unicode_value <= 0x9FFF)
+            || (unicode_value >= 0x00 && unicode_value <= 0x7F)
+        {
             continue; // 中文字符集或ASCII标准字符
         } else {
             return false;
@@ -117,11 +125,10 @@ fn is_chinese_charset(file_name: &str) -> bool {
     }
     true
 }
-fn guess_zip_file_name_utf8(file_name: &str) ->  bool {
+fn guess_zip_file_name_utf8(file_name: &str) -> bool {
     if is_utf8(file_name) && is_chinese_charset(file_name) {
         true
-    }
-    else {
+    } else {
         false
     }
 }
@@ -130,7 +137,7 @@ fn extract_zip(test: &Path, target: &Path) -> Result<()> {
     if !target.exists() {
         create_dir_all(&target)?;
     }
-    decompress_zip_file(test,target).expect("extract zip failed");
+    decompress_zip_file(test, target).expect("extract zip failed");
     remove_file(&test)?;
     Ok(())
 }
@@ -157,7 +164,9 @@ enum ExtractOperationType {
 
 #[tauri::command]
 pub async fn upload_file(url: &str, file_path: &str, key: &str, token: &str) -> Result<(), String> {
-    let file_content = tokio::fs::read(file_path).await.map_err(|err| err.to_string())?;
+    let file_content = tokio::fs::read(file_path)
+        .await
+        .map_err(|err| err.to_string())?;
 
     let client = reqwest::Client::new();
 
@@ -170,7 +179,8 @@ pub async fn upload_file(url: &str, file_path: &str, key: &str, token: &str) -> 
         .text("key", key.to_owned())
         .text("token", token.to_owned());
 
-    client.post(url)
+    client
+        .post(url)
         .multipart(form)
         .send()
         .await
@@ -178,7 +188,6 @@ pub async fn upload_file(url: &str, file_path: &str, key: &str, token: &str) -> 
 
     Ok(())
 }
-
 
 #[tauri::command]
 pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), String> {
@@ -197,7 +206,11 @@ pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), 
     }
     let file_name = {
         if file_name.to_string().is_empty() {
-            Path::new(url).file_name().ok_or("get filename error")?.to_str().ok_or("trans to str error")?
+            Path::new(url)
+                .file_name()
+                .ok_or("get filename error")?
+                .to_str()
+                .ok_or("trans to str error")?
         } else {
             file_name
         }
@@ -217,32 +230,32 @@ pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), 
             // drop(file);
 
             #[cfg(target_os = "windows")]
-                {
-                    if should_extract == ExtractOperationType::Zip {
-                        // extract(&filePath,  &zip_path, &origin_path);
-                        extract_zip(&file_path, &zip_path).map_err(|err| err.to_string())?;
-                        //delete filePath
-                    }
-                    if should_extract == ExtractOperationType::TarGz {
-                        extract_targz(&file_path, &zip_path).map_err(|err| err.to_string())?;
-                        //delete filePath
-                    }
+            {
+                if should_extract == ExtractOperationType::Zip {
+                    // extract(&filePath,  &zip_path, &origin_path);
+                    extract_zip(&file_path, &zip_path).map_err(|err| err.to_string())?;
+                    //delete filePath
                 }
+                if should_extract == ExtractOperationType::TarGz {
+                    extract_targz(&file_path, &zip_path).map_err(|err| err.to_string())?;
+                    //delete filePath
+                }
+            }
             #[cfg(target_os = "macos")]
-                {
-                    if should_extract == ExtractOperationType::Zip {
-                        // extract(&filePath,  &zip_path, &origin_path);
-                        extract_zip(&file_path, &zip_path).map_err(|err| err.to_string())?;
-                        //delete filePath
-                    }
+            {
+                if should_extract == ExtractOperationType::Zip {
+                    // extract(&filePath,  &zip_path, &origin_path);
+                    extract_zip(&file_path, &zip_path).map_err(|err| err.to_string())?;
+                    //delete filePath
                 }
+            }
             // if should_extract {
             //     extract(&filePath,  &zip_path, &origin_path);
             // }
             #[cfg(not(any(target_os = "windows", target_os = "macos")))]
-                {
-                    compile_error!("test");
-                }
+            {
+                compile_error!("test");
+            }
             Ok(())
         }
         Err(err) => {
@@ -252,8 +265,6 @@ pub fn download_file(url: &str, file_path: &str, file_name: &str) -> Result<(), 
         }
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {
@@ -267,16 +278,16 @@ mod tests {
     #[test]
     fn test_win() {
         #[cfg(target_os = "windows")]
-            {
-                download_file("https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.zip",
-                              "D:\\Desktop\\testStudent",
-                              "test.zip",
-                ).unwrap();
-                let task = analyze_dir(Path::new(
-                    "D:\\Desktop\\testStudent"
-                ).to_str().unwrap());
-                block_on(task).unwrap();
-            }
+        {
+            download_file(
+                "https://ooad-1312953997.cos.ap-guangzhou.myqcloud.com/test.zip",
+                "D:\\Desktop\\testStudent",
+                "test.zip",
+            )
+            .unwrap();
+            let task = analyze_dir(Path::new("D:\\Desktop\\testStudent").to_str().unwrap());
+            block_on(task).unwrap();
+        }
     }
 
     #[test]
@@ -284,7 +295,7 @@ mod tests {
         #[cfg(target_os = "windows")]
         {
             let file_path = Path::new("D:\\Desktop\\qwq").join("test2.zip");
-            extract_zip(&file_path,Path::new("D:\\Desktop\\qwq\\test2")).unwrap();
+            extract_zip(&file_path, Path::new("D:\\Desktop\\qwq\\test2")).unwrap();
             // extract_zip(&file_path, Path::new("D:\\Desktop\\qwq\\test"));
         }
     }
@@ -292,13 +303,16 @@ mod tests {
     #[test]
     fn test_mac() {
         #[cfg(target_os = "macos")]
-            {
-                download_file("https://www.learningcontainer.com/wp-content/uploads/2020/05/sample.tar", "./res/testStudent", "sample.tar").unwrap();
-                let task = analyze_dir(Path::new(
-                    "./res/testStudent"
-                ).to_str().unwrap());
-                block_on(task).unwrap();
-            }
+        {
+            download_file(
+                "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample.tar",
+                "./res/testStudent",
+                "sample.tar",
+            )
+            .unwrap();
+            let task = analyze_dir(Path::new("./res/testStudent").to_str().unwrap());
+            block_on(task).unwrap();
+        }
     }
 
     #[test]

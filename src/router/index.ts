@@ -26,6 +26,30 @@ const routes = [
         })
     },
     {
+        path: '/class/:id',
+        name: 'lmsClass',
+        component: () => import('../view/LmsClassView.vue'),
+        beforeEnter: requireLmsSession
+    },
+    {
+        path: '/assignment/:id',
+        name: 'lmsAssignment',
+        component: () => import('../view/LmsAssignmentView.vue'),
+        beforeEnter: requireLmsSession
+    },
+    {
+        path: '/submission/:slug',
+        name: 'lmsSubmission',
+        component: () => import('../view/LmsSubmissionView.vue'),
+        beforeEnter: requireLmsSession
+    },
+    {
+        path: '/discussion/:threadId',
+        name: 'lmsDiscussion',
+        component: () => import('../view/LmsDiscussionView.vue'),
+        beforeEnter: requireLmsSession
+    },
+    {
         path: '/loading',
         name: 'loading',
         component: () => import('../view/Loading.vue')
@@ -38,35 +62,49 @@ const routes = [
     {
         path: '/upload/s/:cid',
         name: 'upload',
-        component: () => import('../view/Submit.vue')
+        redirect: (to: any) => ({name: 'lmsClass', params: {id: to.params.cid}})
     },
     {
         path: '/grade/t/:cid',
         name: 'teacherCourse',
-        component: () => import('../view/CourseView.vue')
+        redirect: (to: any) => ({name: 'lmsClass', params: {id: to.params.cid}})
     },
     {
         path: '/grade/t/:cid/:aid',
         name: 'teacherAssign',
-        component: () => import('../view/AssignView.vue')
+        redirect: (to: any) => ({name: 'lmsAssignment', params: {id: to.params.aid}})
     },
     {
         path: '/grade/t/:cid/:aid/statistics',
         name: 'statistics',
-        component: () => import('../view/AssignStatistics.vue')
+        redirect: (to: any) => ({name: 'lmsAssignment', params: {id: to.params.aid}})
+    },
+    {
+        path: '/grade/t/:cid/:aid/:gid/file/',
+        name: 'render',
+        redirect: (to: any) => ({name: 'lmsSubmission', params: {slug: to.params.gid}})
     },
     {
         path: '/grade/t/:cid/:aid/:gid',
         name: 'grade',
-        component: () => import('../view/Grading.vue'),
-        children: [{
-            path: 'file/',
-            name: 'render',
-            component: () => import('../components/AssignContent/FileContent.vue')
-        }]
+        redirect: (to: any) => ({name: 'lmsSubmission', params: {slug: to.params.gid}})
     },
 
 ]
+
+async function requireLmsSession(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+    const token = localStorage.getItem('token')
+    if (token) {
+        const res = await login(token)
+        if (res) {
+            next()
+            return
+        }
+    }
+    next({
+        name: 'empty',
+    })
+}
 const routerHistory = createMemoryHistory();
 export const router = createRouter({
     // history: createWebHashHistory(),

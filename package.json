@@ -9,11 +9,15 @@
     "dev": "vite",
     "preview": "vite preview",
     "tauri": "tauri",
-    "test": "jest"
+    "test": "jest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@kangc/v-md-editor": "^2.1.7",
-    "@tauri-apps/api": "^1.2.0",
+    "@tauri-apps/api": "^2.11.1",
+    "@tauri-apps/plugin-dialog": "^2.7.1",
+    "@tauri-apps/plugin-fs": "^2.5.1",
+    "@tauri-apps/plugin-http": "^2.5.9",
     "@vueuse/core": "^9.13.0",
     "crypto-js": "^4.1.1",
     "echarts": "^5.4.2",
@@ -35,7 +39,8 @@
     "@babel/preset-typescript": "^7.21.5",
     "@babel/register": "^7.21.0",
     "@element-plus/icons-vue": "^2.1.0",
-    "@tauri-apps/cli": "^1.2.2",
+    "@playwright/test": "^1.61.1",
+    "@tauri-apps/cli": "^2.11.4",
     "@types/jest": "^27.5.2",
     "@types/lodash": "^4.14.194",
     "@types/node": "^18.16.10",

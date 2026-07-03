@@ -25,6 +25,7 @@ import Prism from 'prismjs';
 import 'prismjs/components/prism-json';
 // @ts-ignore
 import setupStyle from './assets/index';
+import {setupDeepLinks} from "@/util/deeplink";
 
 async function setupApp() {
     setupStyle()
@@ -41,10 +42,10 @@ async function setupApp() {
     await setupStore(app)
 
     await setupRouter(app)
+    await setupDeepLinks()
 
     app.mount('#app')
 }
 
 setupApp()
-
 

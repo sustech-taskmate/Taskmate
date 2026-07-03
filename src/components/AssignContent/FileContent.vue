@@ -30,8 +30,8 @@ import {AssignFileType, FileTo} from '@/store/assign';
 import {ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {decrypt} from "@/util";
-import {convertFileSrc} from "@tauri-apps/api/tauri";
-import {readBinaryFile} from "@tauri-apps/api/fs";
+import {convertFileSrc} from "@tauri-apps/api/core";
+import {readFile} from "@tauri-apps/plugin-fs";
 import VuePdfEmbed from 'vue-pdf-embed'
 
 
@@ -51,7 +51,7 @@ async function updateData() {
     selectedFile.value = decrypt(route.query.detail as string) as FileTo;
     format.value = selectedFile.value.format;
     url.value = convertFileSrc(selectedFile.value.url);
-    const file = await readBinaryFile(selectedFile.value.url);
+    const file = await readFile(selectedFile.value.url);
     data.value = new TextDecoder('utf-8').decode(file);
     videoSrc.value = url.value
 }
@@ -95,5 +95,4 @@ watch(
     height: auto;
 }
 </style>
-
 

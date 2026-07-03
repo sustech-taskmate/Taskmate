@@ -90,9 +90,9 @@ import {Assignment, getSubmissionInfo, getSubmissions, Submission} from "@/compo
 import moment from "moment";
 import {AssignmentState, StudentContent} from "@/store/assignview";
 import '@/assets/style/local/assignview.css'
-import {open, save} from "@tauri-apps/api/dialog";
+import {open, save} from "@tauri-apps/plugin-dialog";
 import {downloadAll} from "@/composable/assign";
-import {fs} from "@tauri-apps/api";
+import {writeTextFile} from "@tauri-apps/plugin-fs";
 import _ from "lodash";
 
 const route = useRoute();
@@ -222,7 +222,7 @@ const transmit = async () => {
         csvData.push({sid: submissions.value[item].submitter.sid, score: submissions.value[item].score})
     }
     const csvContent = convertArrayToCSV(csvData);
-    await fs.writeFile(path, csvContent);
+    await writeTextFile(path, csvContent);
 }
 
 const submissionList = await getSubmissions(cid)

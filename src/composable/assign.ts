@@ -1,5 +1,5 @@
-import {invoke} from "@tauri-apps/api/tauri";
-import {exists, readTextFile} from "@tauri-apps/api/fs";
+import {invoke} from "@tauri-apps/api/core";
+import {exists, readTextFile} from "@tauri-apps/plugin-fs";
 import {AssignFileType, FileTreeNode, ZipFile} from "@/store/assign";
 import {appDataDir} from "@tauri-apps/api/path";
 

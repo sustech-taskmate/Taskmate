@@ -1,6 +1,4 @@
-import type {HttpOptions, RequestOptions, Response as res} from '@tauri-apps/api/http'
-
-declare namespace Service {
+export declare namespace Service {
     /**
      * 请求的错误类型：
      * - tauri: tauri错误：网络错误, 请求超时, 默认的兜底错误
@@ -24,14 +22,25 @@ declare namespace Service {
         data: null;
     }
 
-    type HttpOption = HttpOptions
+    type RequestOption = RequestInit & {
+        query?: Record<string, string | number | boolean>;
+        timeout?: number;
+    }
 
-    type RequestOption = RequestOptions
+    type HttpOption = RequestOption & {
+        url: string;
+        method: string;
+    }
 
-    type Response<T> = res<T>
+    interface Response<T> {
+        ok: boolean;
+        status: number;
+        headers: Record<string, string>;
+        data: T;
+    }
 }
 
-declare namespace App {
+export declare namespace App {
     interface AssignTabRoute
         extends Pick<import('vue-router').RouteLocationNormalizedLoaded, 'name' | 'fullPath' | 'meta'> {
         scrollPosition: {

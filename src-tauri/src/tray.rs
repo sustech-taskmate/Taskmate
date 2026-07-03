@@ -1,60 +1,60 @@
-use tauri::{AppHandle, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem};
+use tauri::{
+    menu::MenuBuilder,
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    App, Manager,
+};
 
-// 托盘菜单
-pub fn menu() -> SystemTray {
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-    let show = CustomMenuItem::new("show".to_string(), "Show");
-    let full_screen = CustomMenuItem::new("fullscreen".to_string(), "Fullscreen");
-    let windowed = CustomMenuItem::new("window".to_string(), "Window");
-    let hide = CustomMenuItem::new("hide".to_string(), "Hide");
-    let tray_menu = SystemTrayMenu::new()
-        .add_item(hide)
-        .add_item(show)
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(full_screen)
-        .add_item(windowed)
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(quit);
+pub fn setup(app: &mut App) -> tauri::Result<()> {
+    let menu = MenuBuilder::new(app)
+        .text("hide", "Hide")
+        .text("show", "Show")
+        .separator()
+        .text("fullscreen", "Fullscreen")
+        .text("window", "Window")
+        .separator()
+        .text("quit", "Quit")
+        .build()?;
 
-    SystemTray::new().with_menu(tray_menu)
-}
+    TrayIconBuilder::with_id("main")
+        .menu(&menu)
+        .show_menu_on_left_click(false)
+        .on_tray_icon_event(|tray, event| {
+            if let TrayIconEvent::Click {
+                button: MouseButton::Left,
+                button_state: MouseButtonState::Up,
+                ..
+            } = event
+            {
+                if let Some(window) = tray.app_handle().get_webview_window("main") {
+                    let _ = window.show();
+                    let _ = window.set_focus();
+                }
+            }
+        })
+        .on_menu_event(|app, event| {
+            let Some(window) = app.get_webview_window("main") else {
+                return;
+            };
 
-pub fn handler(app: &AppHandle, event: SystemTrayEvent) {
-    let window = app.get_window("main").unwrap();
-    match event {
-        SystemTrayEvent::LeftClick {
-            position: _,
-            size: _,
-            ..
-        } => {
-            window.show().unwrap();
-        }
-        SystemTrayEvent::RightClick {
-            position: _,
-            size: _,
-            ..
-        } => {
+            match event.id().as_ref() {
+                "quit" => app.exit(0),
+                "show" => {
+                    let _ = window.show();
+                    let _ = window.set_focus();
+                }
+                "hide" => {
+                    let _ = window.hide();
+                }
+                "fullscreen" => {
+                    let _ = window.set_fullscreen(true);
+                }
+                "window" => {
+                    let _ = window.set_fullscreen(false);
+                }
+                _ => {}
+            }
+        })
+        .build(app)?;
 
-        }
-        SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-            "quit" => {
-                std::process::exit(0);
-            }
-            "show" => {
-                window.show().unwrap();
-            }
-            "hide" => {
-                window.hide().unwrap();
-            }
-            "fullscreen" => {
-                window.set_fullscreen(true).expect("TODO: panic message");
-            }
-            "window" => {
-                window.set_fullscreen(false).expect("TODO: panic message");
-            }
-            _ => {}
-        },
-        _ => {}
-
-    }
+    Ok(())
 }

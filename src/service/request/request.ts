@@ -1,12 +1,17 @@
-import {fetch, ResponseType} from '@tauri-apps/api/http';
+import {fetch as tauriFetch} from "@tauri-apps/plugin-http";
 import {Service} from "@/typing/system";
 
 export function createRequest() {
     let cookie = ''
-    let baseUrl = 'https://spaces.sustech.cloud/api'
+    let authToken = ''
+    const baseUrl = import.meta.env.VITE_LMS_API_BASE_URL ?? 'http://localhost:3000/api/internal/app'
 
     function setCookie(val: string): void {
         cookie = val
+    }
+
+    function setAuthToken(val: string): void {
+        authToken = val
     }
 
     function clearCookie(): void {
@@ -26,17 +31,28 @@ export function createRequest() {
      */
     async function asyncRequest<T>(param: Service.HttpOption): Promise<Service.Response<T>> {
         const {url, method, body, query, headers} = param;
-        const fullUrl = baseUrl + url;
-        const timeout = param.timeout || 30;
-        const type = param.responseType || ResponseType.JSON;
-        return (await fetch<T>(fullUrl, {
-            method: method,
-            headers: {cookie, ...headers},
-            body: body,
-            query: query,
-            timeout: timeout,
-            responseType: type
-        }));
+        const fullUrl = new URL(baseUrl + url);
+        Object.entries(query ?? {}).forEach(([key, value]) => fullUrl.searchParams.set(key, String(value)));
+        const requestHeaders = new Headers(headers);
+        if (cookie) requestHeaders.set("cookie", cookie);
+        if (authToken) requestHeaders.set("authorization", `Bearer ${authToken}`);
+        const fetchImpl = isTauriRuntime() ? tauriFetch : globalThis.fetch;
+        const response = await fetchImpl(fullUrl.toString(), {
+            method,
+            headers: requestHeaders,
+            body,
+        });
+        const responseHeaders: Record<string, string> = {};
+        response.headers.forEach((value, key) => {
+            responseHeaders[key] = value;
+        });
+
+        return {
+            ok: response.ok,
+            status: response.status,
+            headers: responseHeaders,
+            data: await response.json().catch(() => null) as T,
+        };
     }
 
     /**
@@ -112,5 +128,10 @@ export function createRequest() {
         patch,
         setCookie,
         clearCookie,
+        setAuthToken,
     };
+}
+
+function isTauriRuntime() {
+    return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 }

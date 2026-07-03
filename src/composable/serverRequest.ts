@@ -1,7 +1,6 @@
 import {request} from "@/service/request";
-import {Body} from "@tauri-apps/api/http";
 import {useRouterPush} from "@/composable/router";
-import {invoke} from "@tauri-apps/api/tauri";
+import {invoke} from "@tauri-apps/api/core";
 
 
 /*    sample value:
@@ -26,6 +25,348 @@ interface User {
         sid: string,
     },
     role: string,
+}
+
+export interface LmsUser {
+    id: string;
+    name: string | null;
+    email: string;
+    image: string | null;
+}
+
+export interface LmsJoinedClass {
+    id: number;
+    slug: string;
+    name: string;
+    code: string;
+    label: string;
+    course: {
+        id: number;
+        code: string;
+        name: string;
+    };
+    semester: {
+        year: number;
+        season: string;
+    };
+}
+
+export interface LmsAssignmentStats {
+    totalAssignments: number;
+    submissionsThisWeek: number;
+    pendingToGrade: number;
+    averageScore: number | null;
+}
+
+export interface LmsHomeResponse {
+    user: LmsUser;
+    classes: LmsJoinedClass[];
+    assignmentStats: LmsAssignmentStats;
+}
+
+export interface LmsClassDetails {
+    id: number;
+    slug: string;
+    name: string;
+    course: {
+        id: number;
+        code: string;
+        name: string;
+    };
+    semester: {
+        year: number;
+        season: string;
+    };
+    users: {
+        id: string;
+        role: string;
+        user: {
+            id: string;
+            name: string;
+            email: string;
+        };
+    }[];
+    assignments: {
+        id: number;
+        name: string;
+        title: string;
+        classId: number;
+        problemId: number | null;
+        publishedAt: string | null;
+        startTime: string | null;
+        endTime: string | null;
+        createdAt: string;
+        updatedAt: string;
+    }[];
+    activities?: {
+        id: string;
+        kind: string;
+        actorName: string;
+        targetName: string;
+        createdAt: string;
+    }[];
+    deadlines?: {
+        id: number;
+        title: string;
+        slug: string;
+        endTime: string;
+    }[];
+    announcements?: {
+        id: number;
+        title: string;
+        createdAt?: string;
+        pinned?: boolean;
+    }[];
+    discussions?: {
+        id: string;
+        title: string;
+        updatedAt?: string;
+        authorName?: string;
+        replyCount?: number;
+    }[];
+    resources?: {
+        id: string;
+        name: string;
+        type?: string;
+        size?: number | null;
+        updatedAt?: string;
+    }[];
+    learningPath?: LmsLearningPath | LmsLearningPathModule[];
+    problems?: {
+        id?: number;
+        name?: string;
+        title?: string;
+    }[];
+    gradeOverview?: {
+        averageScore?: number | null;
+        gradedAssignments?: number;
+        totalAssignments?: number;
+    };
+}
+
+export interface LmsLearningPathItem {
+    id: string | number;
+    title: string;
+    kind?: string;
+    completed?: boolean;
+    completedAt?: string | null;
+    status?: string;
+    assignmentId?: number | null;
+    fileEntryId?: string | null;
+    externalUrl?: string | null;
+}
+
+export interface LmsLearningPathModule {
+    id: string | number;
+    title: string;
+    items?: LmsLearningPathItem[];
+}
+
+export interface LmsLearningPath {
+    modules: LmsLearningPathModule[];
+    progress?: {
+        completedItems?: number;
+        totalItems?: number;
+        completedRequiredItems?: number;
+        totalRequiredItems?: number;
+        completionRate?: number;
+    };
+}
+
+export interface LmsClassSubmissionList {
+    submissions: {
+        id: number;
+        slug: string;
+        name: string;
+        submitterId: string;
+        submitterName: string;
+        assignment: {
+            id: number;
+            slug: string;
+            title: string;
+            name: string;
+            classId: number;
+        };
+        statuses: string[];
+        createdAt: string;
+    }[];
+    availableStatuses: string[];
+    pagination: {
+        page: number;
+        pageSize: number;
+        total: number;
+        totalPages: number;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+    };
+}
+
+export interface LmsAssignmentDetails {
+    id: number;
+    slug: string;
+    classId: number;
+    problemId: number;
+    problemIds: number[];
+    name: string;
+    title: string;
+    description: unknown;
+    publishState: string;
+    createdAt: string;
+    updatedAt: string;
+    status: string;
+    class: {
+        name: string;
+        course: { name: string } | null;
+    } | null;
+    problem: {
+        id?: number;
+        name?: string;
+        title: string;
+        description: unknown;
+        submissionRequirements: LmsSubmissionRequirement[];
+        gradingPolicyKind?: string;
+    } | null;
+    problemItems: {
+        id: number;
+        assignmentId: number;
+        problemId: number;
+        position: number;
+        problem: LmsAssignmentDetails["problem"];
+    }[];
+    submissions: {
+        id: number;
+        slug: string;
+        assignmentId: number;
+        submitterId: string;
+        name: string;
+        createdAt: string;
+        currentAutoJudge: {
+            phase: string;
+            verdict?: string;
+            rawScore?: number;
+        } | null;
+    }[];
+    rubricSnapshot: unknown | null;
+}
+
+export interface LmsSubmissionRequirement {
+    id: string;
+    kind: string;
+    displayName: string;
+    required: boolean;
+    filename?: string;
+    languageFilenames?: Record<string, string>;
+}
+
+export interface LmsSubmissionDetails {
+    id: number;
+    slug: string;
+    createdAt: string;
+    name: string;
+    latestFileEntryId: string | null;
+    assignment: {
+        id: number;
+        slug: string;
+        title: string;
+        gradingStrategy: string;
+    };
+    problem: {
+        id: number;
+        name: string;
+        title: string;
+        class: {
+            id: number;
+            name: string;
+            slug?: string;
+            course: { name: string };
+        };
+    };
+    submitter: {
+        id: string;
+        name: string;
+        email: string;
+        sustechId?: string;
+    };
+    currentGrade: {
+        draft: { points: number; releasedAt?: string | null } | null;
+        released: { points: number; releasedAt?: string | null } | null;
+    };
+    currentAutoJudge: {
+        phase: string;
+        verdict?: string;
+        rawScore?: number;
+    } | null;
+    submissionContent: unknown;
+    submissionFiles: unknown;
+    fileEntries: {
+        id: string;
+        name: string;
+        type?: string;
+        size?: number | null;
+    }[];
+    feedbacks: LmsSubmissionFeedback[];
+}
+
+interface LmsSubmissionUploadParams {
+    folderId: string;
+    fileEntryId: string;
+    uploadUrl: string;
+    token: string;
+    key: string;
+}
+
+interface LmsSubmissionResponse {
+    slug: string;
+}
+
+interface LmsOAuthTokenResponse {
+    access_token: string;
+}
+
+export interface LmsResourceDownload {
+    url: string;
+}
+
+export interface LmsDiscussionDetails {
+    id: string;
+    classId: number;
+    title: string;
+    createdAt: string;
+    updatedAt: string;
+    author: LmsUser;
+    posts: {
+        id: string;
+        body: unknown;
+        createdAt: string;
+        updatedAt: string;
+        author: LmsUser;
+    }[];
+}
+
+interface LmsDiscussionPostResponse {
+    id: string;
+}
+
+interface LmsDiscussionThreadResponse {
+    id: string;
+}
+
+interface LmsLearningItemCompletionResponse {
+    itemId: number;
+    completedAt: string | null;
+}
+
+export interface LmsSubmissionFeedback {
+    id: string;
+    createdAt?: string;
+    updatedAt?: string;
+    score: number;
+    content?: unknown;
+    reason?: string;
+    rubricResult?: unknown;
+    releasedAt?: string | null;
+    creatorId?: string;
+    creator?: { name: string };
 }
 
 interface Semester {
@@ -192,6 +533,13 @@ interface AnswerResponse {
     answer: Answer
 }
 
+function jsonBody(data: unknown): RequestInit {
+    return {
+        headers: {"content-type": "application/json"},
+        body: JSON.stringify(data),
+    }
+}
+
 export interface Entries {
     name: string;
     title: string;
@@ -220,23 +568,131 @@ export interface UploadFile {
 }
 
 async function login(token: string) {
-    const url = '/auth/login'
-    const response = await request.post(url, {
-        body: Body.json({
-            token: token
+    request.setAuthToken(token)
+    const response = await request.get<LmsHomeResponse>('/home')
+    return response.ok
+}
+
+async function exchangeLmsAuthCode(params: {
+    code: string;
+    codeVerifier: string;
+    redirectUri: string;
+    clientId: string;
+}) {
+    const response = await request.post<LmsOAuthTokenResponse>('/oauth/token', {
+        ...jsonBody({
+            grant_type: "authorization_code",
+            client_id: params.clientId,
+            redirect_uri: params.redirectUri,
+            code: params.code,
+            code_verifier: params.codeVerifier,
+        })
+    })
+    return response.ok ? response.data.access_token : null;
+}
+
+async function getLmsHome() {
+    const response = await request.get<LmsHomeResponse>('/home')
+    return response.data
+}
+
+async function getLmsClass(classId: number | string) {
+    const response = await request.get<LmsClassDetails>(`/classes/${classId}`)
+    return response.data
+}
+
+async function getLmsClassSubmissions(classId: number | string) {
+    const response = await request.get<LmsClassSubmissionList>(`/classes/${classId}/submissions`)
+    return response.data
+}
+
+async function getLmsAssignment(assignmentId: number | string) {
+    const response = await request.get<LmsAssignmentDetails>(`/assignments/${assignmentId}`)
+    return response.data
+}
+
+async function getLmsSubmission(slug: string) {
+    const response = await request.get<LmsSubmissionDetails>(`/submissions/${slug}`)
+    return response.data
+}
+
+async function getLmsResource(resourceId: string) {
+    const response = await request.get<LmsResourceDownload>(`/resources/${resourceId}`)
+    return response.ok ? response.data : null;
+}
+
+async function getLmsDiscussion(threadId: string) {
+    const response = await request.get<LmsDiscussionDetails>(`/discussions/${threadId}`)
+    return response.data
+}
+
+async function createLmsDiscussionPost(threadId: string, body: string) {
+    const response = await request.post<LmsDiscussionPostResponse>(`/discussions/${threadId}/posts`, {
+        ...jsonBody({body})
+    })
+    return response.ok ? response.data : null;
+}
+
+async function createLmsDiscussion(classId: number | string, params: {
+    title: string;
+    body: string;
+}) {
+    const response = await request.post<LmsDiscussionThreadResponse>(`/classes/${classId}/discussions`, {
+        ...jsonBody(params)
+    })
+    return response.ok ? response.data : null;
+}
+
+async function setLmsLearningItemCompletion(itemId: number | string, completed: boolean) {
+    const response = await request.post<LmsLearningItemCompletionResponse>(`/learning-items/${itemId}/completion`, {
+        ...jsonBody({completed})
+    })
+    return response.ok ? response.data : null;
+}
+
+async function submitLmsFile(params: {
+    assignmentId: number;
+    assignmentProblemItemId?: number;
+    file: File;
+    name: string;
+}) {
+    const upload = await request.post<LmsSubmissionUploadParams>(`/assignments/${params.assignmentId}/submission-file-upload`, {
+        ...jsonBody({
+            filename: params.file.name,
+            size: params.file.size,
         })
     });
-    if (response.ok) {
-        const cookie = response.headers['set-cookie']
-        request.setCookie(cookie)
-        return true
-    }
-    return false
+
+    if (!upload.ok) return null;
+
+    const form = new FormData();
+    form.set("token", upload.data.token);
+    form.set("key", upload.data.key);
+    form.set("file", params.file, params.file.name);
+
+    const uploadResponse = await globalThis.fetch(upload.data.uploadUrl, {
+        method: "POST",
+        body: form,
+    });
+    if (!uploadResponse.ok) return null;
+
+    const response = await request.post<LmsSubmissionResponse>(`/assignments/${params.assignmentId}/submissions`, {
+        ...jsonBody({
+            assignmentProblemItemId: params.assignmentProblemItemId,
+            name: params.name,
+            fileEntryId: upload.data.folderId,
+            content: {},
+            files: [],
+        })
+    });
+
+    return response.ok ? response.data : null;
 }
 
 async function logout() {
     localStorage.removeItem('token');
     request.clearCookie()
+    request.setAuthToken("")
     const {routerPush} = useRouterPush();
     await routerPush({name: 'empty'})
 }
@@ -299,7 +755,7 @@ async function uploadFile(classId: string, problemId: string, entryId: string, f
     const uuids: string[] = await Promise.all(files.map(async file => {
         const url = `/file/`;
         const response = await request.post<FileResponse>(url, {
-            body: Body.json({
+            ...jsonBody({
                 size: file.size,
                 name: file.name,
             })
@@ -315,14 +771,14 @@ async function uploadFile(classId: string, problemId: string, entryId: string, f
 
     let url = `/problem/${problemId}/answer`;
     const response = await request.post<AnswerResponse>(url, {
-        body: Body.json({
+        ...jsonBody({
             files: uuids
         })
     })
 
     url = `/class/${classId}/entry/${entryId}/submission`
     const response2 = await request.post(url, {
-        body: Body.json({
+        ...jsonBody({
             answers: [response.data.answer.uuid]
         })
     })
@@ -333,7 +789,7 @@ async function uploadFile(classId: string, problemId: string, entryId: string, f
 async function returnSubmission(submissionName: string, score: number, comment?: string, metrics?: { [key: string]: number; }) {
     const url = `/submission/${submissionName}/score`;
     const response = await request.post(url, {
-        body: Body.json({
+        ...jsonBody({
             score: score,
             comment: comment,
             metrics: metrics
@@ -345,7 +801,7 @@ async function returnSubmission(submissionName: string, score: number, comment?:
 async function sendNote(classId: string, entryId: string, note: string) {
     const url = `/class/${classId}/entry/${entryId}/note`;
     const response = await request.post(url, {
-        body: Body.json({
+        ...jsonBody({
             text: note,
         })
     })
@@ -367,10 +823,17 @@ export {
     uploadFile,
     returnSubmission,
     sendNote,
+    exchangeLmsAuthCode,
+    getLmsHome,
+    getLmsClass,
+    getLmsClassSubmissions,
+    getLmsAssignment,
+    getLmsSubmission,
+    getLmsResource,
+    getLmsDiscussion,
+    createLmsDiscussion,
+    createLmsDiscussionPost,
+    setLmsLearningItemCompletion,
+    submitLmsFile,
 }
 export type {ClassesResponseData}
-
-
-
-
-

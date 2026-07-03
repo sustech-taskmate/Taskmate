@@ -1,37 +1,50 @@
-import index from "@/view/Index.vue"
-import {mount} from "@vue/test-utils";
-import {ClassesResponseData, Class} from "@/composable/serverRequest.ts";
+import {flushPromises, mount} from "@vue/test-utils";
+import Index from "@/view/Index.vue";
+import {getLmsHome} from "@/composable/serverRequest";
 
-test('Index', async () => {
-    const wrapper = mount(index,
-        {
-            props: {
-                tempClassList: [
-                    {id: 4, name: "F", title: "FFF", role: 'assistant', semester: {id: 1, year: 2023, season: 'Spring'}}
-                ]
-            }
-        })
-    expect(wrapper).toBeTruthy()
-    const t = wrapper.findAll('over-view-right-card')
-    await wrapper.vm.$nextTick();
-    expect(wrapper.vm.m).toEqual(new Map ([
-        ['Spring', 0],
-        ['Summer', 1],
-        ['Fall', 2],
-        ['Winter', 3]
-    ]))
-    expect(wrapper.vm.SaTodo).toEqual([])
-    expect(wrapper.vm.StudentTodo).toEqual([])
-    expect(wrapper.vm.cardList).toEqual([
-        {
-            key: '2023 Spring',
-            listContainCard: [
-                {id: 4, name: 'F', title: 'FFF', role: 'assistant'}
-            ],
-            isOpen: false,
-            isLoading: false,
-            index: 0
-        }
-    ]);
-    const temp = mount(index)
-})
+jest.mock("@/composable/serverRequest", () => ({
+    getLmsHome: jest.fn(),
+}));
+
+jest.mock("vue-router", () => ({
+    useRouter: () => ({
+        push: jest.fn(),
+    }),
+}));
+
+test("Index renders LMS home data", async () => {
+    getLmsHome.mockResolvedValue({
+        user: {
+            id: "user-1",
+            name: "Hitomi",
+            email: "hitomi@sustech.edu.cn",
+            image: null,
+        },
+        classes: [
+            {
+                id: 42,
+                slug: "cs309-2026-spring",
+                name: "OOAD",
+                code: "CS309",
+                label: "CS309 OOAD",
+                course: {id: 7, code: "CS309", name: "Object-Oriented Analysis and Design"},
+                semester: {year: 2026, season: "Spring"},
+            },
+        ],
+        assignmentStats: {
+            totalAssignments: 12,
+            submissionsThisWeek: 5,
+            pendingToGrade: 3,
+            averageScore: 87.25,
+        },
+    });
+
+    const wrapper = mount(Index);
+    await flushPromises();
+
+    expect(wrapper.get('[data-testid="lms-home"]').exists()).toBe(true);
+    expect(wrapper.text()).toContain("Hitomi 的课程工作台");
+    expect(wrapper.text()).toContain("12");
+    expect(wrapper.text()).toContain("87.3");
+    expect(wrapper.text()).toContain("Object-Oriented Analysis and Design");
+});
